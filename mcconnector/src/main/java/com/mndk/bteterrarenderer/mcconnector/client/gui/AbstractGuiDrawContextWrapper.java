@@ -60,8 +60,8 @@ public abstract class AbstractGuiDrawContextWrapper implements GuiDrawContextWra
         }
     }
 
-    public final int drawTextWithShadow(FontWrapper fontWrapper, TextWrapper textWrapper, float x, float y, int color) {
-        return textWrapper.drawWithShadow(fontWrapper, this, x, y, color);
+    public final void drawTextWithShadow(FontWrapper fontWrapper, TextWrapper textWrapper, float x, float y, int color) {
+        textWrapper.drawWithShadow(fontWrapper, this, x, y, color);
     }
 
     public final void drawTextWithShadow(FontWrapper font, String text, HorizontalAlign align, float x, float y, float width, int color) {

@@ -60,8 +60,8 @@ Visit this [wiki page](https://github.com/tf2mandeokyi/BTETerraRenderer/wiki/How
 
 # Building for specific MC versions:
 # Cleaning is to refresh the core subproject dependency.
-./gradlew :fabric1.18.2:clean
-./gradlew :fabric1.18.2:build
+./gradlew :fabric1.21.11:clean
+./gradlew :fabric1.21.11:build
 ```
 
 After building for MC versions you can find the jar files in `build/libs` directory.
