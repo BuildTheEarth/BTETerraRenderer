@@ -30,9 +30,9 @@
     "accessWidener": "${aw}",
     "depends": {
         "fabricloader": ">=${fabricLoaderVersion}",
-        "fabric": "*",
+        "fabric-api": "*",
         "minecraft": "${mcversion}",
-        "java": ">=17"
+        "java": ">=${javaVersionInteger}"
     },
     "custom": {
         "modmenu": {

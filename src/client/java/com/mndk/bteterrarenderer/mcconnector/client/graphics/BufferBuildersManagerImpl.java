@@ -43,7 +43,7 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
             (drawMode, cull) -> RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
                     .withLocation("pipeline/entity_translucent")
                     .withSampler("Sampler1")
-                    .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, drawMode)
+                    .withVertexFormat(/*? if >=26.1 {*/DefaultVertexFormat.ENTITY/*? } else {*//*DefaultVertexFormat.NEW_ENTITY*//*? }*/, drawMode)
                     .withBlend(BlendFunction.TRANSLUCENT)
                     .withCull(cull)
                     .build()

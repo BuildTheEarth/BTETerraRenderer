@@ -2,7 +2,6 @@ package com.mndk.bteterrarenderer.mcconnector.client.input;
 
 import com.mndk.bteterrarenderer.mod.util.IdUtil;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources./*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/;
@@ -40,7 +39,11 @@ public class GameInputManagerImpl implements GameInputManager {
         /*KeyMapping keyBinding = new KeyMapping(description, key.glfwKeyCode, category);
 *///? }
 
-        KeyBindingHelper.registerKeyBinding(keyBinding);
+//? if >=26.1 {
+        net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping(keyBinding);
+//? } else {
+        /*net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding(keyBinding);
+*///? }
         return keyBinding::consumeClick;
     }
 

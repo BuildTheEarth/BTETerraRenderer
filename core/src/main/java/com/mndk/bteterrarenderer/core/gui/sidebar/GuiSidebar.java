@@ -39,7 +39,6 @@ public abstract class GuiSidebar extends McFXScreen<McFXHorizontalList> {
     public final PropertyAccessor<Double> sidebarWidth;
     private double mouseClickX, initialWidth;
     private boolean widthChangingState;
-    private boolean isChatFocused;
 
 
     public GuiSidebar(int elementPaddingSide, int paddingTopBottom, int elementDistance, boolean guiPausesGame,
@@ -118,8 +117,6 @@ public abstract class GuiSidebar extends McFXScreen<McFXHorizontalList> {
 
     @Override
     public boolean mouseHovered(int mouseX, int mouseY, float partialTicks) {
-        this.isChatFocused = !this.chatScreenWrapper.isEmpty();
-
         if (super.mouseHovered(mouseX, mouseY, partialTicks)) return true;
 
         // Width change bar
@@ -197,11 +194,6 @@ public abstract class GuiSidebar extends McFXScreen<McFXHorizontalList> {
 
     @Override
     public boolean isChatFocused() {
-        return this.isChatFocused;
-    }
-
-    @Override
-    public void onRemoved() {
-        this.isChatFocused = false;
+        return !this.chatScreenWrapper.isEmpty();
     }
 }

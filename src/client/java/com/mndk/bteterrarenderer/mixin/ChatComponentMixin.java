@@ -22,12 +22,19 @@ public class ChatComponentMixin {
 
     @Shadow @Final private Minecraft minecraft;
 
-//? if >=1.21.11 {
-    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At(value = "HEAD"))
-    public void preRender(GuiGraphics context, Font textRenderer, int currentTick, int mouseX, int mouseY,
-                          boolean focused, boolean overlay, CallbackInfo ci) {
+//? if >=26.1 {
+    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "HEAD"))
+    public void preRender(
+            final GuiGraphics graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
+            final ChatComponent.DisplayMode displayMode, final boolean changeCursorOnInsertions, CallbackInfo ci) {
+        var pose = graphics.pose();
+//? } else if >=1.21.11 {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At(value = "HEAD"))
+    public void preRender(
+            GuiGraphics context, Font textRenderer, int currentTick, int mouseX, int mouseY, boolean focused,
+            boolean overlay, CallbackInfo ci) {
         var pose = context.pose();
-//? } else if >=1.20.5 {
+*///? } else if >=1.20.5 {
     /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V", at = @At(value = "HEAD"))
     public void preRender(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         var pose = context.pose();
@@ -48,17 +55,25 @@ public class ChatComponentMixin {
         if (!(currentScreen instanceof AbstractGuiScreenImpl screenImpl)) return;
         if (!(screenImpl.delegate instanceof MapRenderingOptionsSidebar sidebar)) return;
         if (sidebar.side.get() != SidebarSide.LEFT) return;
+        if (((ChatComponent)(Object)this).isChatFocused()) return;
 
-        int translateX = sidebar.sidebarWidth.get().intValue();
+        int translateX = sidebar.sidebarWidth.get().intValue() + 1;
         pose.translate(translateX, 0/*? if <1.21.6 {*//*, 0*//*? }*/);
     }
 
-//? if >=1.21.11 {
-    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At(value = "RETURN"))
-    public void postRender(GuiGraphics context, Font textRenderer, int currentTick, int mouseX, int mouseY,
-                           boolean focused, boolean overlay, CallbackInfo ci) {
+//? if >=26.1 {
+    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "RETURN"))
+    public void postRender(
+            final GuiGraphics graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
+            final ChatComponent.DisplayMode displayMode, final boolean changeCursorOnInsertions, CallbackInfo ci) {
+        var pose = graphics.pose();
+//? } else if >=1.21.11 {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At(value = "RETURN"))
+    public void postRender(
+            GuiGraphics context, Font textRenderer, int currentTick, int mouseX, int mouseY, boolean focused,
+            boolean overlay, CallbackInfo ci) {
         var pose = context.pose();
-//? } else if >=1.20.5 {
+*///? } else if >=1.20.5 {
     /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V", at = @At(value = "RETURN"))
     public void postRender(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         var pose = context.pose();

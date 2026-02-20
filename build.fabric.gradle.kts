@@ -47,7 +47,7 @@ configure<LoomGradleExtensionAPI> {
         }
     }
 
-    val accessWidener = rootProject.file("src/main/resources/${project.findProperty("aw") ?: "empty.accesswidener"}")
+    val accessWidener = rootProject.file("src/main/resources/${project.findProperty("aw") ?: if (isUnobfuscated) "emptyofficial.accesswidener" else "empty.accesswidener"}")
     if (accessWidener.exists()) {
         accessWidenerPath = accessWidener
     }
@@ -76,9 +76,7 @@ dependencies {
     myModImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabricLoaderVersion")}")
 
     // Fabric API (bundle)
-    myModImplementation      ("net.fabricmc.fabric-api:fabric-api:${project.property("fabricVersion")}")
-    // With splitEnvironmentSourceSets(), also add it to the client source set
-    "modClientImplementation"("net.fabricmc.fabric-api:fabric-api:${project.property("fabricVersion")}")
+    myModImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabricVersion")}")
 
     if (mcVersion > "1.12") { // for T++
         "shadowDep"("lzma:lzma:0.0.1")
@@ -104,7 +102,8 @@ tasks.withType<ProcessResources> {
     val resourceTargets = listOf(
         "mcmod.info",
         "META-INF/mods.toml",
-        "fabric.mod.json"
+        "fabric.mod.json",
+        "mixins.bteterrarenderer.client.json"
     )
     val replaceProperties = mapOf(
         "version" to             rootProject.property("mod_version"),
@@ -118,7 +117,8 @@ tasks.withType<ProcessResources> {
         "credits" to             rootProject.property("mod_credits"),
         "license" to             rootProject.property("mod_license"),
         "fabricLoaderVersion" to rootProject.property("fabricLoaderVersion"),
-        "aw" to                  (project.findProperty("aw") ?: "empty.accesswidener"),
+        "javaVersionInteger" to  javaVersionInteger.toString(),
+        "aw" to                  (project.findProperty("aw") ?: if (isUnobfuscated) "emptyofficial.accesswidener" else "empty.accesswidener"),
     )
 
     inputs.properties(replaceProperties)
