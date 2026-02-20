@@ -1,6 +1,6 @@
 package com.mndk.bteterrarenderer.mcconnector.client.text;
 
-import net.minecraft.text.Style;
+import net.minecraft.network.chat.Style;
 
 import javax.annotation.Nonnull;
 

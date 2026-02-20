@@ -1,11 +1,11 @@
 package com.mndk.bteterrarenderer.mcconnector.client.graphics;
 
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 
 import javax.annotation.Nonnull;
 
 public record WorldDrawContextWrapperImpl(
-        @Nonnull MatrixStack stack,
-        @Nonnull VertexConsumerProvider provider
+        @Nonnull PoseStack stack,
+        @Nonnull MultiBufferSource provider
 ) implements WorldDrawContextWrapper {}

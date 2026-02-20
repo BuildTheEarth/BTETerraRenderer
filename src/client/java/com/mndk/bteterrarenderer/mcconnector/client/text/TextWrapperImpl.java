@@ -2,13 +2,12 @@ package com.mndk.bteterrarenderer.mcconnector.client.text;
 
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapperImpl;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,46 +16,46 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TextWrapperImpl extends AbstractTextWrapper {
 
-    @Nonnull public final Text delegate;
+    @Nonnull public final Component delegate;
 
     @Override
     protected List<? extends TextWrapper> splitByWidthUnsafe(FontWrapper fontWrapper, int wrapWidth) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-        return textRenderer.wrapLines(delegate, wrapWidth).stream().map(OrderedTextWrapperImpl::new).toList();
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        return textRenderer.split(delegate, wrapWidth).stream().map(OrderedTextWrapperImpl::new).toList();
     }
 
     @Override
     public int getWidth(FontWrapper fontWrapper) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-        return textRenderer.getWidth(delegate);
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        return textRenderer.width(delegate);
     }
 
     @Override
     @Nullable
     public StyleWrapper getStyleComponentFromLine(FontWrapper fontWrapper, int mouseXFromLeft) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-        Style style = findStyleAtX(textRenderer, delegate.asOrderedText(), mouseXFromLeft);
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        Style style = findStyleAtX(textRenderer, delegate.getVisualOrderText(), mouseXFromLeft);
         return style != null ? new StyleWrapperImpl(style) : null;
     }
 
     @Override
     public void drawWithShadow(FontWrapper fontWrapper, GuiDrawContextWrapper context, float x, float y, int color) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
 //? if >=1.20 {
-        DrawContext drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
-        drawContext.drawTextWithShadow(textRenderer, delegate, (int) x, (int) y, color);
+        GuiGraphics drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
+        drawContext.drawString(textRenderer, delegate, (int) x, (int) y, color);
 //? } else {
-        /*MatrixStack matrixStack = ((GuiDrawContextWrapperImpl) context).delegate;
-        textRenderer.drawWithShadow(matrixStack, delegate, (int) x, (int) y, color);
+        /*PoseStack PoseStack = ((GuiDrawContextWrapperImpl) context).delegate;
+        textRenderer.drawShadow(PoseStack, delegate, (int) x, (int) y, color);
 *///? }
     }
 
     @Nullable
-    private static Style findStyleAtX(TextRenderer textRenderer, OrderedText text, int mouseXFromLeft) {
+    private static Style findStyleAtX(Font textRenderer, FormattedCharSequence text, int mouseXFromLeft) {
         int[] x = { 0 };
         Style[] result = { null };
         text.accept((index, style, codePoint) -> {
-            int width = textRenderer.getWidth(OrderedText.styled(codePoint, style));
+            int width = textRenderer.width(FormattedCharSequence.codepoint(codePoint, style));
             if (mouseXFromLeft < x[0] + width) {
                 result[0] = style;
                 return false;

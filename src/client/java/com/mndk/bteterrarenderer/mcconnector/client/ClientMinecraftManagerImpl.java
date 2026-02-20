@@ -14,14 +14,13 @@ import com.mndk.bteterrarenderer.mcconnector.client.text.TextWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.text.TextWrapperImpl; // <-- if this line errors, see note below
 import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapperImpl;
+import com.mndk.bteterrarenderer.mod.util.IdUtil;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -40,17 +39,17 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public WindowDimension getWindowSize() {
-        return new WindowDimensionImpl(MinecraftClient.getInstance().getWindow());
+        return new WindowDimensionImpl(Minecraft.getInstance().getWindow());
     }
 
     @Override
     public FontWrapper getDefaultFont() {
-        return new FontWrapperImpl(MinecraftClient.getInstance().textRenderer);
+        return new FontWrapperImpl(Minecraft.getInstance().font);
     }
 
     @Override
     public ResourceLocationWrapper newResourceLocation(String modId, String location) {
-        return new ResourceLocationWrapperImpl(Identifier.of(modId, location));
+        return new ResourceLocationWrapperImpl(IdUtil.fromNamespaceAndPath(modId, location));
     }
 
     @Override
@@ -65,7 +64,7 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public void displayGuiScreen(@Nullable AbstractGuiScreenCopy screen) {
-        MinecraftClient.getInstance().setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
+        Minecraft.getInstance().setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
     }
 
     @Override
@@ -83,38 +82,34 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
     @Override
     public double getFovDegrees() {
 //? if >=1.19 {
-        return MinecraftClient.getInstance().options.getFov().getValue();
+        return Minecraft.getInstance().options.fov().get();
 //? } else {
-        /*return MinecraftClient.getInstance().options.fov;
+        /*return Minecraft.getInstance().options.fov;
 *///? }
     }
 
     @Override
     public double getPlayerRotationYaw() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        return player != null ? player.getYaw() : 0;
+        LocalPlayer player = Minecraft.getInstance().player;
+        return player != null ? player.getYRot() : 0;
     }
 
     @Override
     public double getPlayerRotationPitch() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        return player != null ? player.getPitch() : 0;
+        LocalPlayer player = Minecraft.getInstance().player;
+        return player != null ? player.getXRot() : 0;
     }
 
     @Override
     public void sendTextComponentToChat(TextWrapper textComponent) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        player.sendMessage(((TextWrapperImpl) textComponent).delegate, false);
+        player.displayClientMessage(((TextWrapperImpl) textComponent).delegate, false);
     }
 
     @Override
     public void playClickSound() {
-//? if >=1.21.11 {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-//? } else {
-        /*MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));
-*///? }
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
     }
 }

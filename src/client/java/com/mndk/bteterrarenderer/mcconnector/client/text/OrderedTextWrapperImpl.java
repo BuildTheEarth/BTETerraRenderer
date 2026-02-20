@@ -2,14 +2,13 @@ package com.mndk.bteterrarenderer.mcconnector.client.text;
 
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapperImpl;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.ComponentCollector;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.util.TextCollector;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,43 +19,43 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class OrderedTextWrapperImpl extends AbstractTextWrapper {
 
-    @Nonnull public final OrderedText delegate;
+    @Nonnull public final FormattedCharSequence delegate;
 
     protected List<? extends TextWrapper> splitByWidthUnsafe(FontWrapper fontWrapper, int wrapWidth) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-        StringVisitable text = this.toStringVisitable();
-        return textRenderer.wrapLines(text, wrapWidth).stream().map(OrderedTextWrapperImpl::new).toList();
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        FormattedText text = this.toStringVisitable();
+        return textRenderer.split(text, wrapWidth).stream().map(OrderedTextWrapperImpl::new).toList();
     }
 
     public int getWidth(FontWrapper fontWrapper) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-        return textRenderer.getWidth(delegate);
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        return textRenderer.width(delegate);
     }
 
     @Nullable
     public StyleWrapper getStyleComponentFromLine(FontWrapper fontWrapper, int mouseXFromLeft) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
         Style style = findStyleAtX(textRenderer, delegate, mouseXFromLeft);
         return style != null ? new StyleWrapperImpl(style) : null;
     }
 
     public void drawWithShadow(FontWrapper fontWrapper, GuiDrawContextWrapper context, float x, float y, int color) {
-        TextRenderer textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
+        Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
 //? if >=1.20 {
-        DrawContext drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
-        drawContext.drawTextWithShadow(textRenderer, delegate, (int) x, (int) y, color);
+        GuiGraphics drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
+        drawContext.drawString(textRenderer, delegate, (int) x, (int) y, color);
 //? } else {
-        /*MatrixStack matrixStack = ((GuiDrawContextWrapperImpl) context).delegate;
-        textRenderer.drawWithShadow(matrixStack, delegate, (int) x, (int) y, color);
+        /*PoseStack PoseStack = ((GuiDrawContextWrapperImpl) context).delegate;
+        textRenderer.drawShadow(PoseStack, delegate, (int) x, (int) y, color);
 *///? }
     }
 
     @Nullable
-    private static Style findStyleAtX(TextRenderer textRenderer, OrderedText text, int mouseXFromLeft) {
+    private static Style findStyleAtX(Font textRenderer, FormattedCharSequence text, int mouseXFromLeft) {
         int[] x = { 0 };
         Style[] result = { null };
         text.accept((index, style, codePoint) -> {
-            int width = textRenderer.getWidth(OrderedText.styled(codePoint, style));
+            int width = textRenderer.width(FormattedCharSequence.codepoint(codePoint, style));
             if (mouseXFromLeft < x[0] + width) {
                 result[0] = style;
                 return false;
@@ -67,8 +66,8 @@ public class OrderedTextWrapperImpl extends AbstractTextWrapper {
         return result[0];
     }
 
-    private StringVisitable toStringVisitable() {
-        TextCollector textCollector = new TextCollector();
+    private FormattedText toStringVisitable() {
+        ComponentCollector textCollector = new ComponentCollector();
         AtomicReference<Style> lastStyle = new AtomicReference<>();
         AtomicReference<String> lastString = new AtomicReference<>("");
         delegate.accept((index, style, codePoint) -> {
@@ -78,15 +77,15 @@ public class OrderedTextWrapperImpl extends AbstractTextWrapper {
                 return true;
             }
             if (!lastString.get().isEmpty()) {
-                textCollector.add(StringVisitable.styled(lastString.get(), lastStyle.get()));
+                textCollector.append(FormattedText.of(lastString.get(), lastStyle.get()));
             }
             lastStyle.set(style);
             lastString.set(append);
             return true;
         });
         if (!lastString.get().isEmpty()) {
-            textCollector.add(StringVisitable.styled(lastString.get(), lastStyle.get()));
+            textCollector.append(FormattedText.of(lastString.get(), lastStyle.get()));
         }
-        return textCollector.getCombined();
+        return textCollector.getResultOrEmpty();
     }
 }

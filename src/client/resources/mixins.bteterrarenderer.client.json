@@ -4,8 +4,8 @@
     "package": "com.mndk.bteterrarenderer.mixin",
     "compatibilityLevel": "JAVA_21",
     "client": [
-        "ChatHudMixin",
-        "MinecraftClientMixin",
+        "ChatComponentMixin",
+        "MinecraftMixin",
         "ScreenMixin"
     ],
     "injectors": {

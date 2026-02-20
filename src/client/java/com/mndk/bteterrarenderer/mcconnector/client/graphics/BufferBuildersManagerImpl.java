@@ -5,14 +5,17 @@ import com.mndk.bteterrarenderer.mcconnector.client.graphics.shape.GraphicsTrian
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.vertex.PosTex;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.vertex.PosTexNorm;
 import com.mndk.bteterrarenderer.mcconnector.util.math.McCoord;
-//? if >=1.21.5 {
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.gl.RenderPipelines;
-//? }
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.pipeline.*;
+import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.renderer.*;
+//? if >=1.21.11 {
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
+//? } else {
+/*import net.minecraft.Util;
+*///? }
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources./*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/;
 import net.minecraft.util.*;
 import org.joml.Vector2f;
 
@@ -22,120 +25,116 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
 
 //? if >=1.21.11 {
     /**
-     * Minecraft 1.21.11 switched RenderLayer creation to the RenderSetup API.
+     * Minecraft 1.21.11 switched RenderType creation to the RenderSetup API.
      */
     private static RenderSetup generateSetup(RenderPipeline pipeline, Identifier texture) {
         return RenderSetup.builder(pipeline)
                 // Sampler name must match what the pipeline declares via withSampler(...)
-                .texture("Sampler0", texture)
+                .withTexture("Sampler0", texture)
                 .useLightmap()
                 .useOverlay()
-                .translucent()
-                .expectedBufferSize(1536)
-                .outlineMode(RenderSetup.OutlineMode.AFFECTS_OUTLINE)
-                .build();
+                .sortOnUpload()
+                .bufferSize(1536)
+                .setOutline(RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
+                .createRenderSetup();
     }
 
-    private static final BiFunction<VertexFormat.DrawMode, Boolean, RenderPipeline> PIPELINE = Util.memoize(
+    private static final BiFunction<VertexFormat.Mode, Boolean, RenderPipeline> PIPELINE = Util.memoize(
             (drawMode, cull) -> RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
                     .withLocation("pipeline/entity_translucent")
                     .withSampler("Sampler1")
-                    .withVertexFormat(VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, drawMode)
+                    .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, drawMode)
                     .withBlend(BlendFunction.TRANSLUCENT)
                     .withCull(cull)
                     .build()
             )
     );
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> QUADS = Util.memoize(
+    private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> QUADS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.DrawMode.QUADS, cull);
-                return RenderLayer.of("bteterrarenderer-quads", generateSetup(pipeline, texture));
+                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.Mode.QUADS, cull);
+                return RenderType.create("bteterrarenderer-quads", generateSetup(pipeline, texture));
             }
     );
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> TRIS = Util.memoize(
+    private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> TRIS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.DrawMode.TRIANGLES, cull);
-                return RenderLayer.of("bteterrarenderer-tris", generateSetup(pipeline, texture));
+                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.Mode.TRIANGLES, cull);
+                return RenderType.create("bteterrarenderer-tris", generateSetup(pipeline, texture));
             }
     );
 //? } else if >=1.21.5 {
-    /*private static RenderLayer.MultiPhaseParameters generateParameters(Identifier texture) {
-        return RenderLayer.MultiPhaseParameters.builder()
+    /*private static RenderType.CompositeState generateParameters(/^? if >=1.21.11 {^/Identifier/^? } else {^//^ResourceLocation^//^? }^/ texture) {
+        return RenderType.CompositeState.builder()
 //? if >=1.21.6 {
-                .texture(new RenderPhase.Texture(texture, true))
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, true))
 //? } else {
-                /^.texture(new RenderPhase.Texture(texture, TriState.TRUE, true))
+                /^.setTextureState(new RenderStateShard.TextureStateShard(texture, TriState.TRUE, true))
 ^///? }
-                .lightmap(RenderPhase.ENABLE_LIGHTMAP)
-                .overlay(RenderPhase.ENABLE_OVERLAY_COLOR)
-                .build(true);
+                .setLightmapState(RenderStateShard.LIGHTMAP)
+                .setOverlayState(RenderStateShard.OVERLAY)
+                .createCompositeState(true);
     }
 
-    private static final BiFunction<VertexFormat.DrawMode, Boolean, RenderPipeline> PIPELINE = Util.memoize(
+    private static final BiFunction<VertexFormat.Mode, Boolean, RenderPipeline> PIPELINE = Util.memoize(
             (drawMode, cull) -> RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
                     .withLocation("pipeline/entity_translucent")
                     .withSampler("Sampler1")
-                    .withVertexFormat(VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, drawMode)
+                    .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, drawMode)
                     .withBlend(BlendFunction.TRANSLUCENT)
                     .withCull(cull)
                     .build()
             )
     );
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> QUADS = Util.memoize(
-            (texture, cull) -> RenderLayer.of(
+    private static final BiFunction</^? if >=1.21.11 {^/Identifier/^? } else {^//^ResourceLocation^//^? }^/, Boolean, RenderType> QUADS = Util.memoize(
+            (texture, cull) -> RenderType.create(
                     "bteterrarenderer-quads", 1536, true, true,
-                    PIPELINE.apply(VertexFormat.DrawMode.QUADS, cull), generateParameters(texture)
+                    PIPELINE.apply(VertexFormat.Mode.QUADS, cull), generateParameters(texture)
             )
     );
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> TRIS = Util.memoize(
-            (texture, cull) -> RenderLayer.of(
+    private static final BiFunction</^? if >=1.21.11 {^/Identifier/^? } else {^//^ResourceLocation^//^? }^/, Boolean, RenderType> TRIS = Util.memoize(
+            (texture, cull) -> RenderType.create(
                     "bteterrarenderer-tris", 1536, true, true,
-                    PIPELINE.apply(VertexFormat.DrawMode.TRIANGLES, cull), generateParameters(texture)
+                    PIPELINE.apply(VertexFormat.Mode.TRIANGLES, cull), generateParameters(texture)
             )
     );
 *///? } else {
-    /*private static RenderLayer.MultiPhaseParameters generateParameters(Identifier texture, boolean cull) {
-        return RenderLayer.MultiPhaseParameters.builder()
-//? if >=1.19.3 {
-                .program(RenderPhase.ENTITY_TRANSLUCENT_PROGRAM)
-//? } else {
-                /^.shader(RenderPhase.ENTITY_TRANSLUCENT_SHADER)
-^///? }
-                .texture(new RenderPhase.Texture(texture, /^? if >=1.21.2 {^/TriState.TRUE/^? } else {^//^true^//^? }^/, true))
-                .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-                .cull(cull ? RenderPhase.ENABLE_CULLING : RenderPhase.DISABLE_CULLING)
-                .lightmap(RenderPhase.ENABLE_LIGHTMAP)
-                .overlay(RenderPhase.ENABLE_OVERLAY_COLOR)
-                .build(true);
+    /*private static RenderType.CompositeState generateParameters(ResourceLocation texture, boolean cull) {
+        return RenderType.CompositeState.builder()
+                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, /^? if >=1.21.2 {^/TriState.TRUE/^? } else {^//^true^//^? }^/, true))
+                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setCullState(cull ? RenderStateShard.CULL : RenderStateShard.NO_CULL)
+                .setLightmapState(RenderStateShard.LIGHTMAP)
+                .setOverlayState(RenderStateShard.OVERLAY)
+                .createCompositeState(true);
     }
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> QUADS = Util.memoize((texture, cull) -> RenderLayer.of(
-            "bteterrarenderer-quads", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
-            VertexFormat.DrawMode.QUADS, 1536, true, true, generateParameters(texture, cull)
+    private static final BiFunction<ResourceLocation, Boolean, RenderType> QUADS = Util.memoize((texture, cull) -> RenderType.create(
+            "bteterrarenderer-quads", DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.QUADS, 1536, true, true, generateParameters(texture, cull)
     ));
 
-    private static final BiFunction<Identifier, Boolean, RenderLayer> TRIS = Util.memoize((texture, cull) -> RenderLayer.of(
-            "bteterrarenderer-tris", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
-            VertexFormat.DrawMode.TRIANGLES, 1536, true, true, generateParameters(texture, cull)
+    private static final BiFunction<ResourceLocation, Boolean, RenderType> TRIS = Util.memoize((texture, cull) -> RenderType.create(
+            "bteterrarenderer-tris", DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.TRIANGLES, 1536, true, true, generateParameters(texture, cull)
     ));
 *///? }
 
     @Override
     public BufferBuilderWrapper<GraphicsQuad<PosTex>> begin3dQuad(NativeTextureWrapper texture, float alpha, boolean cull) {
-        Identifier id = ((NativeTextureWrapperImpl) texture).delegate;
-        RenderLayer renderLayer = QUADS.apply(id, cull);
+        var id = ((NativeTextureWrapperImpl) texture).delegate;
+        RenderType renderLayer = QUADS.apply(id, cull);
 
         // DrawMode.QUADS
-        // VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
+        // DefaultVertexFormat.NEW_ENTITY
         return new QuadBufferBuilderWrapper<>() {
-            private MatrixStack.Entry entry;
+            private PoseStack.Pose entry;
             private VertexConsumer consumer;
             public void setContext(WorldDrawContextWrapper context) {
-                this.entry = ((WorldDrawContextWrapperImpl) context).stack().peek();
+                this.entry = ((WorldDrawContextWrapperImpl) context).stack().last();
                 this.consumer = ((WorldDrawContextWrapperImpl) context).provider().getBuffer(renderLayer);
             }
             public void next(PosTex vertex) {
@@ -148,16 +147,16 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
     @Override
     public BufferBuilderWrapper<GraphicsTriangle<PosTexNorm>> begin3dTri(NativeTextureWrapper texture,
                                                                          float alpha, boolean enableNormal, boolean cull) {
-        Identifier id = ((NativeTextureWrapperImpl) texture).delegate;
-        RenderLayer renderLayer = TRIS.apply(id, cull);
+        var id = ((NativeTextureWrapperImpl) texture).delegate;
+        RenderType renderLayer = TRIS.apply(id, cull);
 
         // DrawMode.QUADS
-        // VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL
+        // DefaultVertexFormat.NEW_ENTITY
         return new TriangleBufferBuilderWrapper<>() {
-            private MatrixStack.Entry entry;
+            private PoseStack.Pose entry;
             private VertexConsumer consumer;
             public void setContext(WorldDrawContextWrapper context) {
-                this.entry = ((WorldDrawContextWrapperImpl) context).stack().peek();
+                this.entry = ((WorldDrawContextWrapperImpl) context).stack().last();
                 this.consumer = ((WorldDrawContextWrapperImpl) context).provider().getBuffer(renderLayer);
             }
             public void next(PosTexNorm vertex) {
@@ -167,13 +166,22 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
         };
     }
 
-    private static void nextVertex(MatrixStack.Entry entry, VertexConsumer consumer,
+    private static void nextVertex(PoseStack.Pose entry, VertexConsumer consumer,
                                    McCoord pos, Vector2f tex, McCoord normal, float alpha) {
-        consumer.vertex(entry/*? if <1.20.5 {*//*.getPositionMatrix()*//*? }*/, (float) pos.getX(), pos.getY(), (float) pos.getZ())
+//? if >=1.21 {
+        consumer.addVertex(entry, (float) pos.getX(), pos.getY(), (float) pos.getZ())
+                .setColor(1, 1, 1, alpha)
+                .setUv(tex.x, tex.y)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(0x00F000F0)
+                .setNormal(entry, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+//? } else {
+        /*consumer.vertex(entry/^? if <1.20.5 {^//^.pose()^//^? }^/, (float) pos.getX(), pos.getY(), (float) pos.getZ())
                 .color(1, 1, 1, alpha)
-                .texture(tex.x, tex.y)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(0x00F000F0)
-                .normal(entry/*? if <1.20.5 {*//*.getNormalMatrix()*//*? }*/, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+                .uv(tex.x, tex.y)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .color(0x00F000F0)
+                .normal(entry/^? if <1.20.5 {^//^.normal()^//^? }^/, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+*///? }
     }
 }

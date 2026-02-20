@@ -1,20 +1,20 @@
 package com.mndk.bteterrarenderer.mcconnector.client;
 
-import net.minecraft.client.util.Window;
+import com.mojang.blaze3d.platform.Window;
 
 public record WindowDimensionImpl(Window window) implements WindowDimension {
 
     @Override
-    public int getPixelWidth() { return this.window.getFramebufferWidth(); }
+    public int getPixelWidth() { return this.window.getWidth(); }
 
     @Override
-    public int getPixelHeight() { return this.window.getFramebufferHeight(); }
+    public int getPixelHeight() { return this.window.getHeight(); }
 
     @Override
-    public int getScaledWidth() { return this.window.getScaledWidth(); }
+    public int getScaledWidth() { return this.window.getGuiScaledWidth(); }
 
     @Override
-    public int getScaledHeight() { return this.window.getScaledHeight(); }
+    public int getScaledHeight() { return this.window.getGuiScaledHeight(); }
 
     @Override
     public float getScaleFactorX() {

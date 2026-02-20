@@ -3,10 +3,12 @@ package com.mndk.bteterrarenderer.mcconnector.client.gui.screen;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapperImpl;
 import com.mndk.bteterrarenderer.mcconnector.client.input.InputKey;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
+//? if >=1.21.7 {
 import net.minecraft.client.input.*;
+//? }
 
 import javax.annotation.Nonnull;
 
@@ -16,11 +18,11 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     public void onDisplayed() {}
 
     /**
-     * 1.21.119 Screen.init is init(int,int)
+     * 1.21.11 Screen.init is init(int,int)
      */
     @Override
     public void initGui(int width, int height) {
-        delegate.init(/*? if <1.21.11 {*//*MinecraftClient.getInstance(),*//*? }*/width, height);
+        delegate.init(/*? if <1.21.11 {*//*Minecraft.getInstance(),*//*? }*/width, height);
     }
 
     /**
@@ -28,7 +30,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
      */
     @Override
     public void setScreenSize(int width, int height) {
-        delegate.resize(/*? if <1.21.11 {*//*MinecraftClient.getInstance(),*//*? }*/width, height);
+        delegate.resize(/*? if <1.21.11 {*//*Minecraft.getInstance(),*//*? }*/width, height);
     }
 
     @Override
@@ -47,7 +49,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean mousePressed(double mouseX, double mouseY, int mouseButton) {
 //? if >=1.21.9 {
-        Click click = makeClick(mouseX, mouseY, mouseButton);
+        MouseButtonEvent click = makeClick(mouseX, mouseY, mouseButton);
         return delegate.mouseClicked(click, false);
 //? } else {
         /*return delegate.mouseClicked(mouseX, mouseY, mouseButton);
@@ -60,7 +62,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
 //? if >=1.21.9 {
-        Click click = makeClick(mouseX, mouseY, mouseButton);
+        MouseButtonEvent click = makeClick(mouseX, mouseY, mouseButton);
         return delegate.mouseReleased(click);
 //? } else {
         /*return delegate.mouseReleased(mouseX, mouseY, mouseButton);
@@ -74,7 +76,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double pMouseX, double pMouseY) {
 //? if >=1.21.9 {
-        Click click = makeClick(mouseX, mouseY, mouseButton);
+        MouseButtonEvent click = makeClick(mouseX, mouseY, mouseButton);
         double deltaX = mouseX - pMouseX;
         double deltaY = mouseY - pMouseY;
 
@@ -100,7 +102,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
 //? if >=1.21.9 {
-        CharInput charInput = new CharInput(typedChar, keyCode);
+        CharacterEvent charInput = new CharacterEvent(typedChar, keyCode);
         return delegate.charTyped(charInput);
 //? } else {
         /*return delegate.charTyped(typedChar, keyCode);
@@ -113,7 +115,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean keyPressed(InputKey key, int scanCode, int modifiers) {
 //? if >=1.21.9 {
-        KeyInput keyInput = new KeyInput(key.glfwKeyCode, scanCode, modifiers);
+        KeyEvent keyInput = new KeyEvent(key.glfwKeyCode, scanCode, modifiers);
         return delegate.keyPressed(keyInput);
 //? } else {
         /*return delegate.keyPressed(key.glfwKeyCode, scanCode, modifiers);
@@ -127,7 +129,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
 
     @Override
     public boolean doesScreenPauseGame() {
-        return delegate./*? if >=1.18.1 {*/shouldPause/*? } else {*//*isPauseScreen*//*? }*/();
+        return delegate./*? if >=1.18.1 {*/isPauseScreen/*? } else {*//*isPauseScreen*//*? }*/();
     }
 
     @Override
@@ -143,8 +145,8 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
 //? if >=1.21.9 {
     // ---------------- input factories ----------------
 
-    private static Click makeClick(double x, double y, int button) {
-        return new Click(x, y, new MouseInput(button, 0));
+    private static MouseButtonEvent makeClick(double x, double y, int button) {
+        return new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0));
     }
 //? }
 }
