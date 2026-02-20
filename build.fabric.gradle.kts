@@ -1,5 +1,4 @@
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import java.io.ByteArrayOutputStream
 
 plugins {
     id("net.fabricmc.fabric-loom-remap") apply false
@@ -66,7 +65,11 @@ configurations {
 dependencies {
     // Fabric deps
     "minecraft"("com.mojang:minecraft:${sc.current.version}")
-    "mappings"("net.fabricmc:yarn:${project.property("yarnMappings")}:v2")
+
+    if (!isUnobfuscated) {
+        val loom = project.extensions.getByType<LoomGradleExtensionAPI>()
+        "mappings"(loom.officialMojangMappings())
+    }
 
     val myModImplementation = if (isUnobfuscated) "implementation" else "modImplementation"
 

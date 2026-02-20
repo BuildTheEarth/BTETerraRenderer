@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.commands.CommandBuildContext;
 //? } else {
 /*import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
@@ -20,7 +20,7 @@ public class CommandsRegisterer implements ClientCommandRegistrationCallback {
     }
 
     @Override
-    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
         var toggleSubcommand = LiteralArgumentBuilder.<FabricClientCommandSource>literal("toggle")
                 .executes(new ToggleRenderingCommand())
                 .build();

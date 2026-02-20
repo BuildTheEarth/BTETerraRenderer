@@ -3,9 +3,9 @@ package com.mndk.bteterrarenderer.mcconnector.client.text;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.text.TextFormatCopy;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.text.TextManager;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.*;
 
 import javax.annotation.Nonnull;
 
@@ -18,8 +18,8 @@ public class TextManagerImpl implements TextManager {
             // 1.21+: decode Text via codecs instead of Text.Serialization
             var element = com.google.gson.JsonParser.parseString(json);
 
-            var result = TextCodecs.CODEC
-                    .parse(net.minecraft.registry.DynamicRegistryManager.EMPTY.getOps(JsonOps.INSTANCE), element)
+            var result = ComponentSerialization.CODEC
+                    .parse(net.minecraft.core.RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE), element)
                     .result()
                     .orElse(null);
 
@@ -27,18 +27,15 @@ public class TextManagerImpl implements TextManager {
         } catch (Throwable t) {
             return null;
         }
-//? } else if >=1.20.3 {
-        /*Text text = Text.Serialization.fromJson(json);
-        return text != null ? new TextWrapperImpl(text) : null;
-*///? } else {
-        /*Text text = Text.Serializer.fromJson(json);
+//? } else {
+        /*Component text = Component.Serializer.fromJson(json);
         return text != null ? new TextWrapperImpl(text) : null;
 *///? }
     }
 
     @Override
     public TextWrapper fromString(@Nonnull String text) {
-        return new TextWrapperImpl(/*? if >=1.19 {*/Text.literal(text)/*?} else {*//*new LiteralText(text)*//*? }*/);
+        return new TextWrapperImpl(/*? if >=1.19 {*/Component.literal(text)/*?} else {*//*new TextComponent(text)*//*? }*/);
     }
 
     @Override
@@ -54,8 +51,8 @@ public class TextManagerImpl implements TextManager {
 
     @Override
     public boolean handleClick(@Nonnull StyleWrapper styleWrapper) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Screen currentScreen = client.currentScreen;
+        Minecraft client = Minecraft.getInstance();
+        Screen currentScreen = client.screen;
         if (currentScreen == null) return false;
 
         Style style = ((StyleWrapperImpl) styleWrapper).delegate();
@@ -64,10 +61,10 @@ public class TextManagerImpl implements TextManager {
         if (clickEvent == null) return false;
 
 //? if >=1.21.6 {
-        Screen.handleClickEvent(clickEvent, client, currentScreen);
+        Screen.defaultHandleGameClickEvent(clickEvent, client, currentScreen);
         return true;
 //? } else {
-        /*return currentScreen.handleTextClick(style);
+        /*return currentScreen.handleComponentClicked(style);
 *///? }
     }
 }

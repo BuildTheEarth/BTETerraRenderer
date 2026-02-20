@@ -13,19 +13,6 @@ subprojects {
     apply(from = rootProject.file("common.gradle.kts"))
 }
 
-stonecutter.parameters {
-    replacements {
-        string {
-            direction = eval(current.version, "<1.21")
-            replace("Identifier.of(", "new Identifier(")
-        }
-        /*string {
-            direction = eval(current.version, "<1.21.11")
-            replace("Identifier", "ResourceLocation")
-        }*/
-    }
-}
-
 tasks.register<Exec>("gitSubmoduleUpdate") {
     group = "other"
     description = "Updates submodules"

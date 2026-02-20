@@ -2,12 +2,14 @@ package com.mndk.bteterrarenderer.mcconnector.client.gui.screen;
 
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapperImpl;
 import com.mndk.bteterrarenderer.mcconnector.client.input.InputKey;
-import net.minecraft.client.MinecraftClient;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
+//? if >=1.21.7 {
 import net.minecraft.client.input.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.*;
+//? }
+import net.minecraft.network.chat.*;
 
 import javax.annotation.Nonnull;
 
@@ -16,7 +18,7 @@ public class AbstractGuiScreenImpl extends Screen {
     public final AbstractGuiScreenCopy delegate;
 
     public AbstractGuiScreenImpl(@Nonnull AbstractGuiScreenCopy delegate) {
-        super(/*?if >=1.19 {*/Text.empty()/*?} else {*//*LiteralText.EMPTY*//*? }*/);
+        super(/*?if >=1.19 {*/Component.empty()/*?} else {*//*TextComponent.EMPTY*//*? }*/);
         this.delegate = delegate;
     }
 
@@ -36,7 +38,7 @@ public class AbstractGuiScreenImpl extends Screen {
     }
 //? } else {
     /*@Override
-    public void resize(MinecraftClient client, int width, int height) {
+    public void resize(Minecraft client, int width, int height) {
         super.resize(client, width, height);
         delegate.setScreenSize(width, height);
     }
@@ -49,7 +51,7 @@ public class AbstractGuiScreenImpl extends Screen {
 
     @Override
     public void render(
-            /*? if >=1.20 {*/DrawContext/*? } else {*//*MatrixStack*//*? }*/ context,
+            /*? if >=1.20 {*/GuiGraphics/*? } else {*//*PoseStack*//*? }*/ context,
             int mouseX, int mouseY, float delta) {
         delegate.drawScreen(new GuiDrawContextWrapperImpl(context), mouseX, mouseY, delta);
     }
@@ -59,7 +61,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.6: renderBackground() is no longer in render()
      */
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
     }
 //? }
 
@@ -68,7 +70,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.9: ParentElement#mouseClicked now takes (Click, boolean)
      */
     @Override
-    public boolean mouseClicked(Click click, boolean doubleClick) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubleClick) {
         // Call vanilla behavior first (keeps button handling consistent)
         boolean superResult = super.mouseClicked(click, doubleClick);
 
@@ -84,7 +86,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.9: ParentElement#mouseReleased now takes (Click)
      */
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         boolean superResult = super.mouseReleased(click);
 
         double x = click.x();
@@ -100,7 +102,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * The extra doubles are typically drag deltas.
      */
     @Override
-    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+    public boolean mouseDragged(MouseButtonEvent click, double deltaX, double deltaY) {
         boolean superResult = super.mouseDragged(click, deltaX, deltaY);
 
         double x = click.x();
@@ -124,7 +126,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.9: Screen#keyPressed now takes (KeyInput)
      */
     @Override
-    public boolean keyPressed(KeyInput keyInput) {
+    public boolean keyPressed(KeyEvent keyInput) {
         boolean superResult = super.keyPressed(keyInput);
 
         int keyCode = keyInput.key();
@@ -139,7 +141,7 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.9: ParentElement#charTyped now takes (CharInput)
      */
     @Override
-    public boolean charTyped(CharInput charInput) {
+    public boolean charTyped(CharacterEvent charInput) {
         boolean superResult = super.charTyped(charInput);
 
         int modifiers = charInput.modifiers();
@@ -203,7 +205,7 @@ public class AbstractGuiScreenImpl extends Screen {
     }
 
     @Override
-    public boolean /*? if >=1.18.1 {*/shouldPause/*? } else {*//*isPauseScreen*//*? }*/() {
+    public boolean /*? if >=1.18.1 {*/isPauseScreen/*? } else {*//*isPauseScreen*//*? }*/() {
         return delegate.doesScreenPauseGame();
     }
 
