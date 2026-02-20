@@ -8,9 +8,11 @@ import com.mndk.bteterrarenderer.mcconnector.client.graphics.WorldDrawContextWra
 import com.mndk.bteterrarenderer.mod.util.IdUtil;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
-//? if >=1.21.10 {
-import net.fabricmc.fabric.api.client.rendering.v1.world.*;
-//? }
+//? if >=26.1 {
+import net.fabricmc.fabric.api.client.rendering.v1.level.*;
+//? } else if >=1.21.10 {
+/*import net.fabricmc.fabric.api.client.rendering.v1.world.*;
+*///? }
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,9 +26,12 @@ import net.minecraft.util.profiling.Profiler;
 public class RenderEvents {
 
     public static void registerEvents() {
-//? if !=1.21.9 {
-        WorldRenderEvents.AFTER_ENTITIES.register(RenderEvents::onWorldRender);
-//? }
+//? if >=26.1 {
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(RenderEvents::onWorldRender);
+//? } else if !=1.21.9 {
+        /*WorldRenderEvents.AFTER_ENTITIES.register(RenderEvents::onWorldRender);
+*///? }
+
 //? if >=1.21.6 {
         HudRenderCallback.EVENT.register(RenderEvents::onHudRender);
 //? } else if >= 1.21.4 {
@@ -42,13 +47,18 @@ public class RenderEvents {
 
 //? if !=1.21.9 {
     @SuppressWarnings("resource")
-    private static void onWorldRender(WorldRenderContext renderContext) {
+    private static void onWorldRender(/*? if >=26.1 {*/LevelRenderContext/*? } else {*//*WorldRenderContext*//*? }*/ renderContext) {
 //? if >=1.21.10 {
         Minecraft client = renderContext.gameRenderer().getMinecraft();
         if (client.level == null || client.player == null) return;
 
-        PoseStack stack = renderContext.matrices();
+//? if >=26.1 {
+        PoseStack stack = renderContext.poseStack();
+        MultiBufferSource provider = renderContext.bufferSource();
+//? } else {
+        /*PoseStack stack = renderContext.matrices();
         MultiBufferSource provider = renderContext.consumers();
+*///? }
         if (stack == null || provider == null) return;
 
         WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, provider);

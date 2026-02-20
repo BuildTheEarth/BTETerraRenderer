@@ -102,10 +102,14 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public void sendTextComponentToChat(TextWrapper textComponent) {
-        LocalPlayer player = Minecraft.getInstance().player;
+//? if >=26.1 {
+        Minecraft.getInstance().getChatListener().handleSystemMessage(((TextWrapperImpl) textComponent).delegate, false); // Present since 1.20
+//? } else {
+        /*LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
         player.displayClientMessage(((TextWrapperImpl) textComponent).delegate, false);
+*///? }
     }
 
     @Override

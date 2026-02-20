@@ -43,6 +43,8 @@ stonecutter {
             }
         }
 
+        register("26.1-snapshot-9", "fabric")
+
         register("1.21.11", "fabric")
         register("1.21.10", "fabric")
         // register("1.21.9", "fabric") // https://github.com/FabricMC/fabric-api/issues/4902

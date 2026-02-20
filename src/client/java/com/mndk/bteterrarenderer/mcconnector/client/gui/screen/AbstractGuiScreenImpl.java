@@ -144,7 +144,7 @@ public class AbstractGuiScreenImpl extends Screen {
     public boolean charTyped(CharacterEvent charInput) {
         boolean superResult = super.charTyped(charInput);
 
-        int modifiers = charInput.modifiers();
+        int modifiers = /*? if >=26.1 {*/0/*? } else {*//*charInput.modifiers()*//*? }*/;
         int codepoint = charInput.codepoint();
         char chr = codepoint > 0 ? Character.toChars(codepoint)[0] : 0;
 

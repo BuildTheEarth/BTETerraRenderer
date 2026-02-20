@@ -102,7 +102,7 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
 //? if >=1.21.9 {
-        CharacterEvent charInput = new CharacterEvent(typedChar, keyCode);
+        CharacterEvent charInput = new CharacterEvent(typedChar/*? if <26.1 {*//*, keyCode*//*? }*/);
         return delegate.charTyped(charInput);
 //? } else {
         /*return delegate.charTyped(typedChar, keyCode);
