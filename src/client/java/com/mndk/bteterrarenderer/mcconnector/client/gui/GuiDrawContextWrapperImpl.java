@@ -332,9 +332,13 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
     }
 
     public void drawTextHighlight(int startX, int startY, int endX, int endY) {
-//? if >=1.20 {
-        delegate.fill(startX, startY, endX, endY, 0xff0000ff);
-//? } else if >=1.19 {
+//? if >=1.21.9 {
+        delegate.textHighlight(startX, startY, endX, endY/*? if >=1.21.11 {*/, true/*? }*/);
+//? } else if >=1.21.6 {
+        /*delegate.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, startX, startY, endX, endY, 0xff0000ff);
+*///? } else if >=1.20 {
+        /*delegate.fill(RenderType.guiTextHighlight(), startX, startY, endX, endY, 0xff0000ff);
+*///? } else if >=1.19 {
         /*RenderSystem.enableColorLogicOp();
         RenderSystem.logicOp(com.mojang.blaze3d.platform.GlStateManager.LogicOp.OR_REVERSE);
         GuiComponent.fill(delegate, startX, startY, endX, endY, 0xff0000ff);
