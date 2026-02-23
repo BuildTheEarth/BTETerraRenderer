@@ -1,6 +1,7 @@
 package com.mndk.bteterrarenderer.mcconnector.client.input;
 
 import com.mndk.bteterrarenderer.mcconnector.McConnector;
+import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 
 import static com.mndk.bteterrarenderer.mcconnector.client.input.InputKey.*;
 
@@ -8,10 +9,12 @@ public interface GameInputManager {
 
     boolean isKeyDown(InputKey key);
 
-    IKeyBinding registerInternal(String description, InputKey key, String category);
-    default IKeyBinding register(String modId, String name, InputKey key) {
-        return this.registerInternal("key." + modId + "." + name, key, "key." + modId + ".category");
+    IKeyBinding registerInternal(String locKey, InputKey key, IKeyBindingCategory category);
+    default IKeyBinding register(String modId, String name, InputKey key, IKeyBindingCategory category) {
+        return this.registerInternal("key." + modId + "." + name, key, category);
     }
+
+    IKeyBindingCategory registerCategory(ResourceLocationWrapper identifier);
 
     String getClipboardContent();
     void setClipboardContent(String content);

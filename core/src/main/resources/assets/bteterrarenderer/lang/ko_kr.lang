@@ -1,5 +1,5 @@
 # Key bindings
-key.bteterrarenderer.category=BTETerraRenderer
+key.category.bteterrarenderer.bteterrarenderer=BTETerraRenderer
 key.bteterrarenderer.options_ui=설정 UI 열기
 key.bteterrarenderer.toggle=지도 렌더링 켜기/끄기
 key.bteterrarenderer.move_up=지도 위로 올리기

@@ -5,12 +5,15 @@ import com.mndk.bteterrarenderer.core.config.BTETerraRendererConfig;
 import com.mndk.bteterrarenderer.core.gui.MapRenderingOptionsSidebar;
 import com.mndk.bteterrarenderer.core.loader.LoaderRegistry;
 import com.mndk.bteterrarenderer.mcconnector.McConnector;
+import com.mndk.bteterrarenderer.mcconnector.client.ClientMinecraftManager;
 import com.mndk.bteterrarenderer.mcconnector.client.input.GameInputManager;
 import com.mndk.bteterrarenderer.mcconnector.client.input.IKeyBinding;
+import com.mndk.bteterrarenderer.mcconnector.client.input.IKeyBindingCategory;
 import com.mndk.bteterrarenderer.mcconnector.client.input.InputKey;
 
 public class KeyBindings {
 
+    public static IKeyBindingCategory CATEGORY;
     public static IKeyBinding MAP_TOGGLE_KEY;
     public static IKeyBinding MAP_OPTIONS_KEY;
     public static IKeyBinding MOVE_UP_KEY;
@@ -19,11 +22,13 @@ public class KeyBindings {
 
     public static void registerAll() {
         if (registered) return;
-        GameInputManager inputManager = McConnector.client().inputManager;
-        MAP_TOGGLE_KEY = inputManager.register(BTETerraRenderer.MODID, "toggle", InputKey.KEY_R);
-        MAP_OPTIONS_KEY = inputManager.register(BTETerraRenderer.MODID, "options_ui", InputKey.KEY_GRAVE_ACCENT);
-        MOVE_UP_KEY = inputManager.register(BTETerraRenderer.MODID, "move_up", InputKey.KEY_Y);
-        MOVE_DOWN_KEY = inputManager.register(BTETerraRenderer.MODID, "move_down", InputKey.KEY_I);
+        ClientMinecraftManager client = McConnector.client();
+        GameInputManager inputManager = client.inputManager;
+        CATEGORY = inputManager.registerCategory(client.newResourceLocation(BTETerraRenderer.MODID, BTETerraRenderer.MODID));
+        MAP_TOGGLE_KEY = inputManager.register(BTETerraRenderer.MODID, "toggle", InputKey.KEY_R, CATEGORY);
+        MAP_OPTIONS_KEY = inputManager.register(BTETerraRenderer.MODID, "options_ui", InputKey.KEY_GRAVE_ACCENT, CATEGORY);
+        MOVE_UP_KEY = inputManager.register(BTETerraRenderer.MODID, "move_up", InputKey.KEY_Y, CATEGORY);
+        MOVE_DOWN_KEY = inputManager.register(BTETerraRenderer.MODID, "move_down", InputKey.KEY_I, CATEGORY);
         registered = true;
     }
 
