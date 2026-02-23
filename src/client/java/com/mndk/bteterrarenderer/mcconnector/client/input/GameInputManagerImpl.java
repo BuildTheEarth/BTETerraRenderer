@@ -2,16 +2,9 @@ package com.mndk.bteterrarenderer.mcconnector.client.input;
 
 import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapperImpl;
-import com.mndk.bteterrarenderer.mod.util.IdUtil;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources./*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class GameInputManagerImpl implements GameInputManager {
 
