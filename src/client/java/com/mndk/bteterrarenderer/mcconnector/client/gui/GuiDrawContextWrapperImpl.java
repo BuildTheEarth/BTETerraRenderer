@@ -304,7 +304,7 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? if >=1.21.2 {
         delegate.blitSprite(
                 /*? if >=1.21.6 {*/RenderPipelines.GUI_TEXTURED/*? } else {*//*RenderType::guiTextured*//*? }*/,
-                identifier, x, y, width, height, ARGB.white(1));
+                identifier, x, y, width, height, ARGB.white(1.0f));
 //? } else {
         /*RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
@@ -377,12 +377,12 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? } else if >=1.21.2 {
     /*public void drawImage(ResourceLocationWrapper res, int x, int y, int w, int h, float u1, float u2, float v1, float v2) {
         var texture = ((ResourceLocationWrapperImpl) res).delegate();
-        delegate.innerBlit(RenderType::guiTextured, texture, x, x+w, y, y+h, u1, u2, v1, v2, ARGB.white(1));
+        delegate.innerBlit(RenderType::guiTextured, texture, x, x+w, y, y+h, u1, u2, v1, v2, ARGB.white(1.0f));
     }
 
     public void drawWholeNativeImage(@Nonnull NativeTextureWrapper allocatedTextureObject, int x, int y, int w, int h) {
         var texture = ((NativeTextureWrapperImpl) allocatedTextureObject).delegate;
-        delegate.blit(RenderType::guiTextured, texture, x, x+w, y, y+h, 0, 1, 0, 1, ARGB.white(1));
+        delegate.blit(RenderType::guiTextured, texture, x, x+w, y, y+h, 0, 1, 0, 1, ARGB.white(1.0f));
     }
 *///? } else if >=1.20 {
     /*public void drawImage(ResourceLocationWrapper res, int x, int y, int w, int h, float u1, float u2, float v1, float v2) {
