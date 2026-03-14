@@ -40,7 +40,11 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
 
     @Override
     public void drawScreen(@Nonnull GuiDrawContextWrapper context, int mouseX, int mouseY, float partialTicks) {
-        delegate.render(((GuiDrawContextWrapperImpl) context).delegate, mouseX, mouseY, partialTicks);
+//? if >=26.1 {
+        delegate.extractRenderState(((GuiDrawContextWrapperImpl) context).delegate, mouseX, mouseY, partialTicks);
+//? } else {
+        /*delegate.render(((GuiDrawContextWrapperImpl) context).delegate, mouseX, mouseY, partialTicks);
+*///? }
     }
 
     /**

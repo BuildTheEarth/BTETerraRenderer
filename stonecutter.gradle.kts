@@ -4,7 +4,7 @@ plugins {
     id("dev.kikugie.stonecutter")
 }
 
-stonecutter active "fabric26.1-snapshot-9"
+stonecutter active "fabric26.1-pre-2"
 
 subprojects {
     apply(plugin = "java")

@@ -23,9 +23,9 @@ public class ChatComponentMixin {
     @Shadow @Final private Minecraft minecraft;
 
 //? if >=26.1 {
-    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "HEAD"))
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "HEAD"))
     public void preRender(
-            final GuiGraphics graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
+            final GuiGraphicsExtractor graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
             final ChatComponent.DisplayMode displayMode, final boolean changeCursorOnInsertions, CallbackInfo ci) {
         var pose = graphics.pose();
 //? } else if >=1.21.11 {
@@ -62,9 +62,9 @@ public class ChatComponentMixin {
     }
 
 //? if >=26.1 {
-    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "RETURN"))
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "RETURN"))
     public void postRender(
-            final GuiGraphics graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
+            final GuiGraphicsExtractor graphics, final Font font, final int ticks, final int mouseX, final int mouseY,
             final ChatComponent.DisplayMode displayMode, final boolean changeCursorOnInsertions, CallbackInfo ci) {
         var pose = graphics.pose();
 //? } else if >=1.21.11 {
