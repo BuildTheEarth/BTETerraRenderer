@@ -8,6 +8,9 @@ import com.mndk.bteterrarenderer.mcconnector.client.graphics.WorldDrawContextWra
 import com.mndk.bteterrarenderer.mod.util.IdUtil;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
+//? if >=1.21.6 {
+import net.fabricmc.fabric.api.client.rendering.v1.hud.*;
+//? }
 //? if >=26.1 {
 import net.fabricmc.fabric.api.client.rendering.v1.level.*;
 //? } else if >=1.21.10 {
@@ -33,7 +36,11 @@ public class RenderEvents {
 *///? }
 
 //? if >=1.21.6 {
-        HudRenderCallback.EVENT.register(RenderEvents::onHudRender);
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.MISC_OVERLAYS,
+                IdUtil.fromNamespaceAndPath("bteterrarenderer", "tile_renderer_info_element"),
+                RenderEvents::onHudRender
+        );
 //? } else if >= 1.21.4 {
         /*HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerAfter(
                 IdentifiedLayer.MISC_OVERLAYS,
@@ -90,9 +97,11 @@ public class RenderEvents {
     }
 //? }
 
-//? if >=1.21 {
-    private static void onHudRender(GuiGraphics drawContext, DeltaTracker tickCounter) {
-//? } else if >=1.20 {
+//? if >=26.1 {
+    private static void onHudRender(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) {
+//? } else if >=1.21 {
+    /*private static void onHudRender(GuiGraphics drawContext, DeltaTracker tickCounter) {
+*///? } else if >=1.20 {
     /*private static void onHudRender(GuiGraphics drawContext, float tickCounter) {
 *///? } else {
     /*private static void onHudRender(PoseStack drawContext, float tickCounter) {

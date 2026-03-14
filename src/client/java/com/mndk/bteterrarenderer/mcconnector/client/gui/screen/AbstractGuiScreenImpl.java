@@ -50,9 +50,13 @@ public class AbstractGuiScreenImpl extends Screen {
     }
 
     @Override
-    public void render(
-            /*? if >=1.20 {*/GuiGraphics/*? } else {*//*PoseStack*//*? }*/ context,
-            int mouseX, int mouseY, float delta) {
+//? if >=26.1 {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+//? } else if >=1.20 {
+    /*public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+*///? } else {
+    /*public void render(PoseStack context, int mouseX, int mouseY, float delta) {
+*///? }
         delegate.drawScreen(new GuiDrawContextWrapperImpl(context), mouseX, mouseY, delta);
     }
 
@@ -61,7 +65,11 @@ public class AbstractGuiScreenImpl extends Screen {
      * 1.21.6: renderBackground() is no longer in render()
      */
     @Override
-    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+//? if >=26.1 {
+    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+//? } else {
+    /*public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+*///? }
     }
 //? }
 

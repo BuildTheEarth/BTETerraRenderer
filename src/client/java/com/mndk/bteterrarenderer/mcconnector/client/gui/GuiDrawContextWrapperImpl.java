@@ -29,7 +29,11 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 //? }
 //? if >=1.21.6 {
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
+//? if >=26.1 {
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+//? } else {
+/*import net.minecraft.client.gui.render.state.GuiElementRenderState;
+*///? }
 //? }
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.*;
@@ -61,9 +65,11 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
     /*private static final /^? if >=1.21.11 {^/Identifier/^? } else {^//^ResourceLocation^//^? }^/ CHECKBOX_TEXTURE = IdUtil.withDefaultNamespace("textures/gui/checkbox.png");
 *///? }
 
-//? if >=1.20 {
-    @Nonnull public final GuiGraphics delegate;
-//? } else {
+//? if >=26.1 {
+    @Nonnull public final GuiGraphicsExtractor delegate;
+//? } else if >=1.20 {
+    /*@Nonnull public final GuiGraphics delegate;
+*///? } else {
     /*@Nonnull public final PoseStack delegate;
 *///? }
 
@@ -156,9 +162,14 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
     }
 
     public void fillQuad(GraphicsQuad<PosXY> quad, int color, float z) {
-        delegate.guiRenderState.submitGuiElement(new QuadRenderState(
+        QuadRenderState renderState = new QuadRenderState(
                 RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(delegate.pose()), quad, color,
-                delegate.scissorStack.peek()));
+                delegate.scissorStack.peek());
+//? if >=26.1 {
+        delegate.guiRenderState.addGuiElement(renderState);
+//? } else {
+        /*delegate.guiRenderState.submitGuiElement(renderState);
+*///? }
     }
 //? } else {
     /*public void translate(float x, float y, float z) {
@@ -423,7 +434,11 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? if >=1.20 {
         Font textRenderer = Minecraft.getInstance().font;
         Style style = ((StyleWrapperImpl) styleWrapper).delegate();
-        delegate.renderComponentHoverEffect(textRenderer, style, x, y);
+//? if >=26.1 {
+        delegate.componentHoverEffect(textRenderer, style, x, y);
+//? } else {
+        /*delegate.renderComponentHoverEffect(textRenderer, style, x, y);
+*///? }
 //? } else {
         /*Screen currentScreen = Minecraft.getInstance().screen;
         if (!(currentScreen instanceof AbstractGuiScreenImpl guiScreen)) return;
@@ -435,9 +450,11 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 
     public void drawTextWithShadow(FontWrapper fontWrapper, String string, float x, float y, int color) {
         Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-//? if >=1.20 {
-        delegate.drawString(textRenderer, string, (int) x, (int) y, color);
-//? } else {
+//? if >=26.1 {
+        delegate.text(textRenderer, string, (int) x, (int) y, color);
+//? } else if >=1.20 {
+        /*delegate.drawString(textRenderer, string, (int) x, (int) y, color);
+*///? } else {
         /*textRenderer.drawShadow(delegate, string, x, y, color);
 *///? }
     }

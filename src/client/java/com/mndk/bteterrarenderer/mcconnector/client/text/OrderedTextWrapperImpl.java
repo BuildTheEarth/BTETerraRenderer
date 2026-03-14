@@ -41,12 +41,13 @@ public class OrderedTextWrapperImpl extends AbstractTextWrapper {
 
     public void drawWithShadow(FontWrapper fontWrapper, GuiDrawContextWrapper context, float x, float y, int color) {
         Font textRenderer = ((FontWrapperImpl) fontWrapper).delegate;
-//? if >=1.20 {
-        GuiGraphics drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
-        drawContext.drawString(textRenderer, delegate, (int) x, (int) y, color);
-//? } else {
-        /*PoseStack PoseStack = ((GuiDrawContextWrapperImpl) context).delegate;
-        textRenderer.drawShadow(PoseStack, delegate, (int) x, (int) y, color);
+        var drawContext = ((GuiDrawContextWrapperImpl) context).delegate;
+//? if >=26.1 {
+        drawContext.text(textRenderer, delegate, (int) x, (int) y, color);
+//? } else if >=1.20 {
+        /*drawContext.drawString(textRenderer, delegate, (int) x, (int) y, color);
+*///? } else {
+        /*textRenderer.drawShadow(drawContext, delegate, (int) x, (int) y, color);
 *///? }
     }
 
