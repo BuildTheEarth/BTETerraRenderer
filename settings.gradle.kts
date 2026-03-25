@@ -43,7 +43,7 @@ stonecutter {
             }
         }
 
-        register("26.1-pre-2", "fabric")
+        register("26.1", "fabric")
 
         register("1.21.11", "fabric")
         register("1.21.10", "fabric")
