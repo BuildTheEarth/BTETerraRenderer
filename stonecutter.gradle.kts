@@ -10,7 +10,7 @@ subprojects {
     apply(plugin = "java")
     // apply(plugin = "maven-publish")
 
-    apply(from = rootProject.file("common.gradle.kts"))
+    apply(plugin = "common")
 }
 
 tasks.register<Exec>("gitSubmoduleUpdate") {

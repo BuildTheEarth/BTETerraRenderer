@@ -39,7 +39,6 @@ if (!subprojectType.isMod) {
     }
 
     extensions.configure<JavaPluginExtension> {
-        toolchain.languageVersion = JavaLanguageVersion.of(javaVersionInteger)
         sourceCompatibility = javaVersionEnum
         targetCompatibility = javaVersionEnum
     }

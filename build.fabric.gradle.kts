@@ -32,7 +32,6 @@ tasks.withType<JavaCompile>().configureEach {
 
 java {
     withSourcesJar()
-    toolchain.languageVersion = JavaLanguageVersion.of(javaVersionInteger)
     sourceCompatibility = javaVersionEnum
     targetCompatibility = javaVersionEnum
 }
