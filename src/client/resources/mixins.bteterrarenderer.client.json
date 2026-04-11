@@ -5,6 +5,7 @@
     "compatibilityLevel": "JAVA_${javaVersionInteger}",
     "client": [
         "ChatComponentMixin",
+        "GuiMixin",
         "MinecraftMixin",
         "ScreenMixin"
     ],
