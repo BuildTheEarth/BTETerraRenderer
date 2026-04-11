@@ -6,7 +6,7 @@ dependencies {
     implementation(project(":mcconnector"))
 }
 
-tasks.withType<ProcessResources> {
+tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doLast {

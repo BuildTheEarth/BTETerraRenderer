@@ -93,10 +93,8 @@ dependencies {
     }
 }
 
-tasks.withType<ProcessResources> {
+tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-    val target = layout.buildDirectory.dir("resources/main").get().asFile
 
     val resourceTargets = listOf(
         "mcmod.info",
@@ -104,6 +102,7 @@ tasks.withType<ProcessResources> {
         "fabric.mod.json",
         "mixins.bteterrarenderer.client.json"
     )
+    val aw = project.findProperty("aw") ?: if (isUnobfuscated) "emptyofficial.accesswidener" else "empty.accesswidener"
     val replaceProperties = mapOf(
         "version" to             rootProject.property("mod_version"),
         "mcversion" to           (project.findProperty("minecraftVersion") ?: sc.current.version),
@@ -117,27 +116,23 @@ tasks.withType<ProcessResources> {
         "license" to             rootProject.property("mod_license"),
         "fabricLoaderVersion" to rootProject.property("fabricLoaderVersion"),
         "javaVersionInteger" to  javaVersionInteger.toString(),
-        "aw" to                  (project.findProperty("aw") ?: if (isUnobfuscated) "emptyofficial.accesswidener" else "empty.accesswidener"),
+        "aw" to                  aw,
     )
 
     inputs.properties(replaceProperties)
 
-    filesMatching(resourceTargets) { expand(replaceProperties) }
-
-    copy {
-        from(sourceSets["main"].resources) {
-            include(resourceTargets)
-            expand(replaceProperties)
-        }
-        into(target)
+    filesMatching(resourceTargets) {
+        expand(replaceProperties)
     }
 
-    doLast {
-        val logoFile = File(project(":core").projectDir, "src/main/resources/icon.png")
-        val logoContent = logoFile.readBytes()
+    filesMatching("**/*.accesswidener") {
+        if (name != aw) {
+            exclude()
+        }
+    }
 
-        val targetLogoFile = File(outputs.files.asPath, "icon.png")
-        targetLogoFile.writeBytes(logoContent)
+    from(project(":core").file("src/main/resources/icon.png")) {
+        into("")
     }
 }
 
