@@ -16,14 +16,12 @@ else {
     apply(plugin = "net.fabricmc.fabric-loom-remap")
 }
 
-val (javaVersionInteger, javaVersionEnum) = {
-    when {
-        mcVersion >= "26.1-alpha" -> 25 to JavaVersion.VERSION_25
-        mcVersion >= "1.20.5"     -> 21 to JavaVersion.VERSION_21
-        mcVersion >= "1.18"       -> 17 to JavaVersion.VERSION_17
-        else                      ->  8 to JavaVersion.VERSION_1_8
-    }
-}()
+val (javaVersionInteger, javaVersionEnum) = when {
+    mcVersion >= "26.1-alpha" -> 25 to JavaVersion.VERSION_25
+    mcVersion >= "1.20.5"     -> 21 to JavaVersion.VERSION_21
+    mcVersion >= "1.18"       -> 17 to JavaVersion.VERSION_17
+    else                      ->  8 to JavaVersion.VERSION_1_8
+}
 println("Java version set to $javaVersionEnum for $project")
 
 tasks.withType<JavaCompile>().configureEach {
