@@ -65,7 +65,7 @@ fabricVersion = "0.91.1+1.20.3"
 aw = "1.20.accesswidener"
 
 ["fabric1.20.2"]
-minecraftVersion = ">=1.20.2 <=1.20.2"
+minecraftVersion = "1.20.2"
 modLoaderName = "fabric"
 fabricVersion = "0.91.6+1.20.2"
 aw = "1.20.accesswidener"
