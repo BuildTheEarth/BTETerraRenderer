@@ -443,14 +443,6 @@ subprojects {
             dependsOn("clean")
         }
     }
-    else {
-        tasks.named("test").configure { dependsOn(rootProject.tasks.named("gitSubmoduleUpdate")) }
-        project.tasks.register("buildNonModProjects") {
-            group = "build"
-            description = "Builds non-mod projects.\nThis is because fabric requires dependency jars to be present before building."
-            dependsOn("build")
-        }
-    }
 
     tasks.withType<Jar>().configureEach {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -491,21 +483,6 @@ extensions.configure<PublishingExtension> {
             version = rootProject.property("mod_version").toString()
             from(project(":core").components["java"])
         }
-    }
-}
-
-tasks.register<Exec>("gitSubmoduleUpdate") {
-    group = "other"
-    description = "Updates submodules"
-
-    commandLine("git", "submodule", "update", "--init")
-
-    val stdout = ByteArrayOutputStream()
-    standardOutput = stdout
-    doLast {
-        println("Submodule update command output: ")
-        if (stdout.size() > 0) println(stdout.toString())
-        else println("(none)")
     }
 }
 
