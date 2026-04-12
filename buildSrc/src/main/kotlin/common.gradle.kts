@@ -118,9 +118,9 @@ dependencies {
     }
 
     // Lombok
-    "compileOnly"("org.projectlombok:lombok:1.18.42")
-    "testCompileOnly"("org.projectlombok:lombok:1.18.42")
-    "annotationProcessor"("org.projectlombok:lombok:1.18.42")
+    "compileOnly"("org.projectlombok:lombok:1.18.44")
+    "testCompileOnly"("org.projectlombok:lombok:1.18.44")
+    "annotationProcessor"("org.projectlombok:lombok:1.18.44")
 
     // Tests
     "testImplementation"("junit:junit:4.13.2")
@@ -128,13 +128,4 @@ dependencies {
     "testImplementation"("org.apache.logging.log4j:log4j-core:2.20.0")
     "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     "testRuntimeOnly"("junit:junit:4.13.2")
-}
-
-if (!subprojectType.isMod) {
-    tasks.named("test").configure { dependsOn(rootProject.tasks.named("gitSubmoduleUpdate")) }
-    project.tasks.register("buildNonModProjects") {
-        group = "build"
-        description = "Builds non-mod projects.\nThis is because fabric requires dependency jars to be present before building."
-        dependsOn("build")
-    }
 }

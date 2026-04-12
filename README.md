@@ -50,9 +50,8 @@ Visit this [wiki page](https://github.com/tf2mandeokyi/BTETerraRenderer/wiki/How
 ### How to build
 
 ```bash
-# You must run this before building other subprojects
-./gradlew gitSubmoduleUpdate
-./gradlew buildNonModProjects
+# Cloning the repository and its submodules:
+git clone https://github.com/BuildTheEarth/BTETerraRenderer --recursive
 
 # Building for all available MC versions:
 ./gradlew cleanModProjects

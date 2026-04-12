@@ -12,18 +12,3 @@ subprojects {
 
     apply(plugin = "common")
 }
-
-tasks.register<Exec>("gitSubmoduleUpdate") {
-    group = "other"
-    description = "Updates submodules"
-
-    commandLine("git", "submodule", "update", "--init")
-
-    val stdout = ByteArrayOutputStream()
-    standardOutput = stdout
-    doLast {
-        println("Submodule update command output: ")
-        if (stdout.size() > 0) println(stdout.toString())
-        else println("(none)")
-    }
-}

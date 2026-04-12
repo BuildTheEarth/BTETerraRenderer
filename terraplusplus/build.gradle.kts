@@ -1,4 +1,4 @@
 
 dependencies {
-    testImplementation("org.projectlombok:lombok:1.18.42")
+    testImplementation("org.projectlombok:lombok:1.18.44")
 }
