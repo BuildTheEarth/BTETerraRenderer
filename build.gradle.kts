@@ -41,12 +41,12 @@ enum class SubprojectType(val isMod: Boolean) {
 subprojects {
 
     val modLoaderName = project.property("modLoaderName").toString()
-    val subprojectType = {
-        if      (modLoaderName == "core")            SubprojectType.CORE
-        else if (modLoaderName.startsWith("forge"))  SubprojectType.FORGE
-        else if (modLoaderName.startsWith("fabric")) SubprojectType.FABRIC
-        else                                         SubprojectType.LIBRARY
-    }()
+    val subprojectType = when {
+        modLoaderName == "core"            -> SubprojectType.CORE
+        modLoaderName.startsWith("forge")  -> SubprojectType.FORGE
+        modLoaderName.startsWith("fabric") -> SubprojectType.FABRIC
+        else                               -> SubprojectType.LIBRARY
+    }
 
     // Match version
     val mcVersionMatcher = project.findProperty("minecraftVersion")?.toString()?.let { Regex("""^(\d+)\.(.+)$""").find(it) }
@@ -71,11 +71,11 @@ subprojects {
         }
     }
 
-    val (javaVersionInteger, javaVersionEnum) = {
-        if      (mcVersion == null || mcVersion >= 20.5) 21 to JavaVersion.VERSION_21
-        else if (mcVersion >= 18  ) 17 to JavaVersion.VERSION_17
-        else                         8 to JavaVersion.VERSION_1_8
-    }()
+    val (javaVersionInteger, javaVersionEnum) = when {
+        mcVersion != null && mcVersion >= 20.5 -> 21 to JavaVersion.VERSION_21
+        mcVersion == null || mcVersion >= 18   -> 17 to JavaVersion.VERSION_17
+        else -> throw IllegalArgumentException("Unsupported Minecraft version: ${project.findProperty("minecraftVersion")}")
+    }
     println("Java version set to $javaVersionEnum for $project")
 
     if (javaVersionInteger != 8) {
@@ -88,7 +88,6 @@ subprojects {
         if (subprojectType == SubprojectType.FABRIC) {
             withSourcesJar()
         }
-        toolchain.languageVersion = JavaLanguageVersion.of(javaVersionInteger)
         sourceCompatibility = javaVersionEnum
         targetCompatibility = javaVersionEnum
     }
@@ -225,9 +224,9 @@ subprojects {
         }
 
         // Lombok
-        "compileOnly"("org.projectlombok:lombok:1.18.32")
-        "testCompileOnly"("org.projectlombok:lombok:1.18.32")
-        "annotationProcessor"("org.projectlombok:lombok:1.18.32")
+        "compileOnly"("org.projectlombok:lombok:1.18.44")
+        "testCompileOnly"("org.projectlombok:lombok:1.18.44")
+        "annotationProcessor"("org.projectlombok:lombok:1.18.44")
 
         if (subprojectType == SubprojectType.FORGE) {
             "annotationProcessor"("org.spongepowered:mixin:0.8.5:processor")
