@@ -12,7 +12,14 @@ tasks.named<JavaCompile>("compileJava") {
 repositories {
     mavenCentral()
     maven("https://repo.spongepowered.org/maven/")
-    maven("https://maven.daporkchop.net/")
+    exclusiveContent {
+        forRepository {
+            maven("https://maven.daporkchop.net/")
+        }
+        filter {
+            includeGroup("net.daporkchop.lib")
+        }
+    }
     // maven("https://repo.opencollab.dev/snapshot/")
     // maven("https://jitpack.io/")
     // maven("https://repo.elytradev.com/")
