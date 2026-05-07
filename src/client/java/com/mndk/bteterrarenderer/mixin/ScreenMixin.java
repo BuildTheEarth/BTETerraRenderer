@@ -13,7 +13,7 @@ public abstract class ScreenMixin {
 
     @Inject(method = "onClose", at = @At("HEAD"), cancellable = true)
     public void onClose(CallbackInfo ci) {
-//? if >=26.2 {
+//? if >=26.2-alpha.1 {
         /*Screen currentScreen = Minecraft.getInstance().gui.screen();
 *///? } else {
         Screen currentScreen = Minecraft.getInstance().screen;

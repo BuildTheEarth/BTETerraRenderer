@@ -52,7 +52,7 @@ public class TextManagerImpl implements TextManager {
     @Override
     public boolean handleClick(@Nonnull StyleWrapper styleWrapper) {
         Minecraft client = Minecraft.getInstance();
-//? if >=26.2 {
+//? if >=26.2-alpha.1 {
         /*Screen currentScreen = client.gui.screen();
 *///? } else {
         Screen currentScreen = client.screen;

@@ -19,7 +19,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.*;
 import net.minecraft.world.phys.Vec3;
 //? if >=1.21.2 {
 import net.minecraft.util.profiling.Profiler;
@@ -56,20 +56,24 @@ public class RenderEvents {
     @SuppressWarnings("resource")
     private static void onWorldRender(/*? if >=26.1 {*/LevelRenderContext/*? } else {*//*WorldRenderContext*//*? }*/ renderContext) {
 //? if >=1.21.10 {
-        Minecraft client = renderContext.gameRenderer().getMinecraft();
+        Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) return;
 
 //? if >=26.1 {
         PoseStack stack = renderContext.poseStack();
-        MultiBufferSource provider = renderContext.bufferSource();
+        SubmitNodeCollector submitNodeCollector = renderContext.submitNodeCollector();
 //? } else {
         /*PoseStack stack = renderContext.matrices();
-        MultiBufferSource provider = renderContext.consumers();
+        SubmitNodeCollector submitNodeCollector = renderContext.commandQueue();
 *///? }
-        if (stack == null || provider == null) return;
+        if (stack == null || submitNodeCollector == null) return;
 
-        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, provider);
+        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, submitNodeCollector);
+//? if >=26.2-alpha.1 {
+        /*Camera camera = renderContext.gameRenderer().mainCamera();
+*///? } else {
         Camera camera = renderContext.gameRenderer().getMainCamera();
+//? }
         Vec3 cameraPos = camera.position();
 //? } else {
         /*var world = renderContext.world();
@@ -77,9 +81,9 @@ public class RenderEvents {
         if (world == null || client.player == null) return;
 
         PoseStack stack = renderContext.matrixStack();
-        MultiBufferSource provider = renderContext.consumers();
-        if (stack == null || provider == null) return;
-        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, provider);
+        MultiBufferSource bufferSource = renderContext.consumers();
+        if (stack == null || bufferSource == null) return;
+        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, bufferSource);
 
         // While the player is the "rendering center" in 1.12.2,
         // After 1.18.2 it is the camera being that center.

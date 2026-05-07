@@ -5,6 +5,8 @@ import com.mndk.bteterrarenderer.mcconnector.client.graphics.shape.GraphicsTrian
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.vertex.PosTex;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.vertex.PosTexNorm;
 import com.mndk.bteterrarenderer.mcconnector.util.math.McCoord;
+import com.mndk.bteterrarenderer.mcconnector.util.math.McCoordTransformer;
+import com.mojang.blaze3d.*;
 import com.mojang.blaze3d.pipeline.*;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.*;
@@ -23,6 +25,8 @@ import java.util.function.BiFunction;
 
 public class BufferBuildersManagerImpl implements BufferBuildersManager {
 
+    private static final McCoord DEFAULT_NORMAL = new McCoord(0, 1, 0);
+
 //? if >=1.21.11 {
     /**
      * Minecraft 1.21.11 switched RenderType creation to the RenderSetup API.
@@ -34,20 +38,27 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
                 .useLightmap()
                 .useOverlay()
                 .sortOnUpload()
-                .bufferSize(1536)
+                // .bufferSize(1536) // Default is 1536, removed in 26.2-snapshot-5
                 .setOutline(RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
                 .createRenderSetup();
     }
 
-    private static final BiFunction<VertexFormat.Mode, Boolean, RenderPipeline> PIPELINE = Util.memoize(
+    private static final BiFunction</*? if >=26.2-alpha.1 {*//*PrimitiveTopology*//*? } else {*/VertexFormat.Mode/*? }*/, Boolean, RenderPipeline> PIPELINE = Util.memoize(
             (drawMode, cull) -> RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
                     .withLocation("pipeline/entity_translucent")
+//? if >=26.2-alpha.1 {
+                    /*.withBindGroupLayout(BindGroupLayouts.SAMPLER1)
+                    .withVertexBinding(0, DefaultVertexFormat.ENTITY)
+                    .withPrimitiveTopology(drawMode)
+                    .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+*///? } else if >=26.1 {
                     .withSampler("Sampler1")
-                    .withVertexFormat(/*? if >=26.1 {*/DefaultVertexFormat.ENTITY/*? } else {*//*DefaultVertexFormat.NEW_ENTITY*//*? }*/, drawMode)
-//? if >=26.1 {
+                    .withVertexFormat(DefaultVertexFormat.ENTITY, drawMode)
                     .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
 //? } else {
-                    /*.withBlend(BlendFunction.TRANSLUCENT)
+                    /*.withSampler("Sampler1")
+                    .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, drawMode)
+                    .withBlend(BlendFunction.TRANSLUCENT)
 *///? }
                     .withCull(cull)
                     .build()
@@ -56,14 +67,14 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
 
     private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> QUADS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.Mode.QUADS, cull);
+                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2-alpha.1 {*//*PrimitiveTopology.QUADS*//*? } else {*/VertexFormat.Mode.QUADS/*? }*/, cull);
                 return RenderType.create("bteterrarenderer-quads", generateSetup(pipeline, texture));
             }
     );
 
     private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> TRIS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(VertexFormat.Mode.TRIANGLES, cull);
+                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2-alpha.1 {*//*PrimitiveTopology.TRIANGLES*//*? } else {*/VertexFormat.Mode.TRIANGLES/*? }*/, cull);
                 return RenderType.create("bteterrarenderer-tris", generateSetup(pipeline, texture));
             }
     );
@@ -135,15 +146,30 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
         // DrawMode.QUADS
         // DefaultVertexFormat.NEW_ENTITY
         return new QuadBufferBuilderWrapper<>() {
-            private PoseStack.Pose entry;
-            private VertexConsumer consumer;
+            private WorldDrawContextWrapperImpl context;
+            @Override
             public void setContext(WorldDrawContextWrapper context) {
-                this.entry = ((WorldDrawContextWrapperImpl) context).stack().last();
-                this.consumer = ((WorldDrawContextWrapperImpl) context).provider().getBuffer(renderLayer);
+                this.context = (WorldDrawContextWrapperImpl) context;
             }
-            public void next(PosTex vertex) {
-                McCoord tp = this.getTransformer().transform(vertex.pos);
-                nextVertex(entry, consumer, tp, vertex.tex, new McCoord(0, 1, 0), alpha);
+            @Override
+            public void nextShape(GraphicsQuad<PosTex> shape) {
+//? if >=1.21.10 {
+                context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
+                    McCoordTransformer transformer = this.getTransformer();
+                    nextVertex(pose, buffer, transformer.transform(shape.v0.pos), shape.v0.tex, DEFAULT_NORMAL, alpha);
+                    nextVertex(pose, buffer, transformer.transform(shape.v1.pos), shape.v1.tex, DEFAULT_NORMAL, alpha);
+                    nextVertex(pose, buffer, transformer.transform(shape.v2.pos), shape.v2.tex, DEFAULT_NORMAL, alpha);
+                    nextVertex(pose, buffer, transformer.transform(shape.v3.pos), shape.v3.tex, DEFAULT_NORMAL, alpha);
+                });
+//? } else {
+                /*PoseStack.Pose pose = context.poseStack().last();
+                VertexConsumer buffer = context.bufferSource().getBuffer(renderLayer);
+                McCoordTransformer transformer = this.getTransformer();
+                nextVertex(pose, buffer, transformer.transform(shape.v0.pos), shape.v0.tex, DEFAULT_NORMAL, alpha);
+                nextVertex(pose, buffer, transformer.transform(shape.v1.pos), shape.v1.tex, DEFAULT_NORMAL, alpha);
+                nextVertex(pose, buffer, transformer.transform(shape.v2.pos), shape.v2.tex, DEFAULT_NORMAL, alpha);
+                nextVertex(pose, buffer, transformer.transform(shape.v3.pos), shape.v3.tex, DEFAULT_NORMAL, alpha);
+*///? }
             }
         };
     }
@@ -157,35 +183,54 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
         // DrawMode.QUADS
         // DefaultVertexFormat.NEW_ENTITY
         return new TriangleBufferBuilderWrapper<>() {
-            private PoseStack.Pose entry;
-            private VertexConsumer consumer;
+            private WorldDrawContextWrapperImpl context;
+            @Override
             public void setContext(WorldDrawContextWrapper context) {
-                this.entry = ((WorldDrawContextWrapperImpl) context).stack().last();
-                this.consumer = ((WorldDrawContextWrapperImpl) context).provider().getBuffer(renderLayer);
+                this.context = (WorldDrawContextWrapperImpl) context;
             }
-            public void next(PosTexNorm vertex) {
-                PosTexNorm tv = vertex.transform(this.getTransformer());
-                nextVertex(entry, consumer, tv.pos, tv.tex, enableNormal ? tv.normal : new McCoord(0, 1, 0), alpha);
+            @Override
+            public void nextShape(GraphicsTriangle<PosTexNorm> shape) {
+//? if >=1.21.10 {
+                context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
+                    McCoordTransformer transformer = this.getTransformer();
+                    PosTexNorm tv0 = shape.v0.transform(transformer);
+                    nextVertex(pose, buffer, tv0.pos, tv0.tex, enableNormal ? tv0.normal : DEFAULT_NORMAL, alpha);
+                    PosTexNorm tv1 = shape.v1.transform(transformer);
+                    nextVertex(pose, buffer, tv1.pos, tv1.tex, enableNormal ? tv1.normal : DEFAULT_NORMAL, alpha);
+                    PosTexNorm tv2 = shape.v2.transform(transformer);
+                    nextVertex(pose, buffer, tv2.pos, tv2.tex, enableNormal ? tv2.normal : DEFAULT_NORMAL, alpha);
+                });
+//? } else {
+                /*PoseStack.Pose pose = context.poseStack().last();
+                VertexConsumer buffer = context.bufferSource().getBuffer(renderLayer);
+                McCoordTransformer transformer = this.getTransformer();
+                PosTexNorm tv0 = shape.v0.transform(transformer);
+                nextVertex(pose, buffer, tv0.pos, tv0.tex, enableNormal ? tv0.normal : DEFAULT_NORMAL, alpha);
+                PosTexNorm tv1 = shape.v1.transform(transformer);
+                nextVertex(pose, buffer, tv1.pos, tv1.tex, enableNormal ? tv1.normal : DEFAULT_NORMAL, alpha);
+                PosTexNorm tv2 = shape.v2.transform(transformer);
+                nextVertex(pose, buffer, tv2.pos, tv2.tex, enableNormal ? tv2.normal : DEFAULT_NORMAL, alpha);
+*///? }
             }
         };
     }
 
-    private static void nextVertex(PoseStack.Pose entry, VertexConsumer consumer,
+    private static void nextVertex(PoseStack.Pose pose, VertexConsumer buffer,
                                    McCoord pos, Vector2f tex, McCoord normal, float alpha) {
 //? if >=1.21 {
-        consumer.addVertex(entry, (float) pos.getX(), pos.getY(), (float) pos.getZ())
+        buffer.addVertex(pose, (float) pos.getX(), pos.getY(), (float) pos.getZ())
                 .setColor(1, 1, 1, alpha)
                 .setUv(tex.x, tex.y)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(0x00F000F0)
-                .setNormal(entry, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+                .setNormal(pose, (float) normal.getX(), normal.getY(), (float) normal.getZ());
 //? } else {
-        /*consumer.vertex(entry/^? if <1.20.5 {^//^.pose()^//^? }^/, (float) pos.getX(), pos.getY(), (float) pos.getZ())
+        /*buffer.vertex(pose/^? if <1.20.5 {^//^.pose()^//^? }^/, (float) pos.getX(), pos.getY(), (float) pos.getZ())
                 .color(1, 1, 1, alpha)
                 .uv(tex.x, tex.y)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .color(0x00F000F0)
-                .normal(entry/^? if <1.20.5 {^//^.normal()^//^? }^/, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+                .normal(pose/^? if <1.20.5 {^//^.normal()^//^? }^/, (float) normal.getX(), normal.getY(), (float) normal.getZ());
 *///? }
     }
 }

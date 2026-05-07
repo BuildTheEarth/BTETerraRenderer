@@ -19,7 +19,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.9"
+    id("dev.kikugie.stonecutter") version "0.9.3"
 }
 
 rootProject.name = "BTETerraRenderer"
@@ -43,7 +43,7 @@ stonecutter {
             }
         }
 
-        register("26.2-snapshot-2", "fabric")
+        register("26.2-snapshot-6", "fabric")
         register("26.1", "fabric")
 
         register("1.21.11", "fabric")

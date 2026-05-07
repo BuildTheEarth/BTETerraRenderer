@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 @Mixin(Gui.class)
 public class GuiMixin {
 
-//? if >=26.2 {
+//? if >=26.2-alpha.1 {
     /*@Shadow @Nullable private Screen screen;
 
     @Inject(method = "setScreen", at = @At(value = "HEAD"), cancellable = true)

@@ -16,12 +16,5 @@ public abstract class QuadBufferBuilderWrapper<V extends GraphicsVertex> impleme
     }
 
     @Override
-    public final void nextShape(GraphicsQuad<V> shape) {
-        this.next(shape.v0);
-        this.next(shape.v1);
-        this.next(shape.v2);
-        this.next(shape.v3);
-    }
-
-    protected abstract void next(V vertex);
+    public abstract void nextShape(GraphicsQuad<V> shape);
 }
