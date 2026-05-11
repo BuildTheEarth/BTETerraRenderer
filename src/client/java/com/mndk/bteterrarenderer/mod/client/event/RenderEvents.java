@@ -59,16 +59,19 @@ public class RenderEvents {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) return;
 
-//? if >=26.1 {
+//? if >=26.2-alpha.1 {
+        /*PoseStack stack = renderContext.poseStack();
+        var submitNodeCollectorOrBufferSource = renderContext.submitNodeCollector();
+*///? } else if >=26.1 {
         PoseStack stack = renderContext.poseStack();
-        SubmitNodeCollector submitNodeCollector = renderContext.submitNodeCollector();
+        var submitNodeCollectorOrBufferSource = renderContext.bufferSource();
 //? } else {
         /*PoseStack stack = renderContext.matrices();
-        SubmitNodeCollector submitNodeCollector = renderContext.commandQueue();
+        var submitNodeCollectorOrBufferSource = renderContext.consumers();
 *///? }
-        if (stack == null || submitNodeCollector == null) return;
+        if (stack == null || submitNodeCollectorOrBufferSource == null) return;
 
-        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, submitNodeCollector);
+        WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, submitNodeCollectorOrBufferSource);
 //? if >=26.2-alpha.1 {
         /*Camera camera = renderContext.gameRenderer().mainCamera();
 *///? } else {
