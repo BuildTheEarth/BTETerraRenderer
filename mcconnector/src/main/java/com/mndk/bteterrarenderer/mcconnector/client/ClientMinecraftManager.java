@@ -12,6 +12,9 @@ import com.mndk.bteterrarenderer.mcconnector.client.text.TextWrapper;
 import com.mndk.bteterrarenderer.mcconnector.i18n.I18nManager;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Path;
 
 public abstract class ClientMinecraftManager extends CommonMinecraftManager {
 
@@ -45,5 +48,15 @@ public abstract class ClientMinecraftManager extends CommonMinecraftManager {
     public abstract void sendTextComponentToChat(TextWrapper textComponent);
     public void sendFormattedStringToChat(String formattedString) {
         this.sendTextComponentToChat(this.textManager.fromString(formattedString));
+    }
+
+    public abstract void openUri(URI uri);
+
+    public final void openFile(File file) {
+        this.openUri(file.toURI());
+    }
+
+    public final void openPath(Path path) {
+        this.openUri(path.toUri());
     }
 }

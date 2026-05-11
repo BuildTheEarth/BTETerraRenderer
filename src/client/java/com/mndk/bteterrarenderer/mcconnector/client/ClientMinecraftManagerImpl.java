@@ -21,9 +21,15 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+//? if >=1.21.11 {
+import net.minecraft.util.Util;
+//? } else {
+/*import net.minecraft.Util;
+*///? }
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.net.URI;
 
 public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
@@ -121,5 +127,10 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
     @Override
     public void playClickSound() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+    }
+
+    @Override
+    public void openUri(URI uri) {
+        Util.getPlatform().openUri(uri);
     }
 }

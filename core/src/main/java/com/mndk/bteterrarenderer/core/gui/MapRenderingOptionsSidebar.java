@@ -2,7 +2,6 @@ package com.mndk.bteterrarenderer.core.gui;
 
 import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.core.config.BTETerraRendererConfig;
-import com.mndk.bteterrarenderer.util.concurrent.ManualThreadExecutor;
 import com.mndk.bteterrarenderer.core.gui.mapaligner.MapAligner;
 import com.mndk.bteterrarenderer.core.gui.sidebar.GuiSidebar;
 import com.mndk.bteterrarenderer.core.gui.sidebar.SidebarSide;
@@ -10,9 +9,6 @@ import com.mndk.bteterrarenderer.core.loader.LoaderRegistry;
 import com.mndk.bteterrarenderer.core.network.HttpResourceManager;
 import com.mndk.bteterrarenderer.core.tile.TileMapService;
 import com.mndk.bteterrarenderer.core.tile.flat.FlatTileMapService;
-import com.mndk.bteterrarenderer.util.category.CategoryMap;
-import com.mndk.bteterrarenderer.util.image.ImageUtil;
-import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
 import com.mndk.bteterrarenderer.mcconnector.McConnector;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.NativeTextureWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
@@ -28,18 +24,18 @@ import com.mndk.bteterrarenderer.mcconnector.client.mcfx.wrapper.McFXWrapper;
 import com.mndk.bteterrarenderer.mcconnector.i18n.Translatable;
 import com.mndk.bteterrarenderer.util.BTRUtil;
 import com.mndk.bteterrarenderer.util.accessor.PropertyAccessor;
+import com.mndk.bteterrarenderer.util.category.CategoryMap;
+import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
+import com.mndk.bteterrarenderer.util.concurrent.ManualThreadExecutor;
+import com.mndk.bteterrarenderer.util.image.ImageUtil;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
-import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 
 public class MapRenderingOptionsSidebar extends GuiSidebar {
 
@@ -280,30 +276,7 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private void openMapsFolder() {
-        try {
-            File directory = LoaderRegistry.tms().getFilesDirectory();
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(directory);
-                return;
-            }
-
-            Process p;
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                p = new ProcessBuilder("explorer.exe", "/select," + directory.getAbsolutePath()).start();
-            }
-            else if (System.getProperty("os.name").startsWith("Mac")) {
-                p = new ProcessBuilder("usr/bin/open", directory.getAbsolutePath()).start();
-            }
-            else {
-                McConnector.sendErrorMessageToChat("Cannot open file explorer! Instead you can manually go to:");
-                McConnector.sendErrorMessageToChat(directory.getAbsolutePath());
-                return;
-            }
-            p.waitFor(3, TimeUnit.SECONDS);
-            p.destroy();
-        } catch (Exception e) {
-            McConnector.sendErrorMessageToChat(this, "Error opening the map folder!", e);
-        }
+        McConnector.client().openFile(LoaderRegistry.tms().getFilesDirectory());
     }
 
     private static NativeTextureWrapper getIconTextureObject(String[] categoryPath) {
