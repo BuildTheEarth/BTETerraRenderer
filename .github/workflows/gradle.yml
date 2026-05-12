@@ -10,9 +10,33 @@ on:
     branches: [ main ]
 
 jobs:
+  generate-build-matrix:
+    runs-on: ubuntu-latest
+    name: Generate build matrix
+
+    outputs:
+      matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get versions
+        id: generate-matrix
+        run: |
+          MATRIX=$(jq -c '{include: (.versions | map({target: ., name: (split(":")[0])}))}' ./versions.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   build:
+    name: Build ${{ matrix.name }}
+    needs: generate-build-matrix
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-build-matrix.outputs.matrix) }}
 
     steps:
       - name: Check out repo
@@ -31,10 +55,14 @@ jobs:
         with:
           cache-provider: 'basic'
 
-      - name: Build subprojects with Gradle
-        run: ./gradlew copyBuildResultToRoot
+      - name: Build with Gradle
+        run: |
+          ./gradlew "Refresh active project" --configuration-cache
+          ./gradlew copyBuildResultToRoot --configuration-cache
+        env:
+          CI_SINGLE_BUILD: ${{ matrix.target }}
 
       - uses: actions/upload-artifact@v7
         with:
-          name: Build result
+          name: ${{ matrix.name }}
           path: build/libs/*.jar

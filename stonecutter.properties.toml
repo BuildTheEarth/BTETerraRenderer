@@ -22,11 +22,11 @@ modLoaderName = "fabric"
 fabricVersion = "0.138.4+1.21.10"
 aw = "1.21.6.accesswidener"
 
-["fabric1.21.9"]
-minecraftVersion = "1.21.9"
-modLoaderName = "fabric"
-fabricVersion = "0.134.1+1.21.9"
-aw = "1.21.6.accesswidener"
+# ["fabric1.21.9"] # https://github.com/FabricMC/fabric-api/issues/4902
+# minecraftVersion = "1.21.9"
+# modLoaderName = "fabric"
+# fabricVersion = "0.134.1+1.21.9"
+# aw = "1.21.6.accesswidener"
 
 ["fabric1.21.6"]
 minecraftVersion = ">=1.21.6 <=1.21.8"

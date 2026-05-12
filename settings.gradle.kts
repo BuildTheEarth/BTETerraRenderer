@@ -36,35 +36,13 @@ include(":core")
 //include(":forge1.18.2")
 
 stonecutter {
-    create(rootProject) {
-        fun register(version: String, vararg loaders: String) {
-            for (loader in loaders) {
-                version("$loader$version", version).buildscript = "build.$loader.gradle.kts"
-            }
+    val ciSingleBuild: String? = System.getenv("CI_SINGLE_BUILD")
+    if (ciSingleBuild != null) {
+        val split = ciSingleBuild.split(":")
+        create(rootProject) {
+            version(split[0], split[1]).buildscript(split[2])
         }
-
-        register("26.2-snapshot-6", "fabric")
-        register("26.1", "fabric")
-
-        register("1.21.11", "fabric")
-        register("1.21.10", "fabric")
-        // register("1.21.9", "fabric") // https://github.com/FabricMC/fabric-api/issues/4902
-        register("1.21.6", "fabric") // Also compatible with 1.21.7-1.21.8
-        register("1.21.5", "fabric")
-        register("1.21.4", "fabric")
-        register("1.21.2", "fabric") // Also compatible with 1.21.3
-        register("1.21", "fabric") // Also compatible with 1.21.1
-
-        register("1.20.5", "fabric") // Also compatible with 1.20.6
-        register("1.20.3", "fabric") // Also compatible with 1.20.4
-        register("1.20.2", "fabric")
-        register("1.20", "fabric") // Also compatible with 1.20.1
-
-        register("1.19.4", "fabric")
-        register("1.19.3", "fabric")
-        register("1.19", "fabric") // Also compatible with 1.19.1 and 1.19.2
-
-        register("1.18.1", "fabric") // Also compatible with 1.18.2
-        register("1.18", "fabric")
+    } else {
+        create(rootProject, file("versions.json"))
     }
 }

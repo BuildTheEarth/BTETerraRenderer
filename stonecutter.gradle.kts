@@ -1,10 +1,13 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("dev.kikugie.stonecutter")
 }
 
-stonecutter active "fabric26.1"
+val ciSingleBuild: String? = System.getenv("CI_SINGLE_BUILD")
+if (ciSingleBuild != null) {
+    stonecutter active ciSingleBuild.split(":")[0]
+} else {
+    stonecutter active "fabric26.1"
+}
 
 subprojects {
     apply(plugin = "java")
