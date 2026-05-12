@@ -10,9 +10,9 @@ tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doLast {
-        fileTree(outputs.files.asPath) { include("**/*.lang") }.forEach { langFile: File ->
-            val r1 = Regex("#.*")
-            val r2 = Regex("""([^=]+)=(.+)""")
+        val r1 = Regex("#.*")
+        val r2 = Regex("""([^=]+)=(.+)""")
+        outputs.files.asFileTree.matching { include("**/*.lang") }.files.forEach { langFile: File ->
             val content = langFile.readText(Charsets.UTF_8).split("\n")
                 .asSequence()
                 .map { it.replace(r1, "") }
@@ -23,10 +23,7 @@ tasks.withType<ProcessResources>().configureEach {
                 }
                 .joinToString(",\n")
 
-            val r3 = Regex("""\.[^.]+$""")
-            val jsonPath = langFile.path.replaceFirst(r3, "") + ".json"
-            val jsonFile = file(jsonPath)
-
+            val jsonFile = File(langFile.parentFile, langFile.nameWithoutExtension + ".json")
             jsonFile.writeText("{\n$content\n}", Charsets.UTF_8)
         }
     }
