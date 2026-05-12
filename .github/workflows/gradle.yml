@@ -5,9 +5,8 @@ name: build
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   generate-build-matrix:
@@ -66,3 +65,4 @@ jobs:
         with:
           name: ${{ matrix.name }}
           path: build/libs/*.jar
+          archive: false

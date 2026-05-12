@@ -137,8 +137,11 @@ tasks.withType<ProcessResources>().configureEach {
 project.tasks.register<Copy>("copyBuildResultToRoot") {
     group = "build"
     description = "Copies build result into root build directory"
-    from("${project.projectDir}/build/libs")
-    into("${rootProject.projectDir}/build/libs")
+    from(layout.buildDirectory.dir("libs")) {
+        include("*.jar")
+        exclude("*-sources.jar")
+    }
+    into(rootProject.layout.buildDirectory.dir("libs"))
     dependsOn("build")
 }
 tasks.named("build").configure { finalizedBy("copyBuildResultToRoot") }
