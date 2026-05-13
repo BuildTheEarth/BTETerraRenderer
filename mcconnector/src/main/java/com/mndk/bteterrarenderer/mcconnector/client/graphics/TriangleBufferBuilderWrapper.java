@@ -16,11 +16,5 @@ public abstract class TriangleBufferBuilderWrapper<V extends GraphicsVertex> imp
     }
 
     @Override
-    public final void nextShape(GraphicsTriangle<V> shape) {
-        this.next(shape.v0);
-        this.next(shape.v1);
-        this.next(shape.v2);
-    }
-
-    protected abstract void next(V vertex);
+    public abstract void nextShape(GraphicsTriangle<V> shape);
 }

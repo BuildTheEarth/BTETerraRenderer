@@ -27,8 +27,8 @@ public interface GuiDrawContextWrapper {
     void drawHoverEvent(StyleWrapper styleWrapper, int x, int y);
 
     // Font
-    int drawTextWithShadow(FontWrapper fontWrapper, String string, float x, float y, int color);
-    int drawTextWithShadow(FontWrapper fontWrapper, TextWrapper textWrapper, float x, float y, int color);
+    void drawTextWithShadow(FontWrapper fontWrapper, String string, float x, float y, int color);
+    void drawTextWithShadow(FontWrapper fontWrapper, TextWrapper textWrapper, float x, float y, int color);
 
     // GUI implementations
     void fillRect(int x1, int y1, int x2, int y2, int color);

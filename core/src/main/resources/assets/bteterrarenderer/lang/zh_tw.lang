@@ -1,5 +1,5 @@
 # Key bindings
-key.bteterrarenderer.category=BTETerraRenderer
+key.category.bteterrarenderer.bteterrarenderer=BTETerraRenderer
 key.bteterrarenderer.options_ui=開啟選項介面
 key.bteterrarenderer.toggle=開關地圖投影
 key.bteterrarenderer.move_up=上移地圖

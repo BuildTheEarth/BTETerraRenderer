@@ -1,0 +1,27 @@
+{
+  "$schema": "https://stonecutter.kikugie.dev/settings-schema/latest.json",
+  "versions": [
+    "fabric26.2-snapshot-6:26.2-snapshot-6:build.fabric.gradle.kts",
+    "fabric26.1:26.1:build.fabric.gradle.kts",
+
+    "fabric1.21.11:1.21.11:build.fabric.gradle.kts",
+    "fabric1.21.10:1.21.10:build.fabric.gradle.kts",
+    "fabric1.21.6:1.21.6:build.fabric.gradle.kts",
+    "fabric1.21.5:1.21.5:build.fabric.gradle.kts",
+    "fabric1.21.4:1.21.4:build.fabric.gradle.kts",
+    "fabric1.21.2:1.21.2:build.fabric.gradle.kts",
+    "fabric1.21:1.21:build.fabric.gradle.kts",
+
+    "fabric1.20.5:1.20.5:build.fabric.gradle.kts",
+    "fabric1.20.3:1.20.3:build.fabric.gradle.kts",
+    "fabric1.20.2:1.20.2:build.fabric.gradle.kts",
+    "fabric1.20:1.20:build.fabric.gradle.kts",
+
+    "fabric1.19.4:1.19.4:build.fabric.gradle.kts",
+    "fabric1.19.3:1.19.3:build.fabric.gradle.kts",
+    "fabric1.19:1.19:build.fabric.gradle.kts",
+
+    "fabric1.18.1:1.18.1:build.fabric.gradle.kts",
+    "fabric1.18:1.18:build.fabric.gradle.kts"
+  ]
+}

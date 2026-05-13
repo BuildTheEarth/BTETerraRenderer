@@ -10,10 +10,11 @@ import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.net.URI;
 
 /**
  * Do not use this in game environments! This manager is only for tests.
- * */
+ */
 public class TestEnvironmentDummyMinecraft extends ClientMinecraftManager {
 
     private static final TestEnvironmentDummyMinecraft INSTANCE = new TestEnvironmentDummyMinecraft(new File("test"));
@@ -44,6 +45,7 @@ public class TestEnvironmentDummyMinecraft extends ClientMinecraftManager {
     public double getPlayerRotationPitch() { throw unsupported(); }
     public void playClickSound() { throw unsupported(); }
     public void sendTextComponentToChat(TextWrapper textComponent) { throw unsupported(); }
+    public void openUri(URI uri) { throw unsupported(); }
 
     public static UnsupportedOperationException unsupported() {
         return new UnsupportedOperationException("Minecraft is empty");
