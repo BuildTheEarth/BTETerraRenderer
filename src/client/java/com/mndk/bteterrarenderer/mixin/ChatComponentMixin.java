@@ -51,11 +51,11 @@ public class ChatComponentMixin {
 *///? }
         pose./*? if >=1.21.6 {*/pushMatrix()/*? } else {*//*pushPose()*//*? }*/;
 
-//? if >=26.2-alpha.1 {
-        /*Screen currentScreen = Minecraft.getInstance().gui.screen();
-*///? } else {
-        Screen currentScreen = Minecraft.getInstance().screen;
-//? }
+//? if >=26.2 {
+        Screen currentScreen = Minecraft.getInstance().gui.screen();
+//? } else {
+        /*Screen currentScreen = Minecraft.getInstance().screen;
+*///? }
         if (!(currentScreen instanceof AbstractGuiScreenImpl screenImpl)) return;
         if (!(screenImpl.delegate instanceof MapRenderingOptionsSidebar sidebar)) return;
         if (sidebar.side.get() != SidebarSide.LEFT) return;
@@ -97,11 +97,11 @@ public class ChatComponentMixin {
 
     @Inject(method = "isChatFocused", at = @At(value = "RETURN"), cancellable = true)
     public void isChatFocused(CallbackInfoReturnable<Boolean> cir) {
-//? if >=26.2-alpha.1 {
-        /*if (minecraft.gui.screen() instanceof AbstractGuiScreenImpl screenImpl) {
-*///? } else {
-        if (minecraft.screen instanceof AbstractGuiScreenImpl screenImpl) {
-//? }
+//? if >=26.2 {
+        if (minecraft.gui.screen() instanceof AbstractGuiScreenImpl screenImpl) {
+//? } else {
+        /*if (minecraft.screen instanceof AbstractGuiScreenImpl screenImpl) {
+*///? }
             cir.setReturnValue(screenImpl.delegate.isChatFocused());
         }
     }

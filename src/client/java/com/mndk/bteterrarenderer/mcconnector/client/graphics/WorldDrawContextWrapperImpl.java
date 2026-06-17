@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
 
 public record WorldDrawContextWrapperImpl(
         @Nonnull PoseStack poseStack,
-//? if >=26.2-alpha.1 {
-        /*@Nonnull SubmitNodeCollector submitNodeCollector
-*///? } else {
-        @Nonnull MultiBufferSource bufferSource
-//? }
+//? if >=26.2 {
+        @Nonnull SubmitNodeCollector submitNodeCollector
+//? } else {
+        /*@Nonnull MultiBufferSource bufferSource
+*///? }
 ) implements WorldDrawContextWrapper {}

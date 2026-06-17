@@ -43,19 +43,19 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
                 .createRenderSetup();
     }
 
-    private static final BiFunction</*? if >=26.2-alpha.1 {*//*PrimitiveTopology*//*? } else {*/VertexFormat.Mode/*? }*/, Boolean, RenderPipeline> PIPELINE = Util.memoize(
+    private static final BiFunction</*? if >=26.2 {*/PrimitiveTopology/*? } else {*//*VertexFormat.Mode*//*? }*/, Boolean, RenderPipeline> PIPELINE = Util.memoize(
             (drawMode, cull) -> RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
                     .withLocation("pipeline/entity_translucent")
-//? if >=26.2-alpha.1 {
-                    /*.withBindGroupLayout(BindGroupLayouts.SAMPLER1)
+//? if >=26.2 {
+                    .withBindGroupLayout(BindGroupLayouts.SAMPLER1)
                     .withVertexBinding(0, DefaultVertexFormat.ENTITY)
                     .withPrimitiveTopology(drawMode)
                     .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-*///? } else if >=26.1 {
-                    .withSampler("Sampler1")
+//? } else if >=26.1 {
+                    /*.withSampler("Sampler1")
                     .withVertexFormat(DefaultVertexFormat.ENTITY, drawMode)
                     .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-//? } else {
+*///? } else {
                     /*.withSampler("Sampler1")
                     .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, drawMode)
                     .withBlend(BlendFunction.TRANSLUCENT)
@@ -67,14 +67,14 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
 
     private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> QUADS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2-alpha.1 {*//*PrimitiveTopology.QUADS*//*? } else {*/VertexFormat.Mode.QUADS/*? }*/, cull);
+                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2 {*/PrimitiveTopology.QUADS/*? } else {*//*VertexFormat.Mode.QUADS*//*? }*/, cull);
                 return RenderType.create("bteterrarenderer-quads", generateSetup(pipeline, texture));
             }
     );
 
     private static final BiFunction</*? if >=1.21.11 {*/Identifier/*? } else {*//*ResourceLocation*//*? }*/, Boolean, RenderType> TRIS = Util.memoize(
             (texture, cull) -> {
-                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2-alpha.1 {*//*PrimitiveTopology.TRIANGLES*//*? } else {*/VertexFormat.Mode.TRIANGLES/*? }*/, cull);
+                RenderPipeline pipeline = PIPELINE.apply(/*? if >=26.2 {*/PrimitiveTopology.TRIANGLES/*? } else {*//*VertexFormat.Mode.TRIANGLES*//*? }*/, cull);
                 return RenderType.create("bteterrarenderer-tris", generateSetup(pipeline, texture));
             }
     );
@@ -153,23 +153,23 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
             }
             @Override
             public void nextShape(GraphicsQuad<PosTex> shape) {
-//? if >=26.2-alpha.1 {
-                /*context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
+//? if >=26.2 {
+                context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
                     McCoordTransformer transformer = this.getTransformer();
                     nextVertex(pose, buffer, transformer.transform(shape.v0.pos), shape.v0.tex, DEFAULT_NORMAL, alpha);
                     nextVertex(pose, buffer, transformer.transform(shape.v1.pos), shape.v1.tex, DEFAULT_NORMAL, alpha);
                     nextVertex(pose, buffer, transformer.transform(shape.v2.pos), shape.v2.tex, DEFAULT_NORMAL, alpha);
                     nextVertex(pose, buffer, transformer.transform(shape.v3.pos), shape.v3.tex, DEFAULT_NORMAL, alpha);
                 });
-*///? } else {
-                PoseStack.Pose pose = context.poseStack().last();
+//? } else {
+                /*PoseStack.Pose pose = context.poseStack().last();
                 VertexConsumer buffer = context.bufferSource().getBuffer(renderLayer);
                 McCoordTransformer transformer = this.getTransformer();
                 nextVertex(pose, buffer, transformer.transform(shape.v0.pos), shape.v0.tex, DEFAULT_NORMAL, alpha);
                 nextVertex(pose, buffer, transformer.transform(shape.v1.pos), shape.v1.tex, DEFAULT_NORMAL, alpha);
                 nextVertex(pose, buffer, transformer.transform(shape.v2.pos), shape.v2.tex, DEFAULT_NORMAL, alpha);
                 nextVertex(pose, buffer, transformer.transform(shape.v3.pos), shape.v3.tex, DEFAULT_NORMAL, alpha);
-//? }
+*///? }
             }
         };
     }
@@ -190,8 +190,8 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
             }
             @Override
             public void nextShape(GraphicsTriangle<PosTexNorm> shape) {
-//? if >=26.2-alpha.1 {
-                /*context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
+//? if >=26.2 {
+                context.submitNodeCollector().submitCustomGeometry(context.poseStack(), renderLayer, (pose, buffer) -> {
                     McCoordTransformer transformer = this.getTransformer();
                     PosTexNorm tv0 = shape.v0.transform(transformer);
                     nextVertex(pose, buffer, tv0.pos, tv0.tex, enableNormal ? tv0.normal : DEFAULT_NORMAL, alpha);
@@ -200,8 +200,8 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
                     PosTexNorm tv2 = shape.v2.transform(transformer);
                     nextVertex(pose, buffer, tv2.pos, tv2.tex, enableNormal ? tv2.normal : DEFAULT_NORMAL, alpha);
                 });
-*///? } else {
-                PoseStack.Pose pose = context.poseStack().last();
+//? } else {
+                /*PoseStack.Pose pose = context.poseStack().last();
                 VertexConsumer buffer = context.bufferSource().getBuffer(renderLayer);
                 McCoordTransformer transformer = this.getTransformer();
                 PosTexNorm tv0 = shape.v0.transform(transformer);
@@ -210,7 +210,7 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
                 nextVertex(pose, buffer, tv1.pos, tv1.tex, enableNormal ? tv1.normal : DEFAULT_NORMAL, alpha);
                 PosTexNorm tv2 = shape.v2.transform(transformer);
                 nextVertex(pose, buffer, tv2.pos, tv2.tex, enableNormal ? tv2.normal : DEFAULT_NORMAL, alpha);
-//? }
+*///? }
             }
         };
     }

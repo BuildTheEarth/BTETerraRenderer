@@ -1,13 +1,13 @@
-["fabric26.2-snapshot-6"]
-minecraftVersion = "~26.2-alpha.6"
+["fabric26.2"]
+minecraftVersion = "~26.2"
 modLoaderName = "fabric"
-fabricVersion = "0.148.2+26.2"
+fabricVersion = "0.152.1+26.2"
 aw = "26.1.accesswidener"
 
 ["fabric26.1"]
 minecraftVersion = "~26.1"
 modLoaderName = "fabric"
-fabricVersion = "0.148.2+26.1.2"
+fabricVersion = "0.152.1+26.1.2"
 aw = "26.1.accesswidener"
 
 ["fabric1.21.11"]

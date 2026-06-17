@@ -1,7 +1,7 @@
 {
   "$schema": "https://stonecutter.kikugie.dev/settings-schema/latest.json",
   "versions": [
-    "fabric26.2-snapshot-6:26.2-snapshot-6:build.fabric.gradle.kts",
+    "fabric26.2:26.2:build.fabric.gradle.kts",
     "fabric26.1:26.1:build.fabric.gradle.kts",
 
     "fabric1.21.11:1.21.11:build.fabric.gradle.kts",
