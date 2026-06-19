@@ -227,7 +227,7 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
 
         String url = urlConverter.convertToUrl(this.urlTemplate, relCoord);
         Supplier<BufferedImage> imageGetter = () -> {
-            try { return HttpResourceManager.downloadAsImage(url, this.getNThreads()).get(); }
+            try { return HttpResourceManager.downloadAsImage(url, this.getNThreads(), -1, -1).get(); }
             catch (Exception e) { throw new RuntimeException("Failed to download image from " + url, e); }
         };
         BufferedImage img = imageCache.getOrCompute(relCoord, () -> CompletableFuture.supplyAsync(imageGetter, executor));

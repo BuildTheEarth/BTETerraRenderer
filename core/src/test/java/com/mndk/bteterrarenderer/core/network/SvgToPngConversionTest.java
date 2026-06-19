@@ -11,7 +11,7 @@ public class SvgToPngConversionTest {
     @Test
     public void givenUrl_testConversion() throws ExecutionException, InterruptedException {
         String url = "https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg";
-        HttpResourceManager.downloadAsImage(url, null).get();
+        HttpResourceManager.downloadAsImage(url, -1, -1, -1).get();
     }
 
     static {
