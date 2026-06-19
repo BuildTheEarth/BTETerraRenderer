@@ -70,11 +70,11 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public void displayGuiScreen(@Nullable AbstractGuiScreenCopy screen) {
-//? if >=26.2-alpha.1 {
-        /*Minecraft.getInstance().gui.setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
-*///? } else {
-        Minecraft.getInstance().setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
-//? }
+//? if >=26.2 {
+        Minecraft.getInstance().gui.setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
+//? } else {
+        /*Minecraft.getInstance().setScreen(screen == null ? null : new AbstractGuiScreenImpl(screen));
+*///? }
     }
 
     @Override
@@ -112,11 +112,11 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public void sendTextComponentToChat(TextWrapper textComponent) {
-//? if >=26.2-alpha.1 {
-        /*Minecraft.getInstance().gui.chatListener().handleSystemMessage(((TextWrapperImpl) textComponent).delegate, false);
-*///? } else if >=26.1 {
-        Minecraft.getInstance().getChatListener().handleSystemMessage(((TextWrapperImpl) textComponent).delegate, false); // Present since 1.20
-//? } else {
+//? if >=26.2 {
+        Minecraft.getInstance().gui.chatListener().handleSystemMessage(((TextWrapperImpl) textComponent).delegate, false);
+//? } else if >=26.1 {
+        /*Minecraft.getInstance().getChatListener().handleSystemMessage(((TextWrapperImpl) textComponent).delegate, false); // Present since 1.20
+*///? } else {
         /*LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 

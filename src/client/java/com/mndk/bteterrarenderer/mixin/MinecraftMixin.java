@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
 
-//? if <26.2-alpha.1 {
-    @Shadow @Nullable public Screen screen;
+//? if <26.2 {
+    /*@Shadow @Nullable public Screen screen;
 
     @Inject(method = "setScreen", at = @At(value = "HEAD"), cancellable = true)
     public void preSetScreen(Screen screen, CallbackInfo ci) {
@@ -24,6 +24,6 @@ public class MinecraftMixin {
             if (!escapable) ci.cancel();
         }
     }
-//? }
+*///? }
 
 }

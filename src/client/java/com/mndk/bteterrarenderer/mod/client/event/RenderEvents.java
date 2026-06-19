@@ -59,24 +59,24 @@ public class RenderEvents {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) return;
 
-//? if >=26.2-alpha.1 {
-        /*PoseStack stack = renderContext.poseStack();
-        var submitNodeCollectorOrBufferSource = renderContext.submitNodeCollector();
-*///? } else if >=26.1 {
+//? if >=26.2 {
         PoseStack stack = renderContext.poseStack();
+        var submitNodeCollectorOrBufferSource = renderContext.submitNodeCollector();
+//? } else if >=26.1 {
+        /*PoseStack stack = renderContext.poseStack();
         var submitNodeCollectorOrBufferSource = renderContext.bufferSource();
-//? } else {
+*///? } else {
         /*PoseStack stack = renderContext.matrices();
         var submitNodeCollectorOrBufferSource = renderContext.consumers();
 *///? }
         if (stack == null || submitNodeCollectorOrBufferSource == null) return;
 
         WorldDrawContextWrapper context = new WorldDrawContextWrapperImpl(stack, submitNodeCollectorOrBufferSource);
-//? if >=26.2-alpha.1 {
-        /*Camera camera = renderContext.gameRenderer().mainCamera();
-*///? } else {
-        Camera camera = renderContext.gameRenderer().getMainCamera();
-//? }
+//? if >=26.2 {
+        Camera camera = renderContext.gameRenderer().mainCamera();
+//? } else {
+        /*Camera camera = renderContext.gameRenderer().getMainCamera();
+*///? }
         Vec3 cameraPos = camera.position();
 //? } else {
         /*var world = renderContext.world();

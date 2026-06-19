@@ -6,7 +6,7 @@ val ciSingleBuild: String? = System.getenv("CI_SINGLE_BUILD")
 if (ciSingleBuild != null) {
     stonecutter active ciSingleBuild.split(":")[0]
 } else {
-    stonecutter active "fabric26.1"
+    stonecutter active "fabric26.2"
 }
 
 subprojects {
