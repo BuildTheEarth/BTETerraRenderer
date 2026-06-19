@@ -134,7 +134,7 @@ dependencies {
         if (mcVersion > "1.12") { // for T++
             "shadowDep"("lzma:lzma:0.0.1")
         }
-        if (mcVersion < "1.19.4") {
+        if (mcVersion < "1.19.3") {
             "shadowDep"("org.joml:joml:1.10.8") {
                 exclude(group = "org.jetbrains", module = "annotations")
             }
@@ -177,7 +177,7 @@ if (mcVersion != null) {
                 )
             )
         }
-        if (mcVersion < "1.19.4") {
+        if (mcVersion < "1.19.3") {
             dependencyReplacements.putAll(
                 mapOf(
                     "org.joml" to "joml"

@@ -5,6 +5,12 @@ accessible method net/minecraft/client/gui/screens/Screen renderComponentHoverEf
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
+accessible field com/mojang/math/Matrix4f m00 F
+accessible field com/mojang/math/Matrix4f m01 F
+accessible field com/mojang/math/Matrix4f m03 F
+accessible field com/mojang/math/Matrix4f m10 F
+accessible field com/mojang/math/Matrix4f m11 F
+accessible field com/mojang/math/Matrix4f m13 F
 accessible field net/minecraft/client/renderer/RenderStateShard CULL Lnet/minecraft/client/renderer/RenderStateShard$CullStateShard;
 accessible field net/minecraft/client/renderer/RenderStateShard LIGHTMAP Lnet/minecraft/client/renderer/RenderStateShard$LightmapStateShard;
 accessible field net/minecraft/client/renderer/RenderStateShard NO_CULL Lnet/minecraft/client/renderer/RenderStateShard$CullStateShard;

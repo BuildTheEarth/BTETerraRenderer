@@ -229,8 +229,9 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
                 .color(1, 1, 1, alpha)
                 .uv(tex.x, tex.y)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .color(0x00F000F0)
-                .normal(pose/^? if <1.20.5 {^//^.normal()^//^? }^/, (float) normal.getX(), normal.getY(), (float) normal.getZ());
+                .uv2(0x00F000F0)
+                .normal(pose/^? if <1.20.5 {^//^.normal()^//^? }^/, (float) normal.getX(), normal.getY(), (float) normal.getZ())
+                .endVertex();
 *///? }
     }
 }
