@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.experimental.UtilityClass;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -30,10 +30,9 @@ public class ImageUtil {
 
     private final Transformer TRANSFORMER;
     private final DocumentBuilder DOCUMENT_BUILDER;
-    private final PNGTranscoder PNG_TRANSCODER = new PNGTranscoder();
     private final NullPointerException NPE = new NullPointerException();
 
-    public BufferedImage bufferToImage(ByteBuf buf) throws Exception {
+    public BufferedImage bufferToImage(ByteBuf buf, int width, int height) throws Exception {
         byte[] bytes = IOUtil.readAllBytes(buf);
 
         // Try bitmap type image
@@ -43,6 +42,9 @@ public class ImageUtil {
             stream.close();
 
             if (image == null) throw NPE;
+            if (width != -1 && height != -1) {
+                image = ImageUtil.resizeImage(image, width, height);
+            }
             return image;
         } catch (IOException | NullPointerException ignored) {}
 
@@ -50,12 +52,13 @@ public class ImageUtil {
         InputStream svgStream = fixBrokenSvgFile(new ByteArrayInputStream(bytes));
         TranscoderInput svgInput = new TranscoderInput(svgStream);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TranscoderOutput pngOutput = new TranscoderOutput(baos);
-
-        PNG_TRANSCODER.transcode(svgInput, pngOutput);
-        byte[] pngBytes = baos.toByteArray();
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(pngBytes));
+        BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
+        if (width != -1 && height != -1) {
+             transcoder.addTranscodingHint(ImageTranscoder.KEY_WIDTH, (float) width);
+             transcoder.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, (float) height);
+        }
+        transcoder.transcode(svgInput, null);
+        BufferedImage image = transcoder.getBufferedImage();
         svgStream.close();
 
         if (image == null) throw NPE;
@@ -111,6 +114,25 @@ public class ImageUtil {
             DOCUMENT_BUILDER = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static class BufferedImageTranscoder extends ImageTranscoder {
+
+        private BufferedImage image;
+
+        @Override
+        public BufferedImage createImage(int width, int height) {
+            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        @Override
+        public void writeImage(BufferedImage img, TranscoderOutput output) {
+            this.image = img;
+        }
+
+        public BufferedImage getBufferedImage() {
+            return image;
         }
     }
 }

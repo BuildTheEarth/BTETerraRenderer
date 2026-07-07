@@ -22,16 +22,16 @@ public class HttpResourceManager {
     private final Pattern PROTOCOL_HOST_PORT = Pattern.compile("^(https?)://(([^:/]+)(?::(\\d+))?)/.*$");
     private final Map<String, Integer> MCR_ENTRIES = new ConcurrentHashMap<>();
 
-    public CompletableFuture<BufferedImage> downloadAsImage(String url, @Nullable Integer maxConcurrentRequests) {
+    public CompletableFuture<BufferedImage> downloadAsImage(String url, int maxConcurrentRequests, int width, int height) {
         return download(url, maxConcurrentRequests).thenApplyAsync(buf -> {
-            try { return ImageUtil.bufferToImage(buf); }
+            try { return ImageUtil.bufferToImage(buf, width, height); }
             catch (Exception e) { throw new RuntimeException(e); }
         });
     }
 
     @SneakyThrows
-    public CompletableFuture<ByteBuf> download(String url, @Nullable Integer maxConcurrentRequests) {
-        if (maxConcurrentRequests != null) {
+    public CompletableFuture<ByteBuf> download(String url, int maxConcurrentRequests) {
+        if (maxConcurrentRequests != -1) {
             Matcher matcher = PROTOCOL_HOST_PORT.matcher(url);
             if (matcher.matches()) {
                 String host = matcher.group(1) + "://" + matcher.group(2) + "/";

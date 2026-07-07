@@ -1,7 +1,5 @@
 package com.mndk.bteterrarenderer.mcconnector.client.gui;
 
-import com.mndk.bteterrarenderer.mcconnector.McConnector;
-import com.mndk.bteterrarenderer.mcconnector.client.WindowDimension;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.NativeTextureWrapper;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.NativeTextureWrapperImpl;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.shape.GraphicsQuad;
@@ -73,9 +71,105 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
     /*@Nonnull public final PoseStack delegate;
 *///? }
 
+//? if >=1.20 {
+    public void glPushRelativeScissor(int relX, int relY, int relWidth, int relHeight) {
+        // GuiGraphicsExtractor.enableScissor uses x1,y1,x2,y2
 //? if >=1.21.6 {
-    private int scissorDepth;
+        delegate.enableScissor(relX, relY, relX + relWidth, relY + relHeight);
+//? } else {
+        /*int[] scissorDimension = this.getAbsoluteScissorDimension(relX, relY, relWidth, relHeight);
+        delegate.enableScissor(
+                scissorDimension[0], scissorDimension[1],
+                scissorDimension[0] + scissorDimension[2], scissorDimension[1] + scissorDimension[3]);
+*///? }
+    }
 
+    public void glPopRelativeScissor() {
+        delegate.disableScissor();
+    }
+//? } else {
+    /*// Backport of 1.21.5 scissor stack
+    private final ScissorStack scissorStack = new ScissorStack();
+
+    public void glPushRelativeScissor(int relX, int relY, int relWidth, int relHeight) {
+        this.glUpdateScissorBox(this.scissorStack.push(this.getAbsoluteScissorDimension(relX, relY, relWidth, relHeight)));
+    }
+
+    public void glPopRelativeScissor() {
+        this.glUpdateScissorBox(this.scissorStack.pop());
+    }
+
+    private void glUpdateScissorBox(@Nullable int[] screenRectangle) {
+        if (screenRectangle != null) {
+            var window = Minecraft.getInstance().getWindow();
+            int height = window.getHeight();
+            double guiScale = window.getGuiScale();
+            double xScaled = (double) screenRectangle[0] * guiScale;
+            double yScaled = (double) height - (double)(screenRectangle[1] + screenRectangle[3]) * guiScale;
+            double widthScaled = (double) screenRectangle[2] * guiScale;
+            double heightScaled = (double) screenRectangle[3] * guiScale;
+            RenderSystem.enableScissor((int) xScaled, (int) yScaled, Math.max(0, (int) widthScaled), Math.max(0, (int) heightScaled));
+        } else {
+            RenderSystem.disableScissor();
+        }
+    }
+
+    private static class ScissorStack {
+        private final java.util.Deque<int[]> stack = new java.util.ArrayDeque<>();
+
+        public int[] push(int[] rectangle) {
+            int[] lastRectangle = this.stack.peekLast();
+            if (lastRectangle != null) {
+                int[] intersection = java.util.Objects.requireNonNullElse(screenRectangleIntersection(rectangle, lastRectangle), new int[]{0, 0, 0, 0});
+                this.stack.addLast(intersection);
+                return intersection;
+            } else {
+                this.stack.addLast(rectangle);
+                return rectangle;
+            }
+        }
+
+        public @Nullable int[] pop() {
+            if (this.stack.isEmpty()) {
+                throw new IllegalStateException("Scissor stack underflow");
+            } else {
+                this.stack.removeLast();
+                return this.stack.peekLast();
+            }
+        }
+
+        private int[] screenRectangleIntersection(int[] one, int[] other) {
+            int left = Math.max(one[0], other[0]);
+            int top = Math.max(one[1], other[1]);
+            int right = Math.min(one[0] + one[2], other[0] + other[2]);
+            int bottom = Math.min(one[1] + one[3], other[1] + other[3]);
+            return left < right && top < bottom ? new int[]{left, top, right - left, bottom - top} : null;
+        }
+    }
+*///? }
+
+    /**
+     * Converts "relative" dimension to an absolute scissor dimension
+     * @return {@code [ scissorX, scissorY, scissorWidth, scissorHeight ]}
+     */
+    private int[] getAbsoluteScissorDimension(int relX, int relY, int relWidth, int relHeight) {
+//? if >=1.21.6 {
+        // GuiGraphicsExtractor.enableScissor applies the current matrix transform.
+        return new int[] { relX, relY, relWidth, relHeight };
+//? } else if >=1.19.3 {
+        /*var matrix4f = getPose().last().pose();
+        int absX = Mth.floor(matrix4f.m00() * relX + matrix4f.m10() * relY + matrix4f.m30());
+        int absY = Mth.floor(matrix4f.m01() * relX + matrix4f.m11() * relY + matrix4f.m31());
+        return new int[] { absX, absY, relWidth, relHeight };
+*///? } else {
+        /*var matrix4f = getPose().last().pose();
+        int absX = Mth.floor(matrix4f.m00 * relX + matrix4f.m01 * relY + matrix4f.m03);
+        int absY = Mth.floor(matrix4f.m10 * relX + matrix4f.m11 * relY + matrix4f.m13);
+        return new int[] { absX, absY, relWidth, relHeight };
+*///? }
+    }
+
+//? if >=1.21.6 {
     public void translate(float x, float y, float z) {
         // GUI matrices are 2D in this version
         delegate.pose().translate(x, y);
@@ -87,34 +181,6 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 
     public void popMatrix() {
         delegate.pose().popMatrix();
-    }
-
-    @Override
-    protected boolean usesNativeScissorStack() {
-        return true;
-    }
-
-    protected int[] getAbsoluteScissorDimension(int relX, int relY, int relWidth, int relHeight) {
-        WindowDimension window = McConnector.client().getWindowSize();
-        if (window.getScaledWidth() == 0 || window.getScaledHeight() == 0) {
-            return new int[] { 0, 0, 0, 0 };
-        }
-
-        // DrawContext.enableScissor applies the current matrix transform.
-        return new int[] { relX, relY, relWidth, relHeight };
-    }
-
-    protected void glEnableScissor(int x, int y, int width, int height) {
-        // DrawContext scissor uses x1,y1,x2,y2
-        delegate.enableScissor(x, y, x + width, y + height);
-        scissorDepth++;
-    }
-
-    protected void glDisableScissor() {
-        if (scissorDepth > 0) {
-            delegate.disableScissor();
-            scissorDepth--;
-        }
     }
 
     // Vertex system changed in 1.21.6
@@ -182,46 +248,6 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
         getPose().popPose();
     }
 
-    protected int[] getAbsoluteScissorDimension(int relX, int relY, int relWidth, int relHeight) {
-        WindowDimension window = McConnector.client().getWindowSize();
-        if (window.getScaledWidth() == 0 || window.getScaledHeight() == 0) { // Division by zero handling
-            return new int[] { 0, 0, 0, 0 };
-        }
-        float scaleFactorX = window.getScaleFactorX();
-        float scaleFactorY = window.getScaleFactorY();
-
-        var matrix = getPose().last().pose();
-//? if >=1.19.3 {
-        var start = new org.joml.Vector4f(relX, relY, 0, 1);
-        var end = new org.joml.Vector4f(relX + relWidth, relY + relHeight, 0, 1);
-        start = matrix.transform(start);
-        end = matrix.transform(end);
-//? } else {
-        /^var start = new com.mojang.math.Vector4f(relX, relY, 0, 1);
-        var end = new com.mojang.math.Vector4f(relX + relWidth, relY + relHeight, 0, 1);
-        start.transform(matrix);
-        end.transform(matrix);
-^///? }
-
-        int scissorX = (int) (scaleFactorX * Math.min(start.x(), end.x()));
-        int scissorY = (int) (window.getPixelHeight() - scaleFactorY * Math.max(start.y(), end.y()));
-        int scissorWidth = (int) (scaleFactorX * Math.abs(start.x() - end.x()));
-        int scissorHeight = (int) (scaleFactorY * Math.abs(start.y() - end.y()));
-        return new int[] { scissorX, scissorY, scissorWidth, scissorHeight };
-    }
-    protected void glEnableScissor(int x, int y, int width, int height) {
-//? if >=1.20 {
-        delegate.flush();
-//? }
-        RenderSystem.enableScissor(x, y, width, height);
-    }
-    protected void glDisableScissor() {
-//? if >=1.20 {
-        delegate.flush();
-//? }
-        RenderSystem.disableScissor();
-    }
-
     public void fillQuad(GraphicsQuad<PosXY> quad, int color, float z) {
         var matrix4f = getPose().last().pose();
 //? if >=1.20 {
@@ -235,8 +261,9 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? if >=1.21 {
         quad.forEach(v -> vertexConsumer.addVertex(matrix4f, v.x, v.y, z).setColor(color));
 //? } else {
-        /^quad.forEach(v -> vertexConsumer.vertex(matrix4f, v.x, v.y, z).color(color));
+        /^quad.forEach(v -> vertexConsumer.vertex(matrix4f, v.x, v.y, z).color(color).endVertex());
 ^///? }
+        delegate.flush();
 //? } else if >=1.19.3 {
         /^BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
@@ -393,17 +420,17 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 
     public void drawWholeNativeImage(@Nonnull NativeTextureWrapper allocatedTextureObject, int x, int y, int w, int h) {
         var texture = ((NativeTextureWrapperImpl) allocatedTextureObject).delegate;
-        delegate.blit(RenderType::guiTextured, texture, x, x+w, y, y+h, 0, 1, 0, 1, ARGB.white(1.0f));
+        delegate.innerBlit(RenderType::guiTextured, texture, x, x+w, y, y+h, 0, 1, 0, 1, ARGB.white(1.0f));
     }
 *///? } else if >=1.20 {
     /*public void drawImage(ResourceLocationWrapper res, int x, int y, int w, int h, float u1, float u2, float v1, float v2) {
         var texture = ((ResourceLocationWrapperImpl) res).delegate();
-        delegate.innerBlit(texture, x, x+w, y, y+h, 0, u1, u2, v1, v2);
+        delegate.innerBlit(texture, x, x+w, y, y+h, 0, u1, u2, v1, v2, 1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     public void drawWholeNativeImage(@Nonnull NativeTextureWrapper allocatedTextureObject, int x, int y, int w, int h) {
         var texture = ((NativeTextureWrapperImpl) allocatedTextureObject).delegate;
-        delegate.blit(texture, x, x+w, y, y+h, 0, 0, 1, 0, 1);
+        delegate.innerBlit(texture, x, x+w, y, y+h, 0, 0, 1, 0, 1, 1.0f, 1.0f, 1.0f, 1.0f);
     }*/
 //? } else {
     /*public void drawImage(ResourceLocationWrapper res, int x, int y, int w, int h, float u1, float u2, float v1, float v2) {
@@ -425,7 +452,6 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? if <1.19 {
         /^RenderSystem.enableDepthTest();
 ^///? }
-        RenderSystem.enableDepthTest();
         GuiComponent.innerBlit(matrix4f, x, x+w, y, y+h, 0, 0, 1, 0, 1);
     }
 *///? }

@@ -145,7 +145,7 @@ public abstract class AbstractTileMapService<TileId> implements TileMapService {
                     this.bakingIndicatorWrapper
             );
             if (this.hudImageUrl != null) {
-                HttpResourceManager.downloadAsImage(this.hudImageUrl.toString(), null)
+                HttpResourceManager.downloadAsImage(this.hudImageUrl.toString(), -1, -1, -1)
                         .thenApplyAsync(
                                 image -> McConnector.client().textureManager.allocateAndGetTextureObject(BTETerraRenderer.MODID, image),
                                 TEXTURE_BAKER

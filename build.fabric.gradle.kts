@@ -3,6 +3,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 plugins {
     id("net.fabricmc.fabric-loom-remap") apply false
     id("net.fabricmc.fabric-loom") apply false
+    id("com.gradleup.shadow")
     // id("maven-publish")
 }
 
@@ -52,12 +53,15 @@ configure<LoomGradleExtensionAPI> {
 
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    if (isUnobfuscated) {
+        enabled = false; // Use shadowJar directly instead
+    }
 }
 
-configurations {
+/*configurations { // Use shadowJar instead of JIJ
     val shadowDep = maybeCreate("shadowDep")
     named("include") { extendsFrom(shadowDep) }
-}
+}*/
 
 dependencies {
     // Fabric deps
@@ -74,20 +78,35 @@ dependencies {
 
     // Fabric API (bundle)
     myModImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabricVersion")}")
+}
 
-    if (mcVersion > "1.12") { // for T++
-        "shadowDep"("lzma:lzma:0.0.1")
+if (isUnobfuscated) {
+    tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>().configureEach {
+        from(sourceSets["client"].output) // Required otherwise client source set outputs are not included
+        archiveClassifier.set(null /*main artifact*/)
     }
-    if (mcVersion < "1.19.4") {
-        "shadowDep"("org.joml:joml:1.10.8") {
-            exclude(group = "org.jetbrains", module = "annotations")
-        }
+} else {
+    tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
+        destinationDirectory.set(layout.buildDirectory.dir("devlibs"))
+        archiveClassifier.set("remapped")
     }
-    if (mcVersion >= "1.19") {
-        "shadowDep"("io.netty:netty-codec-http:4.1.9.Final")
-        "shadowDep"("io.netty:netty-codec-http2:4.1.9.Final")
-        "shadowDep"("org.apache.xmlgraphics:xmlgraphics-commons:2.9")
-        "shadowDep"("org.w3c.css:sac:1.3")
+
+    tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>().configureEach {
+        val remapJarTask = tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar")
+        dependsOn(remapJarTask)
+
+        // Clear pre-added build/classes/java/main and build/resources/main
+        // We need the remapped classes and AWs
+        val mainSpecField = AbstractCopyTask::class.java
+            .getDeclaredField("mainSpec").apply { isAccessible = true }
+        val mainSpec = mainSpecField.get(this)
+        val sourcePathsField = org.gradle.api.internal.file.copy.DefaultCopySpec::class.java
+            .getDeclaredField("sourcePaths").apply { isAccessible = true }
+        val sourcePaths = sourcePathsField.get(mainSpec) as ConfigurableFileCollection
+        sourcePaths.setFrom(emptyList<Any>())
+
+        from(zipTree(remapJarTask.flatMap { it.archiveFile }))
+        archiveClassifier.set(null /*main artifact*/)
     }
 }
 
@@ -129,27 +148,9 @@ tasks.withType<ProcessResources>().configureEach {
         }
     }
 
-    from(project(":core").file("src/main/resources/icon.png")) {
+    /*from(project(":core").file("src/main/resources/icon.png")) { // Already handled by shadowJar
         into("")
-    }
-}
-
-project.tasks.register<Copy>("copyBuildResultToRoot") {
-    group = "build"
-    description = "Copies build result into root build directory"
-    from(layout.buildDirectory.dir("libs")) {
-        include("*.jar")
-        exclude("*-sources.jar")
-    }
-    into(rootProject.layout.buildDirectory.dir("libs"))
-    dependsOn("build")
-}
-tasks.named("build").configure { finalizedBy("copyBuildResultToRoot") }
-
-project.tasks.register<Delete>("cleanModProjects") {
-    group = "build"
-    description = "Cleans mod projects"
-    dependsOn("clean")
+    }*/
 }
 
 /*afterEvaluate {

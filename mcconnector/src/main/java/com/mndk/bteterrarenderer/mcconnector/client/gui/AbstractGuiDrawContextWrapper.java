@@ -1,6 +1,5 @@
 package com.mndk.bteterrarenderer.mcconnector.client.gui;
 
-import com.mndk.bteterrarenderer.mcconnector.McConnector;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.shape.GraphicsQuad;
 import com.mndk.bteterrarenderer.mcconnector.client.graphics.vertex.PosXY;
 import com.mndk.bteterrarenderer.mcconnector.client.text.FontWrapper;
@@ -9,28 +8,8 @@ import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Stack;
 
 public abstract class AbstractGuiDrawContextWrapper implements GuiDrawContextWrapper {
-
-    private final Stack<int[]> scissorDimStack = new Stack<>();
-
-    /**
-     * Some platform implementations (e.g., DrawContext scissor stack) already
-     * handle nested scissor intersections internally.
-     */
-    protected boolean usesNativeScissorStack() {
-        return false;
-    }
-
-    // GL scissor
-    /**
-     * Converts "relative" dimension to an absolute scissor dimension
-     * @return {@code [ scissorX, scissorY, scissorWidth, scissorHeight ]}
-     */
-    protected abstract int[] getAbsoluteScissorDimension(int relX, int relY, int relWidth, int relHeight);
-    protected abstract void glEnableScissor(int x, int y, int width, int height);
-    protected abstract void glDisableScissor();
 
     // GUI implementations
     public final void fillRect(int x1, int y1, int x2, int y2, int color) {
@@ -109,53 +88,6 @@ public abstract class AbstractGuiDrawContextWrapper implements GuiDrawContextWra
 
     public final void drawCenteredTextWithShadow(FontWrapper font, TextWrapper textComponent, float x, float y, int color) {
         this.drawTextWithShadow(font, textComponent, x - font.getWidth(textComponent) / 2.0f, y, color);
-    }
-
-    public final void glPushRelativeScissor(int relX, int relY, int relWidth, int relHeight) {
-        int[] scissorDimension = this.getAbsoluteScissorDimension(relX, relY, relWidth, relHeight);
-        scissorDimStack.push(scissorDimension);
-        if (this.usesNativeScissorStack()) {
-            this.glEnableScissor(scissorDimension[0], scissorDimension[1], scissorDimension[2], scissorDimension[3]);
-            return;
-        }
-        this.glUpdateScissorBox();
-    }
-
-    public final void glPopRelativeScissor() {
-        if (scissorDimStack.isEmpty()) return;
-        scissorDimStack.pop();
-        if (this.usesNativeScissorStack()) {
-            this.glDisableScissor();
-            return;
-        }
-        this.glUpdateScissorBox();
-    }
-
-    private void glUpdateScissorBox() {
-        this.glDisableScissor();
-        if (scissorDimStack.isEmpty()) return;
-
-        // Calculate intersections
-        int totalMinX = 0, totalMaxX = McConnector.client().getWindowSize().getPixelWidth();
-        int totalMinY = 0, totalMaxY = McConnector.client().getWindowSize().getPixelHeight();
-        for (int[] dimension : scissorDimStack) {
-            int minX = dimension[0], maxX = dimension[0] + dimension[2];
-            int minY = dimension[1], maxY = dimension[1] + dimension[3];
-            if (totalMinX < minX) totalMinX = minX;
-            if (totalMinY < minY) totalMinY = minY;
-            if (totalMaxX > maxX) totalMaxX = maxX;
-            if (totalMaxY > maxY) totalMaxY = maxY;
-        }
-
-        // Range validation
-        if (totalMinX > totalMaxX) totalMaxX = totalMinX;
-        if (totalMinY > totalMaxY) totalMaxY = totalMinY;
-
-        // Do scissor
-        int scissorX = totalMinX, scissorWidth = totalMaxX - totalMinX;
-        int scissorY = totalMinY, scissorHeight = totalMaxY - totalMinY;
-        if (scissorWidth <= 0 || scissorHeight <= 0) return;
-        this.glEnableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
     }
 
     @Nullable
