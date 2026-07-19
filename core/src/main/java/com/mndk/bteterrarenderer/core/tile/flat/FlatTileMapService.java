@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 @Getter
 @JsonSerialize(using = FlatTileMapServiceSerializer.class)
 @JsonDeserialize(using = FlatTileMapServiceDeserializer.class)
-public class FlatTileMapService extends AbstractTileMapService<FlatTileMapService.Key> {
+public class FlatTileMapService extends AbstractTileMapService<FlatTileMapService.Key> implements AutoCloseable {
 
     /**
      * This variable is to prevent z-fighting from happening.<br>
@@ -251,6 +251,13 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
     public List<GraphicsModel> getErrorModel(Key tileKey) throws OutOfProjectionBoundsException {
         GraphicsShapes shapes = this.computeTileQuad(tileKey);
         return Collections.singletonList(new GraphicsModel(SOMETHING_WENT_WRONG.getTextureObject(), shapes));
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        this.imageCache.close();
+        this.imageFetcher.close();
     }
 
     static {

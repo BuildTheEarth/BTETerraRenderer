@@ -7,16 +7,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MappedExecutors<Key> {
+public class MappedExecutors<Key> implements AutoCloseable {
 
     private final Map<Key, QueueWrapper> map = new ConcurrentHashMap<>();
-    private final Executor executor;
+    private final ExecutorService executorService;
     private volatile Key currentKey;
 
-    public MappedExecutors(Executor executor, Key currentKey) {
-        this.executor = executor;
+    public MappedExecutors(ExecutorService executorService, Key currentKey) {
+        this.executorService = executorService;
         this.currentKey = currentKey;
     }
 
@@ -24,7 +25,7 @@ public class MappedExecutors<Key> {
         currentKey = key;
         QueueWrapper qw = map.get(key);
         if (qw != null && !qw.queue.isEmpty() && qw.drainRunning.compareAndSet(false, true)) {
-            executor.execute(() -> drain(key, qw));
+            executorService.execute(() -> drain(key, qw));
         }
     }
 
@@ -33,9 +34,13 @@ public class MappedExecutors<Key> {
         return r -> {
             qw.queue.addLast(r);
             if (key.equals(currentKey) && qw.drainRunning.compareAndSet(false, true)) {
-                executor.execute(() -> drain(key, qw));
+                executorService.execute(() -> drain(key, qw));
             }
         };
+    }
+
+    public void close() {
+        executorService.shutdown();
     }
 
     private void drain(Key key, QueueWrapper qw) {
@@ -56,7 +61,7 @@ public class MappedExecutors<Key> {
         } finally {
             qw.drainRunning.set(false);
             if (key.equals(currentKey) && !qw.queue.isEmpty() && qw.drainRunning.compareAndSet(false, true)) {
-                executor.execute(() -> drain(key, qw));
+                executorService.execute(() -> drain(key, qw));
             }
         }
     }

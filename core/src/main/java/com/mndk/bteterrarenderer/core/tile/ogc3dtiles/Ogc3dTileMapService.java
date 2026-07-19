@@ -10,7 +10,6 @@ import com.mndk.bteterrarenderer.core.tile.AbstractTileMapService;
 import com.mndk.bteterrarenderer.core.tile.TileMapServiceCommonProperties;
 import com.mndk.bteterrarenderer.core.tile.ogc3dtiles.key.LocalTileNode;
 import com.mndk.bteterrarenderer.core.tile.ogc3dtiles.key.TileLocalKey;
-import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.GeographicProjection;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.OutOfProjectionBoundsException;
 import com.mndk.bteterrarenderer.mcconnector.McConnector;
@@ -35,6 +34,7 @@ import com.mndk.bteterrarenderer.ogc3dtiles.tile.TileContentLink;
 import com.mndk.bteterrarenderer.ogc3dtiles.tile.Tileset;
 import com.mndk.bteterrarenderer.util.Loggers;
 import com.mndk.bteterrarenderer.util.accessor.PropertyAccessor;
+import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
 import de.javagl.jgltf.model.GltfModel;
 import io.netty.buffer.ByteBufInputStream;
 import lombok.*;
@@ -55,7 +55,7 @@ import java.util.concurrent.Executors;
 @Getter
 @JsonSerialize(using = Ogc3dTileMapServiceSerializer.class)
 @JsonDeserialize(using = Ogc3dTileMapServiceDeserializer.class)
-public class Ogc3dTileMapService extends AbstractTileMapService<Ogc3dTileMapService.Key> {
+public class Ogc3dTileMapService extends AbstractTileMapService<Ogc3dTileMapService.Key> implements AutoCloseable {
 
     // From 6.7.1.6.2.2. y-up to z-up:
     // Next, for consistency with the z-up coordinate system of 3D Tiles,
@@ -365,6 +365,7 @@ public class Ogc3dTileMapService extends AbstractTileMapService<Ogc3dTileMapServ
     public void close() throws IOException {
         super.close();
         this.tileDataStorage.close();
+        TILE_PARSER.shutdown();
     }
 
     static {
