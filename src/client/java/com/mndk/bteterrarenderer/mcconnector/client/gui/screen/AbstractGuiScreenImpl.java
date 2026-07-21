@@ -137,11 +137,15 @@ public class AbstractGuiScreenImpl extends Screen {
     public boolean keyPressed(KeyEvent keyInput) {
         boolean superResult = super.keyPressed(keyInput);
 
-        int keyCode = keyInput.key();
-        int scanCode = keyInput.scancode();
-        int modifiers = keyInput.modifiers();
+//? if >=26.3-alpha.4 {
+        // 26.3-snapshot-4 switched from GLFW to SDL
+        boolean delegateResult = delegate.keyPressed(
+                InputKey.fromSdlKeyCode(keyInput.key()), keyInput.keycode(), keyInput.modifiers());
+//? } else {
+        /*boolean delegateResult = delegate.keyPressed(
+                InputKey.fromGlfwKeyCode(keyInput.key()), keyInput.scancode(), keyInput.modifiers());
+*///? }
 
-        boolean delegateResult = delegate.keyPressed(InputKey.fromGlfwKeyCode(keyCode), scanCode, modifiers);
         return superResult || delegateResult;
     }
 

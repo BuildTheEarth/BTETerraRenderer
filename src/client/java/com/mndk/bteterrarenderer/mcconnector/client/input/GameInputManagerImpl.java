@@ -10,9 +10,14 @@ public class GameInputManagerImpl implements GameInputManager {
 
     @Override
     public boolean isKeyDown(InputKey key) {
-        return InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow()/*? if <1.21.9 {*//*.getWindow()*//*? }*/,
-                key.glfwKeyCode);
+//? if >=26.3-alpha.4 {
+        // 26.3-snapshot-4 switched from GLFW to SDL
+        return InputConstants.isKeyDown(key.sdlKeyCode);
+//? } else if >=1.21.9 {
+        /*return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key.glfwKeyCode);
+*///? } else {
+        /*return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.glfwKeyCode);
+*///? }
     }
 
     @Override
