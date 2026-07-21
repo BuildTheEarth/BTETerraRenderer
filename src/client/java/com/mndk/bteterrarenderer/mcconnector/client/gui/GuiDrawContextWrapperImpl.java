@@ -16,10 +16,13 @@ import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapper;
 import com.mndk.bteterrarenderer.mcconnector.util.ResourceLocationWrapperImpl;
 import com.mndk.bteterrarenderer.mod.util.IdUtil;
 //? if >=1.21.5 {
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.*;
 //? }
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+//? if >=26.3-alpha.3 {
+import com.mojang.renderpearl.api.pipeline.*; // 26.3-snapshot-3 moved Blaze3D RenderPipeline stuff to this package
+//? }
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
