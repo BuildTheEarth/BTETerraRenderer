@@ -27,15 +27,12 @@ import com.mndk.bteterrarenderer.util.accessor.PropertyAccessor;
 import com.mndk.bteterrarenderer.util.category.CategoryMap;
 import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
 import com.mndk.bteterrarenderer.util.concurrent.ManualThreadExecutor;
-import com.mndk.bteterrarenderer.util.image.ImageUtil;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MapRenderingOptionsSidebar extends GuiSidebar {
 
@@ -43,7 +40,6 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     private static final int SIDE_PADDING = 7;
     private static final int ELEMENT_DISTANCE_BIG = 35;
 
-    private static final ExecutorService MULTI_THREADED = Executors.newCachedThreadPool();
     private static final ManualThreadExecutor ICON_MAKER = new ManualThreadExecutor();
     private static final IconStorage ICON_STORAGE = new IconStorage();
 
