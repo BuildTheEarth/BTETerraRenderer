@@ -32,6 +32,7 @@ class McFXDropdownItemList extends McFXDropdownItem {
 
     void toggleOpened() {
         this.opened = !this.opened;
+        this.parent.invalidateHeightCache();
     }
 
     int getCategoryHeight() {

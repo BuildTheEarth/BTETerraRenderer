@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 class CategoryMapDeserializer extends JsonDeserializer<CategoryMap<?>> implements ContextualDeserializer {
+    private static final int MAX_RECURSION_DEPTH = 4;
+
     private JavaType valueType;
 
     @Override
@@ -37,13 +39,16 @@ class CategoryMapDeserializer extends JsonDeserializer<CategoryMap<?>> implement
             if (!categoryNode.isObject())
                 throw JsonMappingException.from(p, "category should be an object");
 
-            result.getMap().put(categoryName, deserializeCategory(categoryNode, ctxt));
+            result.getMap().put(categoryName, deserializeCategory(categoryNode, ctxt, 1));
         }
 
         return result;
     }
 
-    private Category<Object> deserializeCategory(JsonNode node, DeserializationContext ctxt) throws IOException {
+    private Category<Object> deserializeCategory(JsonNode node, DeserializationContext ctxt, int depth) throws IOException {
+        if (depth > MAX_RECURSION_DEPTH) {
+            throw JsonMappingException.from(ctxt, "category recursion depth exceeded max depth of " + MAX_RECURSION_DEPTH);
+        }
         Category<Object> category = new Category<>();
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             Map.Entry<String, JsonNode> entry = it.next();
@@ -53,7 +58,7 @@ class CategoryMapDeserializer extends JsonDeserializer<CategoryMap<?>> implement
             if (isLeafNode(childNode)) {
                 category.put(key, ctxt.readTreeAsValue(childNode, this.valueType));
             } else {
-                category.getSubcategories().put(key, deserializeCategory(childNode, ctxt));
+                category.getSubcategories().put(key, deserializeCategory(childNode, ctxt, depth + 1));
             }
         }
         return category;

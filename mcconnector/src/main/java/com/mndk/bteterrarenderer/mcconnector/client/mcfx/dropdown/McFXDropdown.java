@@ -45,6 +45,8 @@ public class McFXDropdown extends McFXElement {
     private final Function<String[], NativeTextureWrapper> iconTextureObjectGetter;
 
     private boolean mouseOnMainBox = false;
+    private boolean dropdownHeightDirty = true;
+    private int cachedDropdownItemsHeight = 0;
     @Getter(AccessLevel.PACKAGE)
     private int mainBoxHeight, singleLineElementHeight, itemInnerWidth;
 
@@ -62,6 +64,7 @@ public class McFXDropdown extends McFXElement {
     @Override
     protected void onWidthChange() {
         this.itemInnerWidth = this.getWidth() - ITEM_PADDING_HORIZONTAL * 2;
+        this.invalidateHeightCache();
     }
 
     @Override
@@ -71,7 +74,19 @@ public class McFXDropdown extends McFXElement {
 
     @Override
     public int getVisualHeight() {
-        return this.mainBoxHeight + this.dropdownItems.calculateHeight(new Stack<>());
+        return this.mainBoxHeight + this.getDropdownItemsHeight();
+    }
+
+    void invalidateHeightCache() {
+        this.dropdownHeightDirty = true;
+    }
+
+    private int getDropdownItemsHeight() {
+        if (this.dropdownHeightDirty) {
+            this.cachedDropdownItemsHeight = this.dropdownItems.calculateHeight(new Stack<>());
+            this.dropdownHeightDirty = false;
+        }
+        return this.cachedDropdownItemsHeight;
     }
 
     @Override
@@ -168,7 +183,7 @@ public class McFXDropdown extends McFXElement {
         System.arraycopy(selectedWithoutRoot, 0, selected, 1, selectedWithoutRoot.length);
         selected[0] = ROOT_CATEGORY_NAME;
 
-        this.dropdownItems.calculateHeight(new Stack<>());
+        this.getDropdownItemsHeight();
         drawContextWrapper.pushMatrix();
         drawContextWrapper.translate(0, mainBoxHeight, 0);
         this.dropdownItems.drawItem(drawContextWrapper, new Stack<>(), selected, 0, true);
@@ -250,6 +265,7 @@ public class McFXDropdown extends McFXElement {
 
             dropdownItems.itemList.clear();
             dropdownItems.itemList.addAll(list);
+            invalidateHeightCache();
             finalized = true;
         }
 

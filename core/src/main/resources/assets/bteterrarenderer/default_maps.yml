@@ -161,7 +161,7 @@ categories:
          max_thread: 2
          default_zoom: 20
 
-      臺北:
+      Taipei:
          tp_ortho_tw:
             type: "flat"
             name:
