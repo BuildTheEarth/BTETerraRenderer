@@ -11,17 +11,24 @@ class CategoryMapSerializer extends JsonSerializer<CategoryMap<Object>> {
     public void serialize(CategoryMap<Object> map, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject(); // main
 
-        map.forEachThrowable((categoryName, category) -> {
-            gen.writeFieldName(categoryName);
-            gen.writeStartObject();
-
-            category.forEach((id, value) -> {
-                gen.writeFieldName(id);
-                gen.writeObject(value);
-            });
-            gen.writeEndObject();
-        });
+        for (java.util.Map.Entry<String, Category<Object>> entry : map.getMap().entrySet()) {
+            gen.writeFieldName(entry.getKey());
+            serializeCategory(entry.getValue(), gen);
+        }
 
         gen.writeEndObject(); // main
+    }
+
+    private void serializeCategory(Category<Object> category, JsonGenerator gen) throws IOException {
+        gen.writeStartObject();
+        for (java.util.Map.Entry<String, Object> entry : category.getEntries().entrySet()) {
+            gen.writeFieldName(entry.getKey());
+            gen.writeObject(entry.getValue());
+        }
+        for (java.util.Map.Entry<String, Category<Object>> sub : category.getSubcategories().entrySet()) {
+            gen.writeFieldName(sub.getKey());
+            serializeCategory(sub.getValue(), gen);
+        }
+        gen.writeEndObject();
     }
 }

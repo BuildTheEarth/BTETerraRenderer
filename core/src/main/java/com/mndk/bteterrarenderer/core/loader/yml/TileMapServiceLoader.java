@@ -23,9 +23,7 @@ public class TileMapServiceLoader extends YamlLoader<TileMapServiceDTO, Category
 
     protected CategoryMap<TileMapService> load(String fileName, TileMapServiceDTO content) {
         CategoryMap<TileMapService> categoryMap = content.getCategories();
-        categoryMap.forEach((categoryName, category) ->
-                category.forEach((key, tms) -> tms.setSource(fileName))
-        );
+        categoryMap.forEach((categoryPath, key, tms) -> tms.setSource(fileName));
         return categoryMap;
     }
 }

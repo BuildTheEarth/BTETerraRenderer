@@ -27,12 +27,15 @@ import com.mndk.bteterrarenderer.util.accessor.PropertyAccessor;
 import com.mndk.bteterrarenderer.util.category.CategoryMap;
 import com.mndk.bteterrarenderer.util.concurrent.CacheStorage;
 import com.mndk.bteterrarenderer.util.concurrent.ManualThreadExecutor;
+import com.mndk.bteterrarenderer.util.image.ImageUtil;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MapRenderingOptionsSidebar extends GuiSidebar {
 
@@ -40,6 +43,7 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     private static final int SIDE_PADDING = 7;
     private static final int ELEMENT_DISTANCE_BIG = 35;
 
+    private static final ExecutorService MULTI_THREADED = Executors.newCachedThreadPool();
     private static final ManualThreadExecutor ICON_MAKER = new ManualThreadExecutor();
     private static final IconStorage ICON_STORAGE = new IconStorage();
 
@@ -172,10 +176,11 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private String[] getWrappedTMS() {
-        return new String[] {
-                BTETerraRendererConfig.GENERAL.getMapServiceCategory(),
-                BTETerraRendererConfig.GENERAL.getMapServiceId()
-        };
+        String[] categoryPath = BTETerraRendererConfig.GENERAL.getMapServiceCategoryPath();
+        String[] wrapped = new String[categoryPath.length + 1];
+        System.arraycopy(categoryPath, 0, wrapped, 0, categoryPath.length);
+        wrapped[categoryPath.length] = BTETerraRendererConfig.GENERAL.getMapServiceId();
+        return wrapped;
     }
 
     private void updateTmsSettings() {
@@ -220,27 +225,27 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private void setTileMapServiceCategoryPath(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        BTETerraRendererConfig.GENERAL.setMapServiceCategory(categoryName);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        BTETerraRendererConfig.GENERAL.setMapServiceCategoryPath(categories);
         BTETerraRendererConfig.GENERAL.setMapServiceId(id);
         this.updateTmsSettings();
     }
 
     private static String tmsWrappedToString(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categoryName, id);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categories, id);
         if (tms == null) {
             return "[§7null§r]\n§4§o(error)";
         }
@@ -263,12 +268,21 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
         McFXDropdown.ItemListUpdater updater = mapSourceDropdown.itemListBuilder();
 
         CategoryMap<TileMapService> tmsCategoryMap = LoaderRegistry.tms().getResult();
-        tmsCategoryMap.forEach((name, category) -> {
+        tmsCategoryMap.getMap().forEach((name, category) -> {
             updater.push(name);
-            category.forEach((id, tms) -> updater.add(id));
+            this.addCategoryToDropdown(updater, category);
             updater.pop();
         });
         updater.update();
+    }
+
+    private void addCategoryToDropdown(McFXDropdown.ItemListUpdater updater, com.mndk.bteterrarenderer.util.category.Category<TileMapService> category) {
+        category.getEntries().forEach((id, tms) -> updater.add(id));
+        category.getSubcategories().forEach((name, subcategory) -> {
+            updater.push(name);
+            this.addCategoryToDropdown(updater, subcategory);
+            updater.pop();
+        });
     }
 
     private void openMapsFolder() {
@@ -276,20 +290,24 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private static NativeTextureWrapper getIconTextureObject(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categoryName, id);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categories, id);
         if (tms == null) return null;
 
         URL iconUrl = tms.getIconUrl();
         if (iconUrl == null) return null;
 
-        return ICON_STORAGE.getOrCompute(iconUrl, () -> HttpResourceManager.downloadAsImage(iconUrl.toString(), -1, 256, 256)
+        return ICON_STORAGE.getOrCompute(iconUrl, () -> HttpResourceManager.downloadAsImage(iconUrl.toString(), null)
+                .thenApplyAsync(
+                        image -> ImageUtil.resizeImage(image, 256, 256),
+                        MULTI_THREADED
+                )
                 .thenApplyAsync(
                         image -> McConnector.client().textureManager.allocateAndGetTextureObject(BTETerraRenderer.MODID, image),
                         ICON_MAKER

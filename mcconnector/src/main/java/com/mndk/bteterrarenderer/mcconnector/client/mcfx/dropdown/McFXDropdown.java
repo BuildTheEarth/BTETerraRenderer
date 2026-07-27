@@ -236,7 +236,7 @@ public class McFXDropdown extends McFXElement {
             McFXDropdownItemList list = stack.peek();
             McFXDropdownItemList victim = dropdownItems;
             for (int i = 0; i < stack.size(); i++) {
-                if (victim != null) victim = victim.findCategory(stack.get(0).name);
+                if (victim != null) victim = victim.findCategory(stack.get(i).name);
             }
             if (victim != null) list.opened = victim.opened;
 
