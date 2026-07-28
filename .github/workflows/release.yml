@@ -228,7 +228,6 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix: ${{ fromJson(needs.generate-release-matrix.outputs.matrix) }}
 
     steps:
@@ -257,17 +256,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           changelog-file: release-notes.md
-
-          # mc-publish infers the version type from this value:
-          # *-alpha* -> alpha
-          # *-beta*  -> beta
-          # otherwise -> release
-          version: ${{ github.ref_name }}-${{ matrix.mcversion }}
-
-          name: BTETerraRenderer ${{ github.ref_name }} for Minecraft ${{ matrix.mcversion }}
-
-          files: |
-            artifact/*.jar
+          files: artifact/*.jar
 
   publish-github-release:
     needs:
@@ -282,7 +271,6 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: release-artifacts
-          pattern: '*'
           merge-multiple: true
           repository: ${{ github.repository }}
           run-id: ${{ needs.locate-build-run.outputs.run-id }}
@@ -307,5 +295,4 @@ jobs:
 
           files: release-artifacts/*.jar
 
-          overwrite_files: true
           fail_on_unmatched_files: true

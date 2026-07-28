@@ -37,7 +37,6 @@ jobs:
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   build:
-    if: github.event_name != 'push' || github.ref_type != 'tag'
     name: Build ${{ matrix.name }}
     needs: generate-build-matrix
     runs-on: ubuntu-latest
