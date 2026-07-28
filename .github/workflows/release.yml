@@ -1,0 +1,311 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: bteterrarenderer-${{ github.sha }}
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  validate-release-tag:
+    runs-on: ubuntu-latest
+
+    outputs:
+      prerelease: ${{ steps.validate.outputs.prerelease }}
+
+    steps:
+      - name: Validate release tag
+        id: validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          tag="${GITHUB_REF_NAME}"
+          
+          # Supported:
+          # v1.2.3
+          # v1.2.3-alpha
+          # v1.2.3-alpha.4
+          # v1.2.3-beta
+          # v1.2.3-beta.2
+          #
+          # Only alpha and beta prerelease identifiers are supported because
+          # mc-publish infers its version type from those words.
+          pattern='^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta)(\.(0|[1-9][0-9]*))?)?$'
+          
+          if [[ ! "${tag}" =~ ${pattern} ]]; then
+            {
+              echo "Invalid release tag: ${tag}"
+              echo
+              echo "Allowed examples:"
+              echo "  v1.5.0"
+              echo "  v1.5.0-alpha"
+              echo "  v1.5.0-alpha.4"
+              echo "  v1.5.0-beta"
+              echo "  v1.5.0-beta.2"
+              echo
+              echo "Unsupported examples:"
+              echo "  v1.05.0"
+              echo "  v1.5.0-test4"
+              echo "  v1.5.0-rc1"
+            } >&2
+          
+            exit 1
+          fi
+          
+          if [[ "${tag}" == *-* ]]; then
+            prerelease="true"
+          else
+            prerelease="false"
+          fi
+          
+          echo "prerelease=${prerelease}" >> "$GITHUB_OUTPUT"
+          
+          {
+            echo "### Validated release tag"
+            echo
+            echo "- Tag: \`${tag}\`"
+            echo "- GitHub prerelease: \`${prerelease}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  generate-release-matrix:
+    needs:
+      - validate-release-tag
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Generate release matrix
+        id: generate-matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          matrix=$(
+            jq -c '
+              {
+                include: (
+                  .versions
+                  | map({
+                      target: .,
+                      name: (split(":")[0]),
+                      mcversion: (split(":")[1])
+                    })
+                )
+              }
+            ' versions.json
+          )
+          
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+
+  locate-build-run:
+    needs:
+      - validate-release-tag
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      run-id: ${{ steps.locate.outputs.run-id }}
+
+    steps:
+      - name: Find matching successful build
+        id: locate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          
+          run_id=$(
+            gh run list \
+              --workflow build \
+              --repo "$GITHUB_REPOSITORY" \
+              --commit "$GITHUB_SHA" \
+              --json databaseId,status,conclusion,event \
+              --limit 20 \
+              --jq '
+                .[]
+                | select(
+                    .event == "push"
+                    and .status == "completed"
+                    and .conclusion == "success"
+                  )
+                | .databaseId
+              ' \
+              | head -n 1
+          )
+          
+          if [[ -z "${run_id}" ]]; then
+            echo "No successful build workflow run found for ${GITHUB_SHA}" >&2
+            exit 1
+          fi
+          
+          echo "run-id=${run_id}" >> "$GITHUB_OUTPUT"
+
+  prepare-release-notes:
+    needs:
+      - validate-release-tag
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Prepare release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+          changelog_version="${tag%%-*}"
+          header="## ${changelog_version}"
+          notes_file="release-notes.md"
+
+          awk -v header="${header}" '
+            $0 == header {
+              printing = 1
+              found = 1
+              next
+            }
+
+            printing && /^##[[:space:]]/ {
+              exit
+            }
+
+            printing {
+              print
+            }
+
+            END {
+              if (!found) {
+                exit 1
+              }
+            }
+          ' CHANGELOG.md > "${notes_file}" || {
+            echo "No changelog section found for ${tag}" >&2
+            echo "Expected heading: ${header}" >&2
+            exit 1
+          }
+
+          if [[ ! -s "${notes_file}" ]]; then
+            echo "Changelog section ${header} is empty" >&2
+            exit 1
+          fi
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-notes
+          path: release-notes.md
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-platforms:
+    needs:
+      - validate-release-tag
+      - generate-release-matrix
+      - locate-build-run
+      - prepare-release-notes
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-release-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Download built artifact
+        uses: actions/download-artifact@v8
+        with:
+          pattern: '*-${{ matrix.name }}.jar'
+          path: artifact
+          repository: ${{ github.repository }}
+          run-id: ${{ needs.locate-build-run.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      - name: Download release notes
+        uses: actions/download-artifact@v8
+        with:
+          name: release-notes
+          path: .
+
+      - name: Publish to Modrinth and CurseForge
+        uses: Kira-NT/mc-publish@v3
+        with:
+          modrinth-id: 1A8XMFfM
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: 1550742
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          changelog-file: release-notes.md
+
+          # mc-publish infers the version type from this value:
+          # *-alpha* -> alpha
+          # *-beta*  -> beta
+          # otherwise -> release
+          version: ${{ github.ref_name }}-${{ matrix.mcversion }}
+
+          name: BTETerraRenderer ${{ github.ref_name }} for Minecraft ${{ matrix.mcversion }}
+
+          files: |
+            artifact/*.jar
+
+  publish-github-release:
+    needs:
+      - validate-release-tag
+      - locate-build-run
+      - prepare-release-notes
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all built artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: release-artifacts
+          pattern: '*'
+          merge-multiple: true
+          repository: ${{ github.repository }}
+          run-id: ${{ needs.locate-build-run.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      - name: Download release notes
+        uses: actions/download-artifact@v8
+        with:
+          name: release-notes
+          path: .
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+
+          body_path: release-notes.md
+          generate_release_notes: true
+
+          prerelease: ${{ needs.validate-release-tag.outputs.prerelease == 'true' }}
+
+          files: release-artifacts/*.jar
+
+          overwrite_files: true
+          fail_on_unmatched_files: true
