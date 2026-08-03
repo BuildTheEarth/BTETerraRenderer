@@ -81,3 +81,9 @@ tf2mandeokyi (https://github.com/tf2mandeokyi/BTETerraRenderer). We tried reachi
 different platforms, but received no response. The focus is on fixing bugs, supporting new versions, and performing
 other maintenance work.
 Many thanks to @Amrsatrio for his significant contributions to the new version.
+
+### Releasing
+
+1. Add a matching `## vX.Y.Z` section to `CHANGELOG.md`.
+2. Tag the commit with the same `vX.Y.Z`.
+3. Push the tag to trigger `.github/workflows/release.yml`, which reuses the Gradle workflow artifacts, publishes each version build to Modrinth and CurseForge, and creates one GitHub release with all jars.
