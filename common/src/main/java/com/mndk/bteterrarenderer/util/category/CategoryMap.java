@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
 @JsonDeserialize(using = CategoryMapDeserializer.class)
 public class CategoryMap<T> {
 
-	@Getter(AccessLevel.PACKAGE)
+	@Getter
 	private final Map<String, Category<T>> map = new LinkedHashMap<>();
 
 	public void forEach(BiConsumer<String, Category<T>> consumer) {
@@ -30,15 +30,42 @@ public class CategoryMap<T> {
 		}
 	}
 
+	public interface PathConsumer<T> {
+		void accept(String[] categoryPath, String id, T item);
+	}
+
+	public void forEach(PathConsumer<T> consumer) {
+		map.forEach((name, category) -> category.forEach(new String[]{name}, consumer));
+	}
+
 	@Nullable
 	public T getItem(String categoryName, String elementId) {
-		Category<T> category = map.get(categoryName);
-		if (category == null) return null;
-		return category.get(elementId);
+		return getItem(new String[]{categoryName}, elementId);
+	}
+
+	@Nullable
+	public T getItem(String[] categoryPath, String elementId) {
+		if (categoryPath == null || categoryPath.length == 0) return null;
+		Category<T> current = map.get(categoryPath[0]);
+		for (int i = 1; i < categoryPath.length; i++) {
+			if (current == null) return null;
+			current = current.getSubcategories().get(categoryPath[i]);
+		}
+		if (current == null) return null;
+		return current.get(elementId);
 	}
 
 	public void setItem(String categoryName, String elementId, @Nonnull T item) {
-		map.computeIfAbsent(categoryName, n -> new Category<>()).put(elementId, item);
+		setItem(new String[]{categoryName}, elementId, item);
+	}
+
+	public void setItem(String[] categoryPath, String elementId, @Nonnull T item) {
+		if (categoryPath == null || categoryPath.length == 0) return;
+		Category<T> current = map.computeIfAbsent(categoryPath[0], n -> new Category<>());
+		for (int i = 1; i < categoryPath.length; i++) {
+			current = current.getSubcategories().computeIfAbsent(categoryPath[i], n -> new Category<>());
+		}
+		current.put(elementId, item);
 	}
 
 	@Getter

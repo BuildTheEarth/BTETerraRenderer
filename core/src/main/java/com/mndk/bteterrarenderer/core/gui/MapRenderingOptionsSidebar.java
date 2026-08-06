@@ -172,10 +172,11 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private String[] getWrappedTMS() {
-        return new String[] {
-                BTETerraRendererConfig.GENERAL.getMapServiceCategory(),
-                BTETerraRendererConfig.GENERAL.getMapServiceId()
-        };
+        String[] categoryPath = BTETerraRendererConfig.GENERAL.getMapServiceCategoryPath();
+        String[] wrapped = new String[categoryPath.length + 1];
+        System.arraycopy(categoryPath, 0, wrapped, 0, categoryPath.length);
+        wrapped[categoryPath.length] = BTETerraRendererConfig.GENERAL.getMapServiceId();
+        return wrapped;
     }
 
     private void updateTmsSettings() {
@@ -220,27 +221,27 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private void setTileMapServiceCategoryPath(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        BTETerraRendererConfig.GENERAL.setMapServiceCategory(categoryName);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        BTETerraRendererConfig.GENERAL.setMapServiceCategoryPath(categories);
         BTETerraRendererConfig.GENERAL.setMapServiceId(id);
         this.updateTmsSettings();
     }
 
     private static String tmsWrappedToString(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categoryName, id);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categories, id);
         if (tms == null) {
             return "[§7null§r]\n§4§o(error)";
         }
@@ -263,12 +264,21 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
         McFXDropdown.ItemListUpdater updater = mapSourceDropdown.itemListBuilder();
 
         CategoryMap<TileMapService> tmsCategoryMap = LoaderRegistry.tms().getResult();
-        tmsCategoryMap.forEach((name, category) -> {
+        tmsCategoryMap.getMap().forEach((name, category) -> {
             updater.push(name);
-            category.forEach((id, tms) -> updater.add(id));
+            this.addCategoryToDropdown(updater, category);
             updater.pop();
         });
         updater.update();
+    }
+
+    private void addCategoryToDropdown(McFXDropdown.ItemListUpdater updater, com.mndk.bteterrarenderer.util.category.Category<TileMapService> category) {
+        category.getEntries().forEach((id, tms) -> updater.add(id));
+        category.getSubcategories().forEach((name, subcategory) -> {
+            updater.push(name);
+            this.addCategoryToDropdown(updater, subcategory);
+            updater.pop();
+        });
     }
 
     private void openMapsFolder() {
@@ -276,14 +286,14 @@ public class MapRenderingOptionsSidebar extends GuiSidebar {
     }
 
     private static NativeTextureWrapper getIconTextureObject(String[] categoryPath) {
-        if (categoryPath == null || categoryPath.length != 2) {
-            throw new IllegalArgumentException("Category stack must have exactly 3 elements: "
-                    + "[categoryName, id]. Current: "
+        if (categoryPath == null || categoryPath.length < 2) {
+            throw new IllegalArgumentException("Category stack must have at least 2 elements: "
+                    + "[...categoryPath, id]. Current: "
                     + Arrays.toString(categoryPath));
         }
-        String categoryName = categoryPath[0];
-        String id = categoryPath[1];
-        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categoryName, id);
+        String[] categories = Arrays.copyOf(categoryPath, categoryPath.length - 1);
+        String id = categoryPath[categoryPath.length - 1];
+        TileMapService tms = LoaderRegistry.tms().getResult().getItem(categories, id);
         if (tms == null) return null;
 
         URL iconUrl = tms.getIconUrl();
