@@ -37,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 @Getter
 @JsonSerialize(using = FlatTileMapServiceSerializer.class)
@@ -246,7 +247,7 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
                         g.drawImage(img, 0, 0, null);
                     }
                 } catch (Exception e) {
-                    // Ignore
+                    Loggers.get(FlatTileMapService.class).log(Level.WARNING, "Failed to composite tile image from URL", e);
                 }
             }
             if (g != null) {

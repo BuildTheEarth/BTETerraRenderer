@@ -69,7 +69,9 @@ public class TileMapServiceCommonPropertiesTest {
     private static String writeJson(TileMapServiceCommonProperties properties) throws Exception {
         StringWriter writer = new StringWriter();
         JsonGenerator gen = new JsonFactory().createGenerator(writer);
+        gen.writeStartObject();
         properties.write(gen);
+        gen.writeEndObject();
         gen.close();
         return writer.toString();
     }
