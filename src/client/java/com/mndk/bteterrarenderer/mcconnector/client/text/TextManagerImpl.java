@@ -18,6 +18,10 @@ public class TextManagerImpl implements TextManager {
             // 1.21+: decode Text via codecs instead of Text.Serialization
             var element = com.google.gson.JsonParser.parseString(json);
 
+//? if >=1.21.5 {
+            upgradeLegacyClickEvents(element);
+//? }
+
             var result = ComponentSerialization.CODEC
                     .parse(net.minecraft.core.RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE), element)
                     .result()
@@ -71,4 +75,38 @@ public class TextManagerImpl implements TextManager {
         /*return currentScreen.handleComponentClicked(style);
 *///? }
     }
+
+//? if >=1.21.5 {
+    private static void upgradeLegacyClickEvents(com.google.gson.JsonElement element) {
+        if (element.isJsonArray()) {
+            for (var child : element.getAsJsonArray()) {
+                upgradeLegacyClickEvents(child);
+            }
+            return;
+        }
+
+        if (!element.isJsonObject()) {
+            return;
+        }
+
+        var object = element.getAsJsonObject();
+
+        if (object.has("clickEvent")) {
+            var click = object.remove("clickEvent").getAsJsonObject();
+
+            if (click.has("value")
+                    && click.has("action")
+                    && "open_url".equals(click.get("action").getAsString())) {
+
+                click.add("url", click.remove("value"));
+            }
+
+            object.add("click_event", click);
+        }
+
+        for (var entry : object.entrySet()) {
+            upgradeLegacyClickEvents(entry.getValue());
+        }
+    }
+//? }
 }
