@@ -56,7 +56,7 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
     @Setter private transient int radius = 3;
     @Getter @Setter private transient int subdivisionLevel = 0;
 
-    private final String urlTemplate;
+    @Getter private final List<TileMapServiceCommonProperties.UrlOption> urlOptions;
     private final FlatTileCoordTranslator coordTranslator;
     private final FlatTileURLConverter urlConverter;
 
@@ -70,7 +70,7 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
                                FlatTileCoordTranslator coordTranslator,
                                FlatTileURLConverter urlConverter) {
         super(properties);
-        this.urlTemplate = properties.getTileUrl();
+        this.urlOptions = properties.getTileUrls();
         this.coordTranslator = coordTranslator;
         this.urlConverter = urlConverter;
 
@@ -225,10 +225,34 @@ public class FlatTileMapService extends AbstractTileMapService<FlatTileMapServic
         FlatTileRelCoord relCoord = tileId.relCoord;
         Executor executor = this.imageFetcher.getExecutor(relCoord.getRelativeZoom());
 
-        String url = urlConverter.convertToUrl(this.urlTemplate, relCoord);
         Supplier<BufferedImage> imageGetter = () -> {
-            try { return HttpResourceManager.downloadAsImage(url, this.getNThreads(), -1, -1).get(); }
-            catch (Exception e) { throw new RuntimeException("Failed to download image from " + url, e); }
+            List<CompletableFuture<BufferedImage>> futures = new ArrayList<>();
+            for (TileMapServiceCommonProperties.UrlOption option : this.urlOptions) {
+                String url = urlConverter.convertToUrl(option.getUrl(), relCoord);
+                futures.add(HttpResourceManager.downloadAsImage(url, this.getNThreads(), -1, -1)
+                        .exceptionally(t -> null));
+            }
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            BufferedImage combined = null;
+            java.awt.Graphics g = null;
+            for (int i = futures.size() - 1; i >= 0; i--) {
+                try {
+                    BufferedImage img = futures.get(i).get();
+                    if (img != null) {
+                        if (combined == null) {
+                            combined = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                            g = combined.getGraphics();
+                        }
+                        g.drawImage(img, 0, 0, null);
+                    }
+                } catch (Exception e) {
+                    Loggers.get(this).warn("Failed to composite tile image from URL", e);
+                }
+            }
+            if (g != null) {
+                g.dispose();
+            }
+            return combined;
         };
         BufferedImage img = imageCache.getOrCompute(relCoord, () -> CompletableFuture.supplyAsync(imageGetter, executor));
         if (img == null) return null;

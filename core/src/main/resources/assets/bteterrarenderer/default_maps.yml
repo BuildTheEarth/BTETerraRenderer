@@ -161,6 +161,26 @@ categories:
          max_thread: 2
          default_zoom: 20
 
+      lidar_tw:
+         type: "flat"
+         name:
+            en_us: "Taiwan LiDAR Map"
+            zh_tw: "空載光達正射影像"
+         copyright:
+            en_us: ["",{"text":"© ","color":"white"},{"text":"National Land Surveying and Mapping Center, Ministry of the Interior, ROC","underlined":true,"color":"aqua","clickEvent":{"action":"open_url","value":"https://maps.nlsc.gov.tw/"}}]
+            zh_tw: ["",{"text":"內政部國土測繪中心","underlined":true,"color":"aqua","clickEvent":{"action":"open_url","value":"https://maps.nlsc.gov.tw/"}},{"text":"版權所有 ©Copyright","color":"white"}]
+         tile_url:
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2024/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2023/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2022/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2021/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2020/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+            - https://wmts.nlsc.gov.tw/wmts/LiDAR2019/default/GoogleMapsCompatible/{z}/{y}/{x}.png
+         icon_url: https://maps.nlsc.gov.tw/images/entrance.gif
+         projection: webmercator
+         max_thread: 2
+         default_zoom: 20
+
       tp_ortho_tw:
          type: "flat"
          name:
