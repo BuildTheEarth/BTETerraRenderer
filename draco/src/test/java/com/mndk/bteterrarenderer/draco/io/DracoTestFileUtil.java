@@ -26,7 +26,8 @@ import com.mndk.bteterrarenderer.draco.mesh.Mesh;
 import com.mndk.bteterrarenderer.printer.ByteTablePrinter;
 import com.mndk.bteterrarenderer.printer.TableColumnPrinter;
 import com.mndk.bteterrarenderer.printer.TablePrinter;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -37,7 +38,7 @@ public class DracoTestFileUtil {
 
     public static File toFile(String fileName) {
         URL url = DracoTestFileUtil.class.getClassLoader().getResource(fileName);
-        if (url == null) Assert.fail("File not found: " + fileName);
+        if (url == null) Assertions.fail("File not found: " + fileName);
         try { return new File(url.toURI()); }
         catch (URISyntaxException e) { throw new RuntimeException(e); }
     }
@@ -71,7 +72,7 @@ public class DracoTestFileUtil {
                     + goldenFile.getName() + ")" + " at byte position 0x" + Long.toHexString(byteDifference) + "."
                     + "\n\n" + table;
             System.err.println(content);
-            Assert.fail();
+            Assertions.fail();
         }
     }
     
@@ -81,9 +82,9 @@ public class DracoTestFileUtil {
 
     public static void testDecoding(File file) {
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertTrue(mesh.getNumFaces() > 0);
+        Assertions.assertTrue(mesh.getNumFaces() > 0);
 
         Mesh pointCloud = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertTrue(pointCloud.getNumPoints() > 0);
+        Assertions.assertTrue(pointCloud.getNumPoints() > 0);
     }
 }

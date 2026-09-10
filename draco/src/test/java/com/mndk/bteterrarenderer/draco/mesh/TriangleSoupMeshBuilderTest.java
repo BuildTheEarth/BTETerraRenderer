@@ -22,8 +22,9 @@ import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
 import com.mndk.bteterrarenderer.draco.attributes.FaceIndex;
 import com.mndk.bteterrarenderer.draco.attributes.GeometryAttribute;
 import com.mndk.bteterrarenderer.draco.core.DracoDataType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class TriangleSoupMeshBuilderTest {
 
@@ -93,9 +94,9 @@ public class TriangleSoupMeshBuilderTest {
                 Pointer.wrap(new float[] { 0f, 1f, 0f }));
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull("Failed to build the cube mesh.", mesh);
-        Assert.assertEquals("Unexpected number of vertices.", 8, mesh.getNumPoints());
-        Assert.assertEquals("Unexpected number of faces.", 12, mesh.getNumFaces());
+        Assertions.assertNotNull(mesh, "Failed to build the cube mesh.");
+        Assertions.assertEquals(8, mesh.getNumPoints(), "Unexpected number of vertices.");
+        Assertions.assertEquals(12, mesh.getNumFaces(), "Unexpected number of faces.");
     }
 
     @Test
@@ -179,10 +180,9 @@ public class TriangleSoupMeshBuilderTest {
         mb.setPerFaceAttributeValueForFace(genAttId, FaceIndex.of(11), boolFalse);
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull("Failed to build the cube mesh.", mesh);
-        Assert.assertEquals("Unexpected number of faces.", 12, mesh.getNumFaces());
-        Assert.assertEquals("Unexpected attribute element type.", MeshAttributeElementType.FACE,
-                mesh.getAttributeElementType(genAttId));
+        Assertions.assertNotNull(mesh, "Failed to build the cube mesh.");
+        Assertions.assertEquals(12, mesh.getNumFaces(), "Unexpected number of faces.");
+        Assertions.assertEquals(MeshAttributeElementType.FACE, mesh.getAttributeElementType(genAttId), "Unexpected attribute element type.");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class TriangleSoupMeshBuilderTest {
                 Pointer.wrap(new float[] { 0f, 1f, 0f }));
         mb.setAttributeUniqueId(posAttId, UInt.of(1234));
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull(mesh);
-        Assert.assertEquals(mesh.getAttributeByUniqueId(UInt.of(1234)), mesh.getAttribute(posAttId));
+        Assertions.assertNotNull(mesh);
+        Assertions.assertEquals(mesh.getAttributeByUniqueId(UInt.of(1234)), mesh.getAttribute(posAttId));
     }
 }

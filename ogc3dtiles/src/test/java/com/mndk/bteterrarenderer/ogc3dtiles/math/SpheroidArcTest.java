@@ -1,7 +1,7 @@
 package com.mndk.bteterrarenderer.ogc3dtiles.math;
 
 import com.mndk.bteterrarenderer.ogc3dtiles.geoid.GeoidHeightFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SpheroidArcTest {
 

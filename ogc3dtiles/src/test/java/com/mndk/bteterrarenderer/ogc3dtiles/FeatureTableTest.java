@@ -5,8 +5,9 @@ import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.ogc3dtiles.table.BinaryJsonTableElement;
 import com.mndk.bteterrarenderer.ogc3dtiles.table.BinaryVector;
 import lombok.Data;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.IOException;
 
@@ -29,15 +30,15 @@ public class FeatureTableTest {
         FeatureTableHeaderTest tableHeaderTest =
                 BTETerraRenderer.JSON_MAPPER.readValue(json, FeatureTableHeaderTest.class);
 
-        Assert.assertEquals(Byte.valueOf((byte) 1), tableHeaderTest.testValueByte.getValue(binary));
-        Assert.assertEquals(Short.valueOf((short) 2), tableHeaderTest.testValueShort.getValue(binary));
-        Assert.assertEquals(Integer.valueOf(3), tableHeaderTest.testValueInt.getValue(binary));
-        Assert.assertEquals(Float.valueOf(4), tableHeaderTest.testValueFloat.getValue(binary));
-        Assert.assertEquals(Double.valueOf(5), tableHeaderTest.testValueDouble.getValue(binary));
-        Assert.assertArrayEquals(new Byte[] { 6, 7, 8 }, tableHeaderTest.testValueByte3.getValue(binary).getElements());
-        Assert.assertEquals(Integer.valueOf(69), tableHeaderTest.testBinaryInt.getValue(binary));
-        Assert.assertArrayEquals(new Integer[] { 9, 10, 11 }, tableHeaderTest.testBinaryInt3.getValue(binary).getElements());
-        Assert.assertEquals(new BinaryVector.Vec4<>((byte) 12, (byte) 13, (byte) 14, (byte) 15),
+        Assertions.assertEquals(Byte.valueOf((byte) 1), tableHeaderTest.testValueByte.getValue(binary));
+        Assertions.assertEquals(Short.valueOf((short) 2), tableHeaderTest.testValueShort.getValue(binary));
+        Assertions.assertEquals(Integer.valueOf(3), tableHeaderTest.testValueInt.getValue(binary));
+        Assertions.assertEquals(Float.valueOf(4), tableHeaderTest.testValueFloat.getValue(binary));
+        Assertions.assertEquals(Double.valueOf(5), tableHeaderTest.testValueDouble.getValue(binary));
+        Assertions.assertArrayEquals(new Byte[]{6, 7, 8}, tableHeaderTest.testValueByte3.getValue(binary).getElements());
+        Assertions.assertEquals(Integer.valueOf(69), tableHeaderTest.testBinaryInt.getValue(binary));
+        Assertions.assertArrayEquals(new Integer[]{9, 10, 11}, tableHeaderTest.testBinaryInt3.getValue(binary).getElements());
+        Assertions.assertEquals(new BinaryVector.Vec4<>((byte) 12, (byte) 13, (byte) 14, (byte) 15),
                 tableHeaderTest.testUnknownObject.getValue(binary));
     }
 

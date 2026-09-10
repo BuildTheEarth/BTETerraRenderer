@@ -4,8 +4,9 @@ import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.ogc3dtiles.gltf.extensions.Web3dQuantizedAttributes;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +22,8 @@ public class ExtensionTest {
         Web3dQuantizedAttributes extension =
                 BTETerraRenderer.JSON_MAPPER.convertValue(json, Web3dQuantizedAttributes.class);
 
-        Assert.assertEquals(new Matrix4d(), extension.getDecodeMatrix());
-        Assert.assertEquals(new Vector3d(0, 0, 0), extension.getDecodedMin());
-        Assert.assertEquals(new Vector3d(1, 1, 1), extension.getDecodedMax());
+        Assertions.assertEquals(new Matrix4d(), extension.getDecodeMatrix());
+        Assertions.assertEquals(new Vector3d(0, 0, 0), extension.getDecodedMin());
+        Assertions.assertEquals(new Vector3d(1, 1, 1), extension.getDecodedMax());
     }
 }

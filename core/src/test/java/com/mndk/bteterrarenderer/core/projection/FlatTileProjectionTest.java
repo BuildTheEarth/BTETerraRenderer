@@ -5,8 +5,9 @@ import com.mndk.bteterrarenderer.core.loader.LoaderRegistry;
 import com.mndk.bteterrarenderer.core.tile.flat.FlatTileProjection;
 import com.mndk.bteterrarenderer.core.tile.flat.FlatTileProjectionImpl;
 import com.mndk.bteterrarenderer.mcconnector.client.TestEnvironmentDummyMinecraft;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class FlatTileProjectionTest {
     @Test
     public void givenYamlConfig_testWebMercatorTransform() throws Exception {
         FlatTileProjection webMercator = PROJECTION_MAP.get("webmercator");
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 WEBMERCATOR_COORD,
                 webMercator.toTileCoord(LONGITUDE, LATITUDE, 21)
         );
@@ -29,7 +30,7 @@ public class FlatTileProjectionTest {
     @Test
     public void givenYamlConfig_testKakaoProjectionTransform() throws Exception {
         FlatTileProjection kakaoProjection = PROJECTION_MAP.get("kakaoprojection");
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 KAKAOPROJECTION_COORD,
                 kakaoProjection.toTileCoord(LONGITUDE, LATITUDE, 1)
         );

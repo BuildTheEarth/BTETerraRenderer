@@ -2,13 +2,14 @@ package com.mndk.bteterrarenderer.core.projection;
 
 import com.mndk.bteterrarenderer.dep.terraplusplus.config.GlobalParseRegistries;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.GeographicProjection;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class Proj4ProjectionTest {
     @Test
     public void testProjectionRegistered() {
-        Assert.assertTrue(GlobalParseRegistries.PROJECTIONS.containsKey("proj4"));
+        Assertions.assertTrue(GlobalParseRegistries.PROJECTIONS.containsKey("proj4"));
     }
 
     @Test
@@ -18,7 +19,7 @@ public class Proj4ProjectionTest {
                 "\"param\": \"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs \"" +
         "}}");
 
-        Assert.assertEquals("WGS84", projection.getTargetCrs().getName());
+        Assertions.assertEquals("WGS84", projection.getTargetCrs().getName());
     }
 
     @Test
@@ -29,7 +30,7 @@ public class Proj4ProjectionTest {
         "}}");
 
         double[] coord = projection.fromGeo(127, 37);
-        Assert.assertArrayEquals(new double[] { 200000, 489012.95569100516 }, coord, 0.01);
+        Assertions.assertArrayEquals(new double[]{200000, 489012.95569100516}, coord, 0.01);
     }
 
     static {

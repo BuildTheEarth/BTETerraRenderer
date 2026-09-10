@@ -1,8 +1,8 @@
 package com.mndk.bteterrarenderer.mcconnector;
 
 import com.mndk.bteterrarenderer.mcconnector.util.math.McCoord;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class McCoordConversionTest {
 
@@ -26,9 +26,9 @@ public class McCoordConversionTest {
     }
 
     private static void assertMcCoordEquals(McCoord expected, McCoord actual) {
-        Assert.assertEquals(expected.getX(), actual.getX(), EPSILON);
-        Assert.assertEquals(expected.getY(), actual.getY(), EPSILON);
-        Assert.assertEquals(expected.getZ(), actual.getZ(), EPSILON);
+        Assertions.assertEquals(expected.getX(), actual.getX(), EPSILON);
+        Assertions.assertEquals(expected.getY(), actual.getY(), EPSILON);
+        Assertions.assertEquals(expected.getZ(), actual.getZ(), EPSILON);
     }
 
 }

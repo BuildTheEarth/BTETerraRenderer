@@ -1,10 +1,10 @@
 package com.mndk.bteterrarenderer.core.projection;
 
-import com.mndk.bteterrarenderer.dep.terraplusplus.projection.GeographicProjection;
 import com.mndk.bteterrarenderer.core.network.ServerWelcomeMessage;
+import com.mndk.bteterrarenderer.dep.terraplusplus.projection.GeographicProjection;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 

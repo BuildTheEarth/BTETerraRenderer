@@ -10,8 +10,9 @@ import com.mndk.bteterrarenderer.core.tile.flat.FlatTileProjection;
 import com.mndk.bteterrarenderer.core.tile.flat.FlatTileProjectionImpl;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.OutOfProjectionBoundsException;
 import com.mndk.bteterrarenderer.mcconnector.client.TestEnvironmentDummyMinecraft;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.IOException;
 
@@ -29,29 +30,29 @@ public class TileMapServiceJsonCopyTest {
         FlatTileProjection projectionCopy = BTETerraRenderer.JSON_MAPPER.readValue(json, FlatTileProjectionImpl.class);
         int[] coord2 = projectionCopy.toTileCoord(LONGITUDE, LATITUDE, 21);
 
-        Assert.assertArrayEquals(coord1, coord2);
+        Assertions.assertArrayEquals(coord1, coord2);
     }
 
     @Test
     public void givenTMSConfig_whenTileCoordProvided_testSameCoord() throws OutOfProjectionBoundsException, IOException {
         FlatTileMapService tms = (FlatTileMapService) LoaderRegistry.tms().getResult()
                 .getItem("Global", "osm");
-        Assert.assertNotNull(tms);
+        Assertions.assertNotNull(tms);
         int[] coord1 = tms.getCoordTranslator().getProjection().toTileCoord(LONGITUDE, LATITUDE, 21);
         int[] coord2 = tms.getCoordTranslator().geoCoordToTileCoord(LONGITUDE, LATITUDE, 0);
 
         String json = BTETerraRenderer.JSON_MAPPER.writeValueAsString(tms);
 
         JsonNode node = BTETerraRenderer.JSON_MAPPER.readTree(json);
-        Assert.assertEquals("webmercator", node.get("projection").asText());
+        Assertions.assertEquals("webmercator", node.get("projection").asText());
 
         FlatTileMapService tmsCopy = BTETerraRenderer.JSON_MAPPER.readValue(json, FlatTileMapService.class);
         int[] coord3 = tmsCopy.getCoordTranslator().getProjection().toTileCoord(LONGITUDE, LATITUDE, 21);
         int[] coord4 = tmsCopy.getCoordTranslator().geoCoordToTileCoord(LONGITUDE, LATITUDE, 0);
         tmsCopy.close();
 
-        Assert.assertArrayEquals(coord1, coord3);
-        Assert.assertArrayEquals(coord2, coord4);
+        Assertions.assertArrayEquals(coord1, coord3);
+        Assertions.assertArrayEquals(coord2, coord4);
     }
 
     static {

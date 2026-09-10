@@ -22,12 +22,15 @@ import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
 import com.mndk.bteterrarenderer.draco.compression.DracoExpertEncoder;
 import com.mndk.bteterrarenderer.draco.compression.config.DracoVersions;
 import com.mndk.bteterrarenderer.draco.compression.config.MeshEncoderMethod;
-import com.mndk.bteterrarenderer.draco.core.*;
+import com.mndk.bteterrarenderer.draco.core.DecoderBuffer;
+import com.mndk.bteterrarenderer.draco.core.EncoderBuffer;
+import com.mndk.bteterrarenderer.draco.core.Status;
+import com.mndk.bteterrarenderer.draco.core.StatusAssert;
 import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.io.MeshIOUtil;
 import com.mndk.bteterrarenderer.draco.mesh.Mesh;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -72,7 +75,7 @@ public class MeshEncoderTest {
 
         File file = DracoTestFileUtil.toFile(fileName);
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + fileName, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + fileName);
 
         DracoExpertEncoder encoder = new DracoExpertEncoder(mesh);
         encoder.setEncodingMethod(method);
@@ -89,7 +92,7 @@ public class MeshEncoderTest {
         decoderBuffer.advance(8);  // Skip the header to the encoding method id.
         Pointer<UByte> encodedMethodRef = Pointer.newUByte();
         StatusAssert.assertOk(decoderBuffer.decode(encodedMethodRef));
-        Assert.assertEquals(method.getValue(), encodedMethodRef.get().intValue());
+        Assertions.assertEquals(method.getValue(), encodedMethodRef.get().intValue());
 
         File goldenFile = DracoTestFileUtil.toFile(goldenFileName);
         DracoTestFileUtil.compareGoldenFile(goldenFile, buffer);

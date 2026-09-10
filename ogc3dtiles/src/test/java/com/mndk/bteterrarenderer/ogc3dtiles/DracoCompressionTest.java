@@ -13,8 +13,8 @@ import de.javagl.jgltf.model.GltfModel;
 import de.javagl.jgltf.model.MeshModel;
 import de.javagl.jgltf.model.MeshPrimitiveModel;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class DracoCompressionTest {
             List<Pair<Mesh, DracoMeshCompression>> pairs = this.decodeDracoMeshData(model);
             for (Pair<Mesh, DracoMeshCompression> pair : pairs) {
                 Mesh mesh = pair.getLeft();
-                Assert.assertTrue(mesh.getNumPoints() >= 0);
+                Assertions.assertTrue(mesh.getNumPoints() >= 0);
             }
         }
     }

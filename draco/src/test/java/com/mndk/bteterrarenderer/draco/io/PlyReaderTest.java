@@ -22,8 +22,9 @@ import com.mndk.bteterrarenderer.datatype.number.UByte;
 import com.mndk.bteterrarenderer.datatype.number.UInt;
 import com.mndk.bteterrarenderer.draco.core.DecoderBuffer;
 import com.mndk.bteterrarenderer.draco.core.StatusAssert;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,19 +43,19 @@ public class PlyReaderTest {
         }
         PlyReader reader = new PlyReader();
         StatusAssert.assertOk(reader.read(buf));
-        Assert.assertEquals(2, reader.getNumElements());
-        Assert.assertEquals(7, reader.getElement(0).getNumProperties());
-        Assert.assertEquals(1, reader.getElement(1).getNumProperties());
-        Assert.assertTrue(reader.getElement(1).getProperty(0).isList());
+        Assertions.assertEquals(2, reader.getNumElements());
+        Assertions.assertEquals(7, reader.getElement(0).getNumProperties());
+        Assertions.assertEquals(1, reader.getElement(1).getNumProperties());
+        Assertions.assertTrue(reader.getElement(1).getProperty(0).isList());
 
-        Assert.assertNotNull(reader.getElement(0).getPropertyByName("red"));
+        Assertions.assertNotNull(reader.getElement(0).getPropertyByName("red"));
         PlyProperty prop = reader.getElement(0).getPropertyByName("red");
         PlyPropertyReader<UByte> readerUInt8 = new PlyPropertyReader<>(DataType.uint8(), prop);
         PlyPropertyReader<UInt> readerUInt32 = new PlyPropertyReader<>(DataType.uint32(), prop);
         PlyPropertyReader<Float> readerFloat = new PlyPropertyReader<>(DataType.float32(), prop);
         for (int i = 0; i < reader.getElement(0).getNumEntries(); i++) {
-            Assert.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
-            Assert.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
+            Assertions.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
+            Assertions.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
         }
     }
 
@@ -79,16 +80,16 @@ public class PlyReaderTest {
             throw new RuntimeException(e);
         }
         StatusAssert.assertOk(readerAscii.read(bufAscii));
-        Assert.assertEquals(reader.getNumElements(), readerAscii.getNumElements());
-        Assert.assertEquals(reader.getElement(0).getNumProperties(), readerAscii.getElement(0).getNumProperties());
+        Assertions.assertEquals(reader.getNumElements(), readerAscii.getNumElements());
+        Assertions.assertEquals(reader.getElement(0).getNumProperties(), readerAscii.getElement(0).getNumProperties());
 
-        Assert.assertNotNull(reader.getElement(0).getPropertyByName("x"));
+        Assertions.assertNotNull(reader.getElement(0).getPropertyByName("x"));
         PlyProperty prop = reader.getElement(0).getPropertyByName("x");
         PlyProperty propAscii = readerAscii.getElement(0).getPropertyByName("x");
         PlyPropertyReader<Float> readerFloat = new PlyPropertyReader<>(DataType.float32(), prop);
         PlyPropertyReader<Float> readerFloatAscii = new PlyPropertyReader<>(DataType.float32(), propAscii);
         for (int i = 0; i < reader.getElement(0).getNumEntries(); i++) {
-            Assert.assertEquals(readerFloat.readValue(i), readerFloatAscii.readValue(i), 1e-4f);
+            Assertions.assertEquals(readerFloat.readValue(i), readerFloatAscii.readValue(i), 1e-4f);
         }
     }
 
@@ -104,19 +105,19 @@ public class PlyReaderTest {
         }
         StatusAssert.assertOk(reader.read(buf));
 
-        Assert.assertEquals(2, reader.getNumElements());
-        Assert.assertEquals(7, reader.getElement(0).getNumProperties());
-        Assert.assertEquals(1, reader.getElement(1).getNumProperties());
-        Assert.assertTrue(reader.getElement(1).getProperty(0).isList());
+        Assertions.assertEquals(2, reader.getNumElements());
+        Assertions.assertEquals(7, reader.getElement(0).getNumProperties());
+        Assertions.assertEquals(1, reader.getElement(1).getNumProperties());
+        Assertions.assertTrue(reader.getElement(1).getProperty(0).isList());
 
-        Assert.assertNotNull(reader.getElement(0).getPropertyByName("red"));
+        Assertions.assertNotNull(reader.getElement(0).getPropertyByName("red"));
         PlyProperty prop = reader.getElement(0).getPropertyByName("red");
         PlyPropertyReader<UByte> readerUInt8 = new PlyPropertyReader<>(DataType.uint8(), prop);
         PlyPropertyReader<UInt> readerUInt32 = new PlyPropertyReader<>(DataType.uint32(), prop);
         PlyPropertyReader<Float> readerFloat = new PlyPropertyReader<>(DataType.float32(), prop);
         for (int i = 0; i < reader.getElement(0).getNumEntries(); i++) {
-            Assert.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
-            Assert.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
+            Assertions.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
+            Assertions.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
         }
     }
 
@@ -132,19 +133,19 @@ public class PlyReaderTest {
         }
         StatusAssert.assertOk(reader.read(buf));
 
-        Assert.assertEquals(2, reader.getNumElements());
-        Assert.assertEquals(7, reader.getElement(0).getNumProperties());
-        Assert.assertEquals(1, reader.getElement(1).getNumProperties());
-        Assert.assertTrue(reader.getElement(1).getProperty(0).isList());
+        Assertions.assertEquals(2, reader.getNumElements());
+        Assertions.assertEquals(7, reader.getElement(0).getNumProperties());
+        Assertions.assertEquals(1, reader.getElement(1).getNumProperties());
+        Assertions.assertTrue(reader.getElement(1).getProperty(0).isList());
 
-        Assert.assertNotNull(reader.getElement(0).getPropertyByName("red"));
+        Assertions.assertNotNull(reader.getElement(0).getPropertyByName("red"));
         PlyProperty prop = reader.getElement(0).getPropertyByName("red");
         PlyPropertyReader<UByte> readerUInt8 = new PlyPropertyReader<>(DataType.uint8(), prop);
         PlyPropertyReader<UInt> readerUInt32 = new PlyPropertyReader<>(DataType.uint32(), prop);
         PlyPropertyReader<Float> readerFloat = new PlyPropertyReader<>(DataType.float32(), prop);
         for (int i = 0; i < reader.getElement(0).getNumEntries(); i++) {
-            Assert.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
-            Assert.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
+            Assertions.assertEquals(readerUInt8.readValue(i).intValue(), readerUInt32.readValue(i).intValue());
+            Assertions.assertEquals(readerUInt8.readValue(i).floatValue(), readerFloat.readValue(i), 1e-4f);
         }
     }
 

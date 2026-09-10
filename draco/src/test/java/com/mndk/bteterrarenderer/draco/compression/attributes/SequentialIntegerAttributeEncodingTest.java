@@ -28,8 +28,9 @@ import com.mndk.bteterrarenderer.draco.core.DecoderBuffer;
 import com.mndk.bteterrarenderer.draco.core.DracoDataType;
 import com.mndk.bteterrarenderer.draco.core.EncoderBuffer;
 import com.mndk.bteterrarenderer.draco.core.StatusAssert;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class SequentialIntegerAttributeEncodingTest {
 
@@ -67,7 +68,7 @@ public class SequentialIntegerAttributeEncodingTest {
         for (int i = 0; i < values.length; ++i) {
             Pointer<Integer> entryVal = Pointer.newInt();
             pa.getValue(AttributeValueIndex.of(i), entryVal);
-            Assert.assertEquals(values[i], entryVal.get().intValue());
+            Assertions.assertEquals(values[i], entryVal.get().intValue());
         }
     }
 

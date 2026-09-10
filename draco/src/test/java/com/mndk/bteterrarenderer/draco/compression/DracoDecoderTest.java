@@ -24,8 +24,9 @@ import com.mndk.bteterrarenderer.draco.core.*;
 import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.io.MeshIOUtil;
 import com.mndk.bteterrarenderer.draco.mesh.Mesh;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.File;
 
@@ -35,7 +36,7 @@ public class DracoDecoderTest {
     public void testSkipAttributeTransformUniqueId() {
         File file = DracoTestFileUtil.toFile("draco/testdata/cube_att.obj");
         Mesh srcMesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull(srcMesh);
+        Assertions.assertNotNull(srcMesh);
 
         UInt kPosUniqueId = UInt.of(7);
         UInt kNormUniqueId = UInt.of(42);
@@ -56,7 +57,7 @@ public class DracoDecoderTest {
         // First we decode the mesh without skipping the attribute transforms.
         DracoDecoder decoderNoSkip = new DracoDecoder();
         Mesh meshNoSkip = decoderNoSkip.decodeMeshFromBuffer(buffer).getValue();
-        Assert.assertNotNull(meshNoSkip);
+        Assertions.assertNotNull(meshNoSkip);
 
         // Now we decode it again while skipping some attributes.
         DracoDecoder decoderSkip = new DracoDecoder();
@@ -67,27 +68,27 @@ public class DracoDecoderTest {
         // Decode the input data into a geometry.
         buffer.init(encoderBuffer.getData(), encoderBuffer.size());
         Mesh meshSkip = decoderSkip.decodeMeshFromBuffer(buffer).getValue();
-        Assert.assertNotNull(meshSkip);
+        Assertions.assertNotNull(meshSkip);
 
         // Compare the unique ids.
         PointAttribute posAttNoSkip = meshNoSkip.getNamedAttribute(GeometryAttribute.Type.POSITION);
-        Assert.assertNotNull(posAttNoSkip);
-        Assert.assertEquals(DracoDataType.FLOAT32, posAttNoSkip.getDataType());
+        Assertions.assertNotNull(posAttNoSkip);
+        Assertions.assertEquals(DracoDataType.FLOAT32, posAttNoSkip.getDataType());
 
         PointAttribute posAttSkip = meshSkip.getNamedAttribute(GeometryAttribute.Type.POSITION);
-        Assert.assertNotNull(posAttSkip);
-        Assert.assertEquals(DracoDataType.INT32, posAttSkip.getDataType());
+        Assertions.assertNotNull(posAttSkip);
+        Assertions.assertEquals(DracoDataType.INT32, posAttSkip.getDataType());
 
         PointAttribute normAttNoSkip = meshNoSkip.getNamedAttribute(GeometryAttribute.Type.NORMAL);
-        Assert.assertNotNull(normAttNoSkip);
-        Assert.assertEquals(DracoDataType.FLOAT32, normAttNoSkip.getDataType());
+        Assertions.assertNotNull(normAttNoSkip);
+        Assertions.assertEquals(DracoDataType.FLOAT32, normAttNoSkip.getDataType());
 
         PointAttribute normAttSkip = meshSkip.getNamedAttribute(GeometryAttribute.Type.NORMAL);
-        Assert.assertNotNull(normAttSkip);
-        Assert.assertEquals(DracoDataType.INT32, normAttSkip.getDataType());
+        Assertions.assertNotNull(normAttSkip);
+        Assertions.assertEquals(DracoDataType.INT32, normAttSkip.getDataType());
 
-        Assert.assertEquals(posAttSkip.getUniqueId(), posAttNoSkip.getUniqueId());
-        Assert.assertEquals(normAttSkip.getUniqueId(), normAttNoSkip.getUniqueId());
+        Assertions.assertEquals(posAttSkip.getUniqueId(), posAttNoSkip.getUniqueId());
+        Assertions.assertEquals(normAttSkip.getUniqueId(), normAttNoSkip.getUniqueId());
     }
 
 }

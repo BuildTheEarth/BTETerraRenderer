@@ -34,12 +34,11 @@ val modLoaderName = findProperty("modLoaderName").toString()
 enum class SubprojectType(val isMod: Boolean) {
     CORE(false), FORGE(true), FABRIC(true), LIBRARY(false)
 }
-val subprojectType = {
-    if      (modLoaderName == "core")            SubprojectType.CORE
-    else if (modLoaderName.startsWith("forge"))  SubprojectType.FORGE
-    else if (modLoaderName.startsWith("fabric")) SubprojectType.FABRIC
-    else                                         SubprojectType.LIBRARY
-}()
+
+val subprojectType = if (modLoaderName == "core") SubprojectType.CORE
+else if (modLoaderName.startsWith("forge")) SubprojectType.FORGE
+else if (modLoaderName.startsWith("fabric")) SubprojectType.FABRIC
+else SubprojectType.LIBRARY
 
 val mcVersion = if (subprojectType.isMod)
     extensions.getByType<dev.kikugie.stonecutter.build.StonecutterBuildExtension>().current.parsed
@@ -93,49 +92,49 @@ dependencies {
     }
 
     // Shadow deps
-    "shadowDep"("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
-    "shadowDep"("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    "shadowDep"("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    "shadowDep"("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
-    "shadowDep"("de.javagl:jgltf-impl-v2:2.0.3")
-    "shadowDep"("de.javagl:jgltf-model:2.0.3")
+    "shadowDep"("com.fasterxml.jackson.core:jackson-annotations:2.18.10")
+    "shadowDep"("com.fasterxml.jackson.core:jackson-core:2.22.2")
+    "shadowDep"("com.fasterxml.jackson.core:jackson-databind:2.22.2")
+    "shadowDep"("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.2")
+    "shadowDep"("de.javagl:jgltf-impl-v2:2.0.4")
+    "shadowDep"("de.javagl:jgltf-model:2.0.4")
     "shadowDep"("net.daporkchop.lib:common:0.5.7-SNAPSHOT") { exclude(group = "io.netty") }
     "shadowDep"("net.daporkchop.lib:binary:0.5.7-SNAPSHOT") { exclude(group = "io.netty") }
     "shadowDep"("net.daporkchop.lib:unsafe:0.5.7-SNAPSHOT")
-    "shadowDep"("org.apache.xmlgraphics:batik-transcoder:1.17")
+    "shadowDep"("org.apache.xmlgraphics:batik-transcoder:1.19")
     "shadowDep"("xml-apis:xml-apis-ext:1.3.04")
     "shadowDep"("org.osgeo:proj4j:0.1.0")
-    "shadowDep"("org.yaml:snakeyaml:1.33")
+    "shadowDep"("org.yaml:snakeyaml:2.7")
 
     // Compile/test-only deps
     "compileAndTestOnly"("org.apache.logging.log4j:log4j-core:2.20.0")
-    "compileAndTestOnly"("org.apache.commons:commons-lang3:3.12.0")
-    "compileAndTestOnly"("commons-codec:commons-codec:1.16.0")
-    "compileAndTestOnly"("com.google.guava:guava:31.1-jre")
-    "compileAndTestOnly"("io.netty:netty-all:4.1.9.Final")
+    "compileAndTestOnly"("org.apache.commons:commons-lang3:3.20.0")
+    "compileAndTestOnly"("commons-codec:commons-codec:1.22.1")
+    "compileAndTestOnly"("com.google.guava:guava:33.7.1-jre")
+    "compileAndTestOnly"("io.netty:netty-all:4.2.18.Final")
     "compileAndTestOnly"("lzma:lzma:0.0.1")
     if (mcVersion == null) {
-        "compileAndTestOnly"("org.joml:joml:1.10.8")
+        "compileAndTestOnly"("org.joml:joml:1.10.9")
     }
 
     // Lombok
-    "compileOnly"("org.projectlombok:lombok:1.18.44")
-    "testCompileOnly"("org.projectlombok:lombok:1.18.44")
-    "annotationProcessor"("org.projectlombok:lombok:1.18.44")
+    "compileOnly"("org.projectlombok:lombok:1.18.48")
+    "testCompileOnly"("org.projectlombok:lombok:1.18.48")
+    "annotationProcessor"("org.projectlombok:lombok:1.18.48")
 
     // Tests
-    "testImplementation"("junit:junit:4.13.2")
-    "testImplementation"("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    "testImplementation"("org.apache.logging.log4j:log4j-core:2.20.0")
-    "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    "testRuntimeOnly"("junit:junit:4.13.2")
+    "testImplementation"(platform("org.junit:junit-bom:6.1.3"))
+    "testImplementation"("org.junit.jupiter:junit-jupiter")
+    "testImplementation"("org.apache.logging.log4j:log4j-core:2.25.5")
+    "testImplementation"("org.hamcrest:hamcrest:3.0")
+    "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
 
     if (mcVersion != null) {
         if (mcVersion > "1.12") { // for T++
             "shadowDep"("lzma:lzma:0.0.1")
         }
         if (mcVersion < "1.19.3") {
-            "shadowDep"("org.joml:joml:1.10.8") {
+            "shadowDep"("org.joml:joml:1.10.9") {
                 exclude(group = "org.jetbrains", module = "annotations")
             }
         }
@@ -292,5 +291,13 @@ if (mcVersion != null) {
         group = "build"
         description = "Cleans mod projects"
         dependsOn("clean")
+    }
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed")
     }
 }

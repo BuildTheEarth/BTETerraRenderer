@@ -24,8 +24,9 @@ import com.mndk.bteterrarenderer.datatype.vector.CppVector;
 import com.mndk.bteterrarenderer.draco.core.DecoderBuffer;
 import com.mndk.bteterrarenderer.draco.core.EncoderBuffer;
 import com.mndk.bteterrarenderer.draco.core.StatusAssert;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class MetadataEncoderTest {
 
@@ -56,12 +57,12 @@ public class MetadataEncoderTest {
         }
 
         private void checkBlobOfDataAreEqual(CppVector<UByte> data0, CppVector<UByte> data1) {
-            Assert.assertEquals(data0.size(), data1.size());
-            Assert.assertEquals(data0, data1);
+            Assertions.assertEquals(data0.size(), data1.size());
+            Assertions.assertEquals(data0, data1);
         }
 
         private void checkGeometryMetadatasAreEqual(GeometryMetadata metadata0, GeometryMetadata metadata1) {
-            Assert.assertEquals(metadata0.getAttributeMetadatas().size(), metadata1.getAttributeMetadatas().size());
+            Assertions.assertEquals(metadata0.getAttributeMetadatas().size(), metadata1.getAttributeMetadatas().size());
             for (int i = 0; i < metadata0.getAttributeMetadatas().size(); ++i) {
                 this.checkMetadatasAreEqual(metadata0.getAttributeMetadatas().get(i), metadata1.getAttributeMetadatas().get(i));
             }
@@ -69,13 +70,13 @@ public class MetadataEncoderTest {
         }
 
         private void checkMetadatasAreEqual(Metadata metadata0, Metadata metadata1) {
-            Assert.assertEquals(metadata0.getNumEntries(), metadata1.getNumEntries());
+            Assertions.assertEquals(metadata0.getNumEntries(), metadata1.getNumEntries());
             for (String entryName : metadata0.getEntries().keySet()) {
                 CppVector<UByte> data0 = metadata0.getEntries().get(entryName).getBuffer();
                 CppVector<UByte> data1 = metadata1.getEntries().get(entryName).getBuffer();
                 this.checkBlobOfDataAreEqual(data0, data1);
             }
-            Assert.assertEquals(metadata0.getSubMetadatas().size(), metadata1.getSubMetadatas().size());
+            Assertions.assertEquals(metadata0.getSubMetadatas().size(), metadata1.getSubMetadatas().size());
             for (String subMetadataName : metadata0.getSubMetadatas().keySet()) {
                 this.checkMetadatasAreEqual(metadata0.getSubMetadatas().get(subMetadataName), metadata1.getSubMetadatas().get(subMetadataName));
             }
@@ -86,7 +87,7 @@ public class MetadataEncoderTest {
     public void testSingleEntry() {
         Package p = new Package();
         p.metadata.addEntryInt("int", 100);
-        Assert.assertEquals(1, p.metadata.getNumEntries());
+        Assertions.assertEquals(1, p.metadata.getNumEntries());
 
         p.testEncodingMetadata();
     }
@@ -98,7 +99,7 @@ public class MetadataEncoderTest {
         p.metadata.addEntryDouble("double", 1.234);
         String entryValue = "test string entry";
         p.metadata.addEntryString("string", entryValue);
-        Assert.assertEquals(3, p.metadata.getNumEntries());
+        Assertions.assertEquals(3, p.metadata.getNumEntries());
 
         p.testEncodingMetadata();
     }
@@ -108,7 +109,7 @@ public class MetadataEncoderTest {
         Package p = new Package();
         p.metadata.addEntryIntArray("int_array", new int[] { 1, 2, 3 });
         p.metadata.addEntryDoubleArray("double_array", new double[] { 0.1, 0.2, 0.3 });
-        Assert.assertEquals(2, p.metadata.getNumEntries());
+        Assertions.assertEquals(2, p.metadata.getNumEntries());
 
         p.testEncodingMetadata();
     }
@@ -140,7 +141,7 @@ public class MetadataEncoderTest {
         AttributeMetadata attMetadata = new AttributeMetadata();
         attMetadata.addEntryInt("int", 100);
         attMetadata.addEntryString("name", "pos");
-        Assert.assertTrue(p.geometryMetadata.addAttributeMetadata(attMetadata));
+        Assertions.assertTrue(p.geometryMetadata.addAttributeMetadata(attMetadata));
 
         p.testEncodingGeometryMetadata();
     }

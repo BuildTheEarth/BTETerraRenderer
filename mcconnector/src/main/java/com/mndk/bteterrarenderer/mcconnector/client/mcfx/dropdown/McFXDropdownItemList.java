@@ -2,7 +2,6 @@ package com.mndk.bteterrarenderer.mcconnector.client.mcfx.dropdown;
 
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,7 +123,7 @@ class McFXDropdownItemList extends McFXDropdownItem {
     }
 
     @Override
-    void mouseClicked(@NotNull Stack<String> categoryPath) {
+    void mouseClicked(@Nonnull Stack<String> categoryPath) {
         if (this.mouseHovered) { this.toggleOpened(); return; }
         categoryPath.push(this.name);
         this.itemList.forEach(dropdownItem -> dropdownItem.mouseClicked(categoryPath));

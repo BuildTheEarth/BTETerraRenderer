@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.core.BTETerraRendererCore;
 import com.mndk.bteterrarenderer.mcconnector.client.TestEnvironmentDummyMinecraft;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
@@ -17,9 +17,9 @@ public class TileMapServiceCommonPropertiesTest {
         TileMapServiceCommonProperties properties =
                 BTETerraRenderer.JSON_MAPPER.readValue(json, TileMapServiceCommonProperties.class);
 
-        Assert.assertEquals(1, properties.getTileUrls().size());
-        Assert.assertEquals("https://example.com/{z}/{x}/{y}.png", properties.getTileUrl());
-        Assert.assertEquals("https://example.com/{z}/{x}/{y}.png", properties.getTileUrls().get(0).getUrl());
+        Assertions.assertEquals(1, properties.getTileUrls().size());
+        Assertions.assertEquals("https://example.com/{z}/{x}/{y}.png", properties.getTileUrl());
+        Assertions.assertEquals("https://example.com/{z}/{x}/{y}.png", properties.getTileUrls().get(0).getUrl());
     }
 
     @Test
@@ -28,10 +28,10 @@ public class TileMapServiceCommonPropertiesTest {
         TileMapServiceCommonProperties properties =
                 BTETerraRenderer.JSON_MAPPER.readValue(json, TileMapServiceCommonProperties.class);
 
-        Assert.assertEquals(2, properties.getTileUrls().size());
-        Assert.assertEquals("https://a/{z}/{x}/{y}.png", properties.getTileUrl());
-        Assert.assertEquals("https://a/{z}/{x}/{y}.png", properties.getTileUrls().get(0).getUrl());
-        Assert.assertEquals("https://b/{z}/{x}/{y}.png", properties.getTileUrls().get(1).getUrl());
+        Assertions.assertEquals(2, properties.getTileUrls().size());
+        Assertions.assertEquals("https://a/{z}/{x}/{y}.png", properties.getTileUrl());
+        Assertions.assertEquals("https://a/{z}/{x}/{y}.png", properties.getTileUrls().get(0).getUrl());
+        Assertions.assertEquals("https://b/{z}/{x}/{y}.png", properties.getTileUrls().get(1).getUrl());
     }
 
     @Test
@@ -39,7 +39,7 @@ public class TileMapServiceCommonPropertiesTest {
         String json = "{\"name\": {\"en_us\": \"Test\"}}";
         try {
             BTETerraRenderer.JSON_MAPPER.readValue(json, TileMapServiceCommonProperties.class);
-            Assert.fail("Expected exception for missing tile_url");
+            Assertions.fail("Expected exception for missing tile_url");
         } catch (Exception ignored) {}
     }
 
@@ -50,8 +50,8 @@ public class TileMapServiceCommonPropertiesTest {
                 BTETerraRenderer.JSON_MAPPER.readValue(input, TileMapServiceCommonProperties.class);
 
         String json = writeJson(properties);
-        Assert.assertTrue(json.contains("\"tile_url\":\"https://example.com/{z}/{x}/{y}.png\""));
-        Assert.assertFalse(json.contains("tile_urls"));
+        Assertions.assertTrue(json.contains("\"tile_url\":\"https://example.com/{z}/{x}/{y}.png\""));
+        Assertions.assertFalse(json.contains("tile_urls"));
     }
 
     @Test
@@ -61,8 +61,8 @@ public class TileMapServiceCommonPropertiesTest {
                 BTETerraRenderer.JSON_MAPPER.readValue(input, TileMapServiceCommonProperties.class);
 
         String json = writeJson(properties);
-        Assert.assertTrue(json.contains("\"tile_url\":[\"https://a/{z}/{x}/{y}.png\",\"https://b/{z}/{x}/{y}.png\"]"));
-        Assert.assertFalse(json.contains("tile_urls"));
+        Assertions.assertTrue(json.contains("\"tile_url\":[\"https://a/{z}/{x}/{y}.png\",\"https://b/{z}/{x}/{y}.png\"]"));
+        Assertions.assertFalse(json.contains("tile_urls"));
     }
 
     private static String writeJson(TileMapServiceCommonProperties properties) throws Exception {

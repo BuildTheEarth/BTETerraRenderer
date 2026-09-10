@@ -2,8 +2,8 @@ package com.mndk.bteterrarenderer.core.network;
 
 import com.mndk.bteterrarenderer.core.BTETerraRendererCore;
 import com.mndk.bteterrarenderer.mcconnector.client.TestEnvironmentDummyMinecraft;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assume;
 
 import java.util.concurrent.ExecutionException;
 
