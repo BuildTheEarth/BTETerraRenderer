@@ -1,6 +1,5 @@
 package com.mndk.bteterrarenderer.core.tile;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.core.BTETerraRendererCore;
@@ -68,7 +67,7 @@ public class TileMapServiceCommonPropertiesTest {
 
     private static String writeJson(TileMapServiceCommonProperties properties) throws Exception {
         StringWriter writer = new StringWriter();
-        JsonGenerator gen = new JsonFactory().createGenerator(writer);
+        JsonGenerator gen = BTETerraRenderer.JSON_MAPPER.createGenerator(writer);
         gen.writeStartObject();
         properties.write(gen);
         gen.writeEndObject();
