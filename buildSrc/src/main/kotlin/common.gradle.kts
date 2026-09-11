@@ -23,9 +23,46 @@ repositories {
             includeGroup("net.daporkchop.lib")
         }
     }
-    // maven("https://repo.opencollab.dev/snapshot/")
-    // maven("https://jitpack.io/")
-    // maven("https://repo.elytradev.com/")
+    repositories {
+        configureEach {
+            when (name) {
+                "Mojang" -> {
+                    content {
+                        excludeGroupByRegex("remapped\\..*")
+                        excludeModuleByRegex(
+                            "net\\.minecraft",
+                            "minecraft-(clientOnly|common)-.*"
+                        )
+                    }
+                }
+
+                "Fabric" -> {
+                    content {
+                        excludeGroupByRegex("remapped\\..*")
+                        excludeModuleByRegex(
+                            "net\\.minecraft",
+                            "minecraft-(clientOnly|common)-.*"
+                        )
+                        excludeGroupByRegex("com\\.mojang.*")
+                        excludeGroupByRegex("net\\.minecraft.*")
+                    }
+                }
+
+                "MavenRepo",
+                "MavenRepo2",
+                "MavenCentralLWJGL" -> {
+                    content {
+                        excludeGroupByRegex("net\\.fabricmc.*")
+                        excludeGroupByRegex("remapped\\..*")
+                        excludeModuleByRegex(
+                            "net\\.minecraft",
+                            "minecraft-(clientOnly|common)-.*"
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 val modLoaderName = findProperty("modLoaderName").toString()
