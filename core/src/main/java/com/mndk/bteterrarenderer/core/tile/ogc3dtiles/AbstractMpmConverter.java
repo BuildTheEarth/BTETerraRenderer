@@ -8,16 +8,9 @@ import com.mndk.bteterrarenderer.ogc3dtiles.math.Spheroid3;
 import com.mndk.bteterrarenderer.ogc3dtiles.math.SpheroidCoordinatesConverter;
 import com.mndk.bteterrarenderer.util.IOUtil;
 import com.mndk.bteterrarenderer.util.Loggers;
-import de.javagl.jgltf.model.ImageModel;
-import de.javagl.jgltf.model.MaterialModel;
-import de.javagl.jgltf.model.TextureModel;
-import de.javagl.jgltf.model.v1.MaterialModelV1;
-import de.javagl.jgltf.model.v2.MaterialModelV2;
+import de.javagl.jgltf.model.*;
 import lombok.RequiredArgsConstructor;
-import org.joml.Matrix3d;
-import org.joml.Matrix4d;
-import org.joml.Vector2f;
-import org.joml.Vector3d;
+import org.joml.*;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
@@ -63,12 +56,12 @@ public abstract class AbstractMpmConverter {
 
     public static BufferedImage readMaterialModel(MaterialModel materialModel) {
         BufferedImage image = null;
-        if (materialModel instanceof MaterialModelV1) {
+        if (materialModel instanceof TechniqueMaterialModel) {
             throw new UnsupportedOperationException("material model v1 not supported");
-        } else if (materialModel instanceof MaterialModelV2) {
-            MaterialModelV2 materialModelV2 = (MaterialModelV2) materialModel;
+        } else if (materialModel instanceof PbrMaterialModel) {
+            PbrMaterialModel pbrMaterialModel = (PbrMaterialModel) materialModel;
 
-            TextureModel textureModel = materialModelV2.getBaseColorTexture();
+            TextureModel textureModel = pbrMaterialModel.getBaseColorTextureModel();
             if (textureModel != null) image = readImageModel(textureModel.getImageModel());
             // TODO: read mag/minFilter, wrapS/T from texture
             // TODO: read emissive, normal, occlusion, and roughness texture from material

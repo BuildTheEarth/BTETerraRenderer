@@ -47,7 +47,7 @@ public class JOMLUtils {
      * @param data The quaternion data
      * @return A new instance of {@link Quaterniond}
      */
-    public Quaterniond quaternionXYZW(float[] data) {
+    public Quaterniond quaternionXYZW(double[] data) {
         return new Quaterniond(data[0], data[1], data[2], data[3]);
     }
 

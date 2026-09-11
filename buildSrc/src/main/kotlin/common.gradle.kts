@@ -132,8 +132,8 @@ dependencies {
     "shadowDep"("com.fasterxml.jackson.core:jackson-core:2.22.2")
     "shadowDep"("com.fasterxml.jackson.core:jackson-databind:2.22.2")
     "shadowDep"("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.2")
-    "shadowDep"("de.javagl:jgltf-impl-v2:2.0.4")
-    "shadowDep"("de.javagl:jgltf-model:2.0.4")
+    "shadowDep"("de.javagl:jgltf-impl-v2:3.0.1")
+    "shadowDep"("de.javagl:jgltf-model:3.0.1")
     "shadowDep"("net.daporkchop.lib:common:0.5.7-SNAPSHOT") { exclude(group = "io.netty") }
     "shadowDep"("net.daporkchop.lib:binary:0.5.7-SNAPSHOT") { exclude(group = "io.netty") }
     "shadowDep"("net.daporkchop.lib:unsafe:0.5.7-SNAPSHOT")
