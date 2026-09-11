@@ -15,7 +15,6 @@ tasks.named<JavaCompile>("compileJava") {
 
 repositories {
     mavenCentral()
-    maven("https://repo.spongepowered.org/maven/")
     exclusiveContent {
         forRepository {
             maven("https://maven.daporkchop.net/")
@@ -112,7 +111,7 @@ dependencies {
     "compileAndTestOnly"("commons-codec:commons-codec:1.22.1")
     "compileAndTestOnly"("com.google.guava:guava:33.7.1-jre")
     "compileAndTestOnly"("io.netty:netty-all:4.2.18.Final")
-    "compileAndTestOnly"("lzma:lzma:0.0.1")
+    "compileAndTestOnly"("org.tukaani:xz:1.12")
     if (mcVersion == null) {
         "compileAndTestOnly"("org.joml:joml:1.10.9")
     }
@@ -131,7 +130,7 @@ dependencies {
 
     if (mcVersion != null) {
         if (mcVersion > "1.12") { // for T++
-            "shadowDep"("lzma:lzma:0.0.1")
+            "shadowDep"("org.tukaani:xz:1.12")
         }
         if (mcVersion < "1.19.3") {
             "shadowDep"("org.joml:joml:1.10.9") {
@@ -172,7 +171,7 @@ if (mcVersion != null) {
         if (mcVersion > "1.12") {
             dependencyReplacements.putAll(
                 mapOf(
-                    // "LZMA" to "lzma" // Unusual package name, got NoClassDefFoundError
+                    "org.tukaani.xz" to "xz"
                 )
             )
         }

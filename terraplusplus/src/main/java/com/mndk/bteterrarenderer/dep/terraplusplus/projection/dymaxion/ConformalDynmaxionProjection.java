@@ -1,6 +1,5 @@
 package com.mndk.bteterrarenderer.dep.terraplusplus.projection.dymaxion;
 
-import LZMA.LzmaInputStream;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mndk.bteterrarenderer.dep.terraplusplus.util.MathUtils;
 import io.netty.buffer.ByteBuf;
@@ -10,6 +9,7 @@ import net.daporkchop.lib.common.function.io.IOSupplier;
 import net.daporkchop.lib.common.reference.ReferenceStrength;
 import net.daporkchop.lib.common.reference.cache.Cached;
 import net.daporkchop.lib.common.util.PArrays;
+import org.tukaani.xz.LZMAInputStream;
 
 import java.io.InputStream;
 
@@ -29,7 +29,7 @@ public class ConformalDynmaxionProjection extends DymaxionProjection {
         double[][] vy = PArrays.filledBy(SIDE_LENGTH + 1, double[][]::new, i -> new double[SIDE_LENGTH + 1 - i]);
 
         ByteBuf buf;
-        try (InputStream in = new LzmaInputStream(ConformalDynmaxionProjection.class.getResourceAsStream("conformal.lzma"))) {
+        try (InputStream in = new LZMAInputStream(ConformalDynmaxionProjection.class.getResourceAsStream("conformal.lzma"))) {
             buf = Unpooled.wrappedBuffer(StreamUtil.toByteArray(in));
         }
 
