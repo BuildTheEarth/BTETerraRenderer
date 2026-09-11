@@ -36,11 +36,11 @@ public class TileMapServiceStateLoader implements ConfigLoader<CategoryMap<TileM
     }
 
     private void applyRawFileData(@Nonnull CategoryMap<TileMapService> tmsCategoryMap, TileMapServicePropertyDTO raw) {
-        raw.getCategories().forEach((categoryName, category) -> category.forEach((id, map) -> {
-            TileMapService tms = tmsCategoryMap.getItem(categoryName, id);
+        raw.getCategories().forEach((categoryPath, id, map) -> {
+            TileMapService tms = tmsCategoryMap.getItem(categoryPath, id);
             if (tms == null || map == null) return; // skip if TMS not found
             this.applyRawStates(tms, map);
-        }));
+        });
     }
 
     private void applyRawStates(@Nonnull TileMapService tms, Map<String, Object> rawValues) {
@@ -68,11 +68,11 @@ public class TileMapServiceStateLoader implements ConfigLoader<CategoryMap<TileM
 
     private CategoryMap<Map<String, Object>> prepareRawFileData(@Nonnull CategoryMap<TileMapService> tmsCategoryMap) {
         CategoryMap<Map<String, Object>> map = new CategoryMap<>();
-        tmsCategoryMap.forEach((categoryName, category) -> category.forEach((id, tms) -> {
+        tmsCategoryMap.forEach((categoryPath, id, tms) -> {
             Map<String, Object> propertyValues = new HashMap<>();
             this.saveRawStates(tms, propertyValues);
-            map.setItem(categoryName, id, propertyValues);
-        }));
+            map.setItem(categoryPath, id, propertyValues);
+        });
         return map;
     }
 
