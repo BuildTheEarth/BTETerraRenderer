@@ -27,7 +27,7 @@ public class LoaderRegistry {
 
     public TileMapService getCurrentTMS() {
         BTETerraRendererConfig.GeneralConfig config = BTETerraRendererConfig.GENERAL;
-        return TMS_YML.getResult().getItem(config.mapServiceCategory, config.mapServiceId);
+        return TMS_YML.getResult().getItem(config.getMapServiceCategoryPath(), config.mapServiceId);
     }
 
     public TileMapServiceLoader tms() {

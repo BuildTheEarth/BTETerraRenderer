@@ -26,6 +26,14 @@ public class BTETerraRendererConfig {
 
         @ConfigName("Map Service ID")
         public String mapServiceId = "osm";
+
+        public String[] getMapServiceCategoryPath() {
+            return this.mapServiceCategory.split("/");
+        }
+
+        public void setMapServiceCategoryPath(String[] path) {
+            this.mapServiceCategory = String.join("/", path);
+        }
     }
 
     @ConfigName("Hologram Settings")

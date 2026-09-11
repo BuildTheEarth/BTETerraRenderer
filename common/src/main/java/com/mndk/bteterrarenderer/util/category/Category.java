@@ -16,11 +16,22 @@ import java.util.Set;
 public class Category<T> {
     // internal map of id to wrapper
     private final Map<String, T> entries = new LinkedHashMap<>();
+    private final Map<String, Category<T>> subcategories = new LinkedHashMap<>();
 
     public <E extends Throwable> void forEach(ThrowableBiConsumer<String, T, E> consumer) throws E {
         for (Entry<String, T> entry : entries.entrySet()) {
             consumer.accept(entry.getKey(), entry.getValue());
         }
+    }
+
+    public void forEach(String[] path, CategoryMap.PathConsumer<T> consumer) {
+        entries.forEach((id, item) -> consumer.accept(path, id, item));
+        subcategories.forEach((subName, subcategory) -> {
+            String[] subPath = new String[path.length + 1];
+            System.arraycopy(path, 0, subPath, 0, path.length);
+            subPath[path.length] = subName;
+            subcategory.forEach(subPath, consumer);
+        });
     }
 
     // accessors for entries
