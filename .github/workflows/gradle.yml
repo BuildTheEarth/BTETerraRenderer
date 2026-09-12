@@ -38,14 +38,16 @@ jobs:
           cache-provider: 'basic'
 
       - name: Run tests
+        shell: bash
         run: |
+          CI_SINGLE_BUILD="$(jq -er '.versions[0] | select(type == "string" and length > 0)' versions.json)"
+          export CI_SINGLE_BUILD
+
           ./gradlew \
             :draco:test \
             :mcconnector:test \
             :ogc3dtiles:test \
             :core:test
-        env:
-          CI_SINGLE_BUILD: fabric26.2:26.2:build.fabric.gradle.kts
 
   generate-build-matrix:
     runs-on: ubuntu-latest
