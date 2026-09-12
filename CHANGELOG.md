@@ -10,6 +10,7 @@ Use the release tag as the heading so the release workflow can match it.
 * Fixed rendering issues on Minecraft versions before 1.21.6
 * Improved SVG rendering performance
 * Fixed the game sometimes failing to exit cleanly
+* Fixed clickable links on Minecraft 1.21.5+.
 
 ## v1.04.0
 
