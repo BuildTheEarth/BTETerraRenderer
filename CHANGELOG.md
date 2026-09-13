@@ -11,6 +11,9 @@ Use the release tag as the heading so the release workflow can match it.
 * Improved SVG rendering performance
 * Fixed the game sometimes failing to exit cleanly
 * Fixed clickable links on Minecraft 1.21.5+.
+* Support multiple tile URL templates for flat tile maps
+* Support nested map source categories
+* Fixed loading of some map icons
 
 ## v1.04.0
 
