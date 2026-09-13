@@ -20,8 +20,9 @@ package com.mndk.bteterrarenderer.draco.core;
 import com.mndk.bteterrarenderer.datatype.number.UInt;
 import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
 import com.mndk.bteterrarenderer.datatype.pointer.RawPointer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class BufferBitCodingTest {
 
@@ -35,7 +36,7 @@ public class BufferBitCodingTest {
 
         for (int i = 0; i < bytesToEncode; ++i) {
             encoder.putBits(UInt.of(data[i]), 8);
-            Assert.assertEquals((i + 1) * 8, encoder.bits());
+            Assertions.assertEquals((i + 1) * 8, encoder.bits());
         }
 
         DecoderBuffer.BitDecoder decoder = new DecoderBuffer.BitDecoder();
@@ -44,10 +45,10 @@ public class BufferBitCodingTest {
             byte datum = data[i];
             Pointer<UInt> x = Pointer.newUInt();
             StatusAssert.assertOk(decoder.getBits(8, x));
-            Assert.assertEquals("Failed to read byte #" + i + ": " + datum, datum, x.get().byteValue());
+            Assertions.assertEquals(datum, x.get().byteValue(), "Failed to read byte #" + i + ": " + datum);
         }
 
-        Assert.assertEquals(bytesToEncode * 8, decoder.bitsDecoded());
+        Assertions.assertEquals(bytesToEncode * 8, decoder.bitsDecoded());
     }
 
     @Test
@@ -74,11 +75,11 @@ public class BufferBitCodingTest {
             StatusAssert.assertOk(decoder.getBits(numBits, x));
             int bitsToShift = 8 - numBits;
             byte testByte = (byte) (((datum << bitsToShift) & 0xff) >> bitsToShift);
-            Assert.assertEquals(testByte, x.get().byteValue());
+            Assertions.assertEquals(testByte, x.get().byteValue());
             bitsToDecode -= 8;
         }
 
-        Assert.assertEquals(bitsToEncode, decoder.bitsDecoded());
+        Assertions.assertEquals(bitsToEncode, decoder.bitsDecoded());
     }
 
     @Test
@@ -92,10 +93,10 @@ public class BufferBitCodingTest {
         for (int i = 0; i < 16; ++i) {
             Pointer<UInt> x = Pointer.newUInt();
             StatusAssert.assertOk(decoder.getBits(1, x));
-            Assert.assertEquals((i % 2), x.get().intValue());
+            Assertions.assertEquals((i % 2), x.get().intValue());
         }
 
-        Assert.assertEquals(16, decoder.bitsDecoded());
+        Assertions.assertEquals(16, decoder.bitsDecoded());
     }
 
     @Test
@@ -109,13 +110,13 @@ public class BufferBitCodingTest {
         for (int i = 0; i < 2; ++i) {
             Pointer<UInt> x = Pointer.newUInt();
             StatusAssert.assertOk(decoder.getBits(16, x));
-            Assert.assertEquals(0x5476, x.get().intValue());
-            Assert.assertEquals(16 + (i * 32), decoder.bitsDecoded());
+            Assertions.assertEquals(0x5476, x.get().intValue());
+            Assertions.assertEquals(16 + (i * 32), decoder.bitsDecoded());
 
             StatusAssert.assertOk(decoder.getBits(16, x));
-            Assert.assertNotNull(x);
-            Assert.assertEquals(0x1032, x.get().intValue());
-            Assert.assertEquals(32 + (i * 32), decoder.bitsDecoded());
+            Assertions.assertNotNull(x);
+            Assertions.assertEquals(0x1032, x.get().intValue());
+            Assertions.assertEquals(32 + (i * 32), decoder.bitsDecoded());
         }
     }
 

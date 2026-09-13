@@ -1,6 +1,6 @@
 package com.mndk.bteterrarenderer.draco.core;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class StatusAssert {
 
@@ -22,7 +22,7 @@ public class StatusAssert {
 
     public static void assertError(Status status) {
         if (status.isOk()) {
-            Assert.fail("Expected error, but got OK");
+            Assertions.fail("Expected error, but got OK");
         }
     }
 

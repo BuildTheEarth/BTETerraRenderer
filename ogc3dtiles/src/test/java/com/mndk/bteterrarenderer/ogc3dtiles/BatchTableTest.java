@@ -2,8 +2,9 @@ package com.mndk.bteterrarenderer.ogc3dtiles;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mndk.bteterrarenderer.ogc3dtiles.table.BatchTable;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class BatchTableTest {
     @Test
@@ -18,8 +19,8 @@ public class BatchTableTest {
         byte[] binary = new byte[] { 12, 0, 0, 0, 24, 0, 0, 0 };
         BatchTable table = BatchTable.from(2, json, binary);
 
-        Assert.assertEquals("unique id", table.get(0).getByName("id"));
-        Assert.assertEquals(2015, table.get(1).getByName("yearBuilt"));
-        Assert.assertEquals(24, table.get(1).getByName("binary"));
+        Assertions.assertEquals("unique id", table.get(0).getByName("id"));
+        Assertions.assertEquals(2015, table.get(1).getByName("yearBuilt"));
+        Assertions.assertEquals(24, table.get(1).getByName("binary"));
     }
 }

@@ -30,8 +30,9 @@ import com.mndk.bteterrarenderer.draco.core.*;
 import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.io.MeshIOUtil;
 import com.mndk.bteterrarenderer.draco.mesh.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.File;
 
@@ -43,7 +44,7 @@ public class MeshEdgebreakerEncodingTest {
 
     private void testFile(File file, int compressionLevel) {
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + file);
         testMesh(mesh, compressionLevel);
     }
 
@@ -94,7 +95,7 @@ public class MeshEdgebreakerEncodingTest {
     public void testEncoderReuse() {
         File file = DracoTestFileUtil.toFile("draco/testdata/test_pos_color.ply");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + file);
 
         MeshEdgebreakerEncoder encoder = new MeshEdgebreakerEncoder();
         EncoderOptions encoderOptions = EncoderOptions.createDefaultOptions();
@@ -104,9 +105,9 @@ public class MeshEdgebreakerEncodingTest {
         StatusAssert.assertOk(encoder.encode(encoderOptions, buffer0));
         StatusAssert.assertOk(encoder.encode(encoderOptions, buffer1));
 
-        Assert.assertEquals(buffer0.size(), buffer1.size());
+        Assertions.assertEquals(buffer0.size(), buffer1.size());
         for (int i = 0; i < buffer0.size(); ++i) {
-            Assert.assertEquals(buffer0.getData().getRawByte(i), buffer1.getData().getRawByte(i));
+            Assertions.assertEquals(buffer0.getData().getRawByte(i), buffer1.getData().getRawByte(i));
         }
     }
 
@@ -114,7 +115,7 @@ public class MeshEdgebreakerEncodingTest {
     public void testDecoderReuse() {
         File file = DracoTestFileUtil.toFile("draco/testdata/test_pos_color.ply");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + file);
 
         MeshEdgebreakerEncoder encoder = new MeshEdgebreakerEncoder();
         EncoderOptions encoderOptions = EncoderOptions.createDefaultOptions();
@@ -145,7 +146,7 @@ public class MeshEdgebreakerEncodingTest {
     public void testSingleConnectivityEncoding() {
         File file = DracoTestFileUtil.toFile("draco/testdata/cube_att.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + file);
 
         for (int i = 0; i < 2; ++i) {
             EncoderOptionsBase<GeometryAttribute.Type> options = EncoderOptionsBase.createDefaultOptions();
@@ -166,12 +167,12 @@ public class MeshEdgebreakerEncodingTest {
 
             DracoDecoder decoder = new DracoDecoder();
             Mesh decMesh = decoder.decodeMeshFromBuffer(decBuffer).getValueOr(Status::throwException);
-            Assert.assertNotNull(decMesh);
-            Assert.assertEquals(24, decMesh.getNumPoints());
-            Assert.assertEquals(3, decMesh.getNumAttributes());
-            Assert.assertEquals(i == 0 ? 24 : 8, decMesh.getAttribute(0).size());
-            Assert.assertEquals(24, decMesh.getAttribute(1).size());
-            Assert.assertEquals(24, decMesh.getAttribute(2).size());
+            Assertions.assertNotNull(decMesh);
+            Assertions.assertEquals(24, decMesh.getNumPoints());
+            Assertions.assertEquals(3, decMesh.getNumAttributes());
+            Assertions.assertEquals(i == 0 ? 24 : 8, decMesh.getAttribute(0).size());
+            Assertions.assertEquals(24, decMesh.getAttribute(1).size());
+            Assertions.assertEquals(24, decMesh.getAttribute(2).size());
         }
     }
 
@@ -192,10 +193,10 @@ public class MeshEdgebreakerEncodingTest {
             Pointer.wrap(new float[] { 0.f, 0.f, 0.f }), Pointer.wrap(new float[] { 0.f, 0.f, 1.f })
         );
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull(mesh);
-        Assert.assertEquals(2, mesh.getNumAttributes());
-        Assert.assertEquals(GeometryAttribute.Type.NORMAL, mesh.getAttribute(0).getAttributeType());
-        Assert.assertEquals(GeometryAttribute.Type.POSITION, mesh.getAttribute(1).getAttributeType());
+        Assertions.assertNotNull(mesh);
+        Assertions.assertEquals(2, mesh.getNumAttributes());
+        Assertions.assertEquals(GeometryAttribute.Type.NORMAL, mesh.getAttribute(0).getAttributeType());
+        Assertions.assertEquals(GeometryAttribute.Type.POSITION, mesh.getAttribute(1).getAttributeType());
 
         EncoderBuffer buffer = new EncoderBuffer();
         DracoEncoder encoder = new DracoEncoder();
@@ -210,17 +211,17 @@ public class MeshEdgebreakerEncodingTest {
 
         DracoDecoder decoder = new DracoDecoder();
         Mesh decMesh = decoder.decodeMeshFromBuffer(decBuffer).getValueOr(Status::throwException);
-        Assert.assertNotNull(decMesh);
-        Assert.assertEquals(2, decMesh.getNumAttributes());
-        Assert.assertEquals(GeometryAttribute.Type.POSITION, decMesh.getAttribute(0).getAttributeType());
-        Assert.assertEquals(GeometryAttribute.Type.NORMAL, decMesh.getAttribute(1).getAttributeType());
+        Assertions.assertNotNull(decMesh);
+        Assertions.assertEquals(2, decMesh.getNumAttributes());
+        Assertions.assertEquals(GeometryAttribute.Type.POSITION, decMesh.getAttribute(0).getAttributeType());
+        Assertions.assertEquals(GeometryAttribute.Type.NORMAL, decMesh.getAttribute(1).getAttributeType());
     }
 
     @Test
     public void testDegenerateMesh() {
         File file = DracoTestFileUtil.toFile("draco/testdata/degenerate_mesh.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model " + file);
         EncoderBuffer buffer = new EncoderBuffer();
         MeshEdgebreakerEncoder encoder = new MeshEdgebreakerEncoder();
         EncoderOptions encoderOptions = EncoderOptions.createDefaultOptions();

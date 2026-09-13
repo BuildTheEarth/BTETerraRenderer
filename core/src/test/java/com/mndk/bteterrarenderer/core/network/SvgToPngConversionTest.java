@@ -2,8 +2,8 @@ package com.mndk.bteterrarenderer.core.network;
 
 import com.mndk.bteterrarenderer.core.BTETerraRendererCore;
 import com.mndk.bteterrarenderer.mcconnector.client.TestEnvironmentDummyMinecraft;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
@@ -11,8 +11,8 @@ public class SvgToPngConversionTest {
 
     @Test
     public void givenUrl_testConversion() throws ExecutionException, InterruptedException {
-        Assume.assumeFalse("Skipping network-dependent test in CI",
-                "true".equalsIgnoreCase(System.getenv("CI")));
+        Assumptions.assumeFalse("true".equalsIgnoreCase(System.getenv("CI")),
+                "Skipping network-dependent test in CI");
 
         String url = "https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg";
         HttpResourceManager.downloadAsImage(url, -1, -1, -1).get();

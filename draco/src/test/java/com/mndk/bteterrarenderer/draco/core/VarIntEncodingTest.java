@@ -19,8 +19,9 @@ package com.mndk.bteterrarenderer.draco.core;
 
 import com.mndk.bteterrarenderer.datatype.PointerAssert;
 import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class VarIntEncodingTest {
 
@@ -33,7 +34,7 @@ public class VarIntEncodingTest {
         decoderBuffer.init(buffer.getData(), buffer.size());
         Pointer<T> decodedRef = number.getType().newOwned();
         decoderBuffer.decodeVarint(decodedRef);
-        Assert.assertEquals(number.get(), decodedRef.get());
+        Assertions.assertEquals(number.get(), decodedRef.get());
     }
 
     @Test

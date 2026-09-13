@@ -18,8 +18,9 @@
 package com.mndk.bteterrarenderer.draco.compression.config;
 
 import com.mndk.bteterrarenderer.draco.attributes.GeometryAttribute;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class DecoderOptionsTest {
 
@@ -29,19 +30,19 @@ public class DecoderOptionsTest {
         // DecoderOptions class instance.
         DecoderOptions options = new DecoderOptions();
         options.setGlobalInt("test", 3);
-        Assert.assertEquals(3, options.getGlobalInt("test", -1));
+        Assertions.assertEquals(3, options.getGlobalInt("test", -1));
 
         options.setAttributeInt(GeometryAttribute.Type.POSITION, "test", 1);
         options.setAttributeInt(GeometryAttribute.Type.GENERIC, "test", 2);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 3,
                 options.getAttributeInt(GeometryAttribute.Type.TEX_COORD, "test", -1)
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 1,
                 options.getAttributeInt(GeometryAttribute.Type.POSITION, "test", -1)
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 2,
                 options.getAttributeInt(GeometryAttribute.Type.GENERIC, "test", -1)
         );
@@ -56,19 +57,19 @@ public class DecoderOptionsTest {
         options.setAttributeInt(GeometryAttribute.Type.POSITION, "test", 2);
         options.setAttributeInt(GeometryAttribute.Type.TEX_COORD, "test", 3);
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 2,
                 options.getAttributeInt(GeometryAttribute.Type.POSITION, "test", -1)
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 -1,
                 options.getAttributeInt(GeometryAttribute.Type.POSITION, "test2", -1)
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 3,
                 options.getAttributeInt(GeometryAttribute.Type.TEX_COORD, "test", -1)
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 1,
                 options.getAttributeInt(GeometryAttribute.Type.NORMAL, "test", -1)
         );

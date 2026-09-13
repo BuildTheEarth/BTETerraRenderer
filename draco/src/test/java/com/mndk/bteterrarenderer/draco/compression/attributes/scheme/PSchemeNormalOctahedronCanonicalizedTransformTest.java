@@ -20,8 +20,9 @@ package com.mndk.bteterrarenderer.draco.compression.attributes.scheme;
 import com.mndk.bteterrarenderer.datatype.DataType;
 import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
 import com.mndk.bteterrarenderer.draco.core.VectorD;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class PSchemeNormalOctahedronCanonicalizedTransformTest {
 
@@ -31,14 +32,14 @@ public class PSchemeNormalOctahedronCanonicalizedTransformTest {
         int[] p = { px + 7, py + 7 };
         int[] corr = { 500, 500 };
         transform.computeCorrection(Pointer.wrap(o), Pointer.wrap(p), Pointer.wrap(corr));
-        Assert.assertEquals(corr[0], (cx + 15) % 15);
-        Assert.assertEquals(corr[1], (cy + 15) % 15);
+        Assertions.assertEquals(corr[0], (cx + 15) % 15);
+        Assertions.assertEquals(corr[1], (cy + 15) % 15);
     }
 
     private void testGetRotationCount(PSchemeNormalOctahedronCanonicalizedEncodingTransform<Integer> transform,
                                       VectorD.D2<Integer> pred, int rotDir) {
         int rotationCount = transform.getRotationCount(pred);
-        Assert.assertEquals(rotDir, rotationCount);
+        Assertions.assertEquals(rotDir, rotationCount);
     }
 
     private void testRotateRepresentation(PSchemeNormalOctahedronCanonicalizedEncodingTransform<Integer> transform,
@@ -47,33 +48,33 @@ public class PSchemeNormalOctahedronCanonicalizedTransformTest {
         int rotationCount = transform.getRotationCount(pred);
         VectorD.D2<Integer> resOrg = transform.rotatePoint(org, rotationCount);
         VectorD.D2<Integer> resPred = transform.rotatePoint(pred, rotationCount);
-        Assert.assertEquals(rotOrg.get(0), resOrg.get(0));
-        Assert.assertEquals(rotOrg.get(1), resOrg.get(1));
-        Assert.assertEquals(rotPred.get(0), resPred.get(0));
-        Assert.assertEquals(rotPred.get(1), resPred.get(1));
+        Assertions.assertEquals(rotOrg.get(0), resOrg.get(0));
+        Assertions.assertEquals(rotOrg.get(1), resOrg.get(1));
+        Assertions.assertEquals(rotPred.get(0), resPred.get(0));
+        Assertions.assertEquals(rotPred.get(1), resPred.get(1));
     }
 
     @Test
     public void init() {
         PSchemeNormalOctahedronCanonicalizedEncodingTransform<Integer> transform =
                 new PSchemeNormalOctahedronCanonicalizedEncodingTransform<>(DataType.int32(), 15);
-        Assert.assertTrue(transform.areCorrectionsPositive());
+        Assertions.assertTrue(transform.areCorrectionsPositive());
     }
 
     @Test
     public void isInBottomLeft() {
         PSchemeNormalOctahedronCanonicalizedEncodingTransform<Integer> transform =
                 new PSchemeNormalOctahedronCanonicalizedEncodingTransform<>(DataType.int32(), 15);
-        Assert.assertTrue(transform.isInBottomLeft(VectorD.int2(0, 0)));
-        Assert.assertTrue(transform.isInBottomLeft(VectorD.int2(-1, -1)));
-        Assert.assertTrue(transform.isInBottomLeft(VectorD.int2(-7, -7)));
+        Assertions.assertTrue(transform.isInBottomLeft(VectorD.int2(0, 0)));
+        Assertions.assertTrue(transform.isInBottomLeft(VectorD.int2(-1, -1)));
+        Assertions.assertTrue(transform.isInBottomLeft(VectorD.int2(-7, -7)));
 
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(1, 1)));
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(7, 7)));
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(-1, 1)));
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(-7, 7)));
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(1, -1)));
-        Assert.assertFalse(transform.isInBottomLeft(VectorD.int2(7, -7)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(1, 1)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(7, 7)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(-1, 1)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(-7, 7)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(1, -1)));
+        Assertions.assertFalse(transform.isInBottomLeft(VectorD.int2(7, -7)));
     }
 
     @Test
@@ -189,9 +190,9 @@ public class PSchemeNormalOctahedronCanonicalizedTransformTest {
     public void interfaceTest() {
         PSchemeNormalOctahedronCanonicalizedEncodingTransform<Integer> transform =
                 new PSchemeNormalOctahedronCanonicalizedEncodingTransform<>(DataType.int32(), 15);
-        Assert.assertEquals(15, transform.getMaxQuantizedValue().longValue());
-        Assert.assertEquals(7, transform.getCenterValue().longValue());
-        Assert.assertEquals(4, transform.getQuantizationBits());
+        Assertions.assertEquals(15, transform.getMaxQuantizedValue().longValue());
+        Assertions.assertEquals(7, transform.getCenterValue().longValue());
+        Assertions.assertEquals(4, transform.getQuantizationBits());
     }
 
 }

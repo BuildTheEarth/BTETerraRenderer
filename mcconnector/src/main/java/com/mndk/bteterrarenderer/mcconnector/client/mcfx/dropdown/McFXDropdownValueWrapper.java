@@ -4,7 +4,6 @@ import com.mndk.bteterrarenderer.mcconnector.client.graphics.NativeTextureWrappe
 import com.mndk.bteterrarenderer.mcconnector.client.gui.GuiDrawContextWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,7 +19,7 @@ class McFXDropdownValueWrapper extends McFXDropdownItem {
     final String id;
 
     @Override
-    int calculateHeight(@NotNull Stack<String> categoryPath) {
+    int calculateHeight(@Nonnull Stack<String> categoryPath) {
         categoryPath.push(this.id);
         String name = parent.getNameWithRoot(categoryPath);
         int result = parent.getDefaultFont().getWordWrappedHeight(name, parent.getItemInnerWidth()) + ITEM_PADDING_VERTICAL * 2;
@@ -44,7 +43,7 @@ class McFXDropdownValueWrapper extends McFXDropdownItem {
     @Override
     void drawItem(
             GuiDrawContextWrapper drawContextWrapper,
-            @NotNull Stack<String> categoryPath,
+            @Nonnull Stack<String> categoryPath,
             @Nullable String[] selectedCategoryPath,
             int selectedDepth, boolean isLast
     ) {
@@ -79,7 +78,7 @@ class McFXDropdownValueWrapper extends McFXDropdownItem {
     }
 
     @Override
-    void mouseClicked(@NotNull Stack<String> categoryPath) {
+    void mouseClicked(@Nonnull Stack<String> categoryPath) {
         categoryPath.push(this.id);
         if (this.mouseHovered) {
             parent.setSelectedCategoryPath(categoryPath);

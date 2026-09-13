@@ -18,11 +18,11 @@
 package com.mndk.bteterrarenderer.draco.mesh;
 
 import com.mndk.bteterrarenderer.draco.core.Status;
-import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.core.StatusAssert;
+import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.io.MeshIOUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -32,7 +32,7 @@ public class MeshAreEquivalentTest {
     public void testOnIdenticalMesh() {
         File file = DracoTestFileUtil.toFile("draco/testdata/test_nm.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model: " + file);
 
         MeshAreEquivalent equiv = new MeshAreEquivalent();
         StatusAssert.assertOk(equiv.equals(mesh, mesh));
@@ -46,9 +46,9 @@ public class MeshAreEquivalentTest {
         Mesh mesh0 = MeshIOUtil.decode(file0).getValueOr(Status::throwException);
         Mesh mesh1 = MeshIOUtil.decode(file1).getValueOr(Status::throwException);
         Mesh mesh2 = MeshIOUtil.decode(file2).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file0, mesh0);
-        Assert.assertNotNull("Failed to load test model: " + file1, mesh1);
-        Assert.assertNotNull("Failed to load test model: " + file2, mesh2);
+        Assertions.assertNotNull(mesh0, "Failed to load test model: " + file0);
+        Assertions.assertNotNull(mesh1, "Failed to load test model: " + file1);
+        Assertions.assertNotNull(mesh2, "Failed to load test model: " + file2);
 
         MeshAreEquivalent equiv = new MeshAreEquivalent();
         StatusAssert.assertOk(equiv.equals(mesh0, mesh0));
@@ -62,8 +62,8 @@ public class MeshAreEquivalentTest {
         File file1 = DracoTestFileUtil.toFile("draco/testdata/two_faces_312.obj");
         Mesh mesh0 = MeshIOUtil.decode(file0).getValueOr(Status::throwException);
         Mesh mesh1 = MeshIOUtil.decode(file1).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file0, mesh0);
-        Assert.assertNotNull("Failed to load test model: " + file1, mesh1);
+        Assertions.assertNotNull(mesh0, "Failed to load test model: " + file0);
+        Assertions.assertNotNull(mesh1, "Failed to load test model: " + file1);
 
         MeshAreEquivalent equiv = new MeshAreEquivalent();
         StatusAssert.assertOk(equiv.equals(mesh0, mesh0));
@@ -77,8 +77,8 @@ public class MeshAreEquivalentTest {
         File file1 = DracoTestFileUtil.toFile("draco/testdata/three_faces_312.obj");
         Mesh mesh0 = MeshIOUtil.decode(file0).getValueOr(Status::throwException);
         Mesh mesh1 = MeshIOUtil.decode(file1).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file0, mesh0);
-        Assert.assertNotNull("Failed to load test model: " + file1, mesh1);
+        Assertions.assertNotNull(mesh0, "Failed to load test model: " + file0);
+        Assertions.assertNotNull(mesh1, "Failed to load test model: " + file1);
 
         MeshAreEquivalent equiv = new MeshAreEquivalent();
         StatusAssert.assertOk(equiv.equals(mesh0, mesh0));
@@ -90,10 +90,10 @@ public class MeshAreEquivalentTest {
     public void testOnBigMesh() {
         File file = DracoTestFileUtil.toFile("draco/testdata/test_nm.obj");
         Mesh mesh0 = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file, mesh0);
+        Assertions.assertNotNull(mesh0, "Failed to load test model: " + file);
 
         Mesh mesh1 = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file, mesh1);
+        Assertions.assertNotNull(mesh1, "Failed to load test model: " + file);
 
         MeshAreEquivalent equiv = new MeshAreEquivalent();
         StatusAssert.assertOk(equiv.equals(mesh0, mesh0));

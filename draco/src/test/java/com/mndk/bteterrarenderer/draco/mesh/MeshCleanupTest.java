@@ -22,8 +22,9 @@ import com.mndk.bteterrarenderer.draco.attributes.FaceIndex;
 import com.mndk.bteterrarenderer.draco.attributes.GeometryAttribute;
 import com.mndk.bteterrarenderer.draco.core.DracoDataType;
 import com.mndk.bteterrarenderer.draco.core.StatusAssert;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class MeshCleanupTest {
 
@@ -43,11 +44,11 @@ public class MeshCleanupTest {
                 Pointer.wrap(new float[] { 1f, 0f, 0f }));
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull("Failed to build the test mesh.", mesh);
-        Assert.assertEquals("Wrong number of faces in the input mesh.", 2, mesh.getNumFaces());
+        Assertions.assertNotNull(mesh, "Failed to build the test mesh.");
+        Assertions.assertEquals(2, mesh.getNumFaces(), "Wrong number of faces in the input mesh.");
         MeshCleanupOptions cleanupOptions = new MeshCleanupOptions();
         StatusAssert.assertOk(MeshCleanup.cleanup(mesh, cleanupOptions));
-        Assert.assertEquals("Failed to remove degenerated faces.", 1, mesh.getNumFaces());
+        Assertions.assertEquals(1, mesh.getNumFaces(), "Failed to remove degenerated faces.");
     }
 
     @Test
@@ -77,15 +78,15 @@ public class MeshCleanupTest {
                 Pointer.wrap(new int[] { 0, 2 }));
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull("Failed to build the test mesh.", mesh);
-        Assert.assertEquals("Wrong number of faces in the input mesh.", 2, mesh.getNumFaces());
-        Assert.assertEquals("Wrong number of point ids in the input mesh.", 5, mesh.getNumPoints());
-        Assert.assertEquals(3, mesh.getAttribute(intAttId).size());
+        Assertions.assertNotNull(mesh, "Failed to build the test mesh.");
+        Assertions.assertEquals(2, mesh.getNumFaces(), "Wrong number of faces in the input mesh.");
+        Assertions.assertEquals(5, mesh.getNumPoints(), "Wrong number of point ids in the input mesh.");
+        Assertions.assertEquals(3, mesh.getAttribute(intAttId).size());
         MeshCleanupOptions cleanupOptions = new MeshCleanupOptions();
         StatusAssert.assertOk(MeshCleanup.cleanup(mesh, cleanupOptions));
-        Assert.assertEquals("Failed to remove degenerated faces.", 1, mesh.getNumFaces());
-        Assert.assertEquals("Failed to remove isolated attribute indices.", 3, mesh.getNumPoints());
-        Assert.assertEquals(3, mesh.getAttribute(intAttId).size());
+        Assertions.assertEquals(1, mesh.getNumFaces(), "Failed to remove degenerated faces.");
+        Assertions.assertEquals(3, mesh.getNumPoints(), "Failed to remove isolated attribute indices.");
+        Assertions.assertEquals(3, mesh.getAttribute(intAttId).size());
     }
 
     @Test
@@ -113,16 +114,16 @@ public class MeshCleanupTest {
                 Pointer.wrap(new float[] { 1f, 0f }));
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull("Failed to build the test mesh.", mesh);
-        Assert.assertEquals("Wrong number of faces in the input mesh.", 2, mesh.getNumFaces());
-        Assert.assertEquals("Wrong number of point ids in the input mesh.", 5, mesh.getNumPoints());
-        Assert.assertEquals(2, mesh.getAttribute(genericAttId).size());
+        Assertions.assertNotNull(mesh, "Failed to build the test mesh.");
+        Assertions.assertEquals(2, mesh.getNumFaces(), "Wrong number of faces in the input mesh.");
+        Assertions.assertEquals(5, mesh.getNumPoints(), "Wrong number of point ids in the input mesh.");
+        Assertions.assertEquals(2, mesh.getAttribute(genericAttId).size());
         MeshCleanupOptions cleanupOptions = new MeshCleanupOptions();
         StatusAssert.assertOk(MeshCleanup.cleanup(mesh, cleanupOptions));
-        Assert.assertEquals("Failed to remove degenerated faces.", 1, mesh.getNumFaces());
-        Assert.assertEquals("Failed to remove isolated attribute indices.", 3, mesh.getNumPoints());
-        Assert.assertEquals(3, mesh.getAttribute(0).size());
-        Assert.assertEquals(1, mesh.getAttribute(1).size());
+        Assertions.assertEquals(1, mesh.getNumFaces(), "Failed to remove degenerated faces.");
+        Assertions.assertEquals(3, mesh.getNumPoints(), "Failed to remove isolated attribute indices.");
+        Assertions.assertEquals(3, mesh.getAttribute(0).size());
+        Assertions.assertEquals(1, mesh.getAttribute(1).size());
     }
 
     @Test
@@ -182,11 +183,11 @@ public class MeshCleanupTest {
                 Pointer.wrap(new float[] { 0f, 0f, 1f }));
 
         Mesh mesh = mb.finalizeMesh();
-        Assert.assertNotNull(mesh);
-        Assert.assertEquals(5, mesh.getNumFaces());
+        Assertions.assertNotNull(mesh);
+        Assertions.assertEquals(5, mesh.getNumFaces());
         MeshCleanupOptions cleanupOptions = new MeshCleanupOptions();
         StatusAssert.assertOk(MeshCleanup.cleanup(mesh, cleanupOptions));
-        Assert.assertEquals(3, mesh.getNumFaces());
+        Assertions.assertEquals(3, mesh.getNumFaces());
     }
 
 }

@@ -17,18 +17,18 @@
 
 package com.mndk.bteterrarenderer.draco.compression.entropy;
 
-import com.mndk.bteterrarenderer.datatype.DataType;
 import com.mndk.bteterrarenderer.datatype.DataNumberType;
+import com.mndk.bteterrarenderer.datatype.DataType;
 import com.mndk.bteterrarenderer.datatype.number.UByte;
 import com.mndk.bteterrarenderer.datatype.number.UInt;
 import com.mndk.bteterrarenderer.datatype.pointer.Pointer;
+import com.mndk.bteterrarenderer.datatype.vector.CppVector;
 import com.mndk.bteterrarenderer.draco.compression.config.DracoVersions;
 import com.mndk.bteterrarenderer.draco.compression.config.SymbolCodingMethod;
 import com.mndk.bteterrarenderer.draco.core.*;
-import com.mndk.bteterrarenderer.datatype.vector.CppVector;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class SymbolCodingTest {
         DataNumberType<U> symbolType = signedType.makeUnsigned();
         U symbol = BitUtils.convertSignedIntToSymbol(signedType, value, symbolType);
         T result = BitUtils.convertSymbolToSignedInt(symbolType, symbol, signedType);
-        Assert.assertEquals(value, result);
+        Assertions.assertEquals(value, result);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SymbolCodingTest {
         db.setBitstreamVersion(BITSTREAM_VERSION);
         StatusAssert.assertOk(SymbolDecoding.decode(UInt.of(numValues), 1, db, out));
         for (int i = 0; i < numValues; ++i) {
-            Assert.assertEquals(UInt.of(in[i]), out.get(i));
+            Assertions.assertEquals(UInt.of(in[i]), out.get(i));
         }
     }
 
@@ -96,7 +96,7 @@ public class SymbolCodingTest {
             // Test the encoding using all available symbol coding methods.
             Options options = new Options();
             SymbolCodingMethod symbolCodingMethod = SymbolCodingMethod.valueOf(UByte.of(method));
-            Assert.assertNotNull(symbolCodingMethod);
+            Assertions.assertNotNull(symbolCodingMethod);
             SymbolEncoding.setSymbolEncodingMethod(options, symbolCodingMethod);
 
             EncoderBuffer eb = new EncoderBuffer();
@@ -110,8 +110,7 @@ public class SymbolCodingTest {
             StatusAssert.assertOk(SymbolDecoding.decode(UInt.of(inValues.size()), 1, db, outValues));
 
             for (int i = 0; i < inValues.size(); ++i) {
-                Assert.assertEquals("Assertion fail on method=" + symbolCodingMethod + ", i=" + i,
-                        inValues.get(i), outValues.get(i));
+                Assertions.assertEquals(inValues.get(i), outValues.get(i), "Assertion fail on method=" + symbolCodingMethod + ", i=" + i);
             }
         }
     }
@@ -142,7 +141,7 @@ public class SymbolCodingTest {
         db.setBitstreamVersion(BITSTREAM_VERSION);
         StatusAssert.assertOk(SymbolDecoding.decode(UInt.of(inLength), 1, db, out));
         for (int i = 0; i < inLength; ++i) {
-            Assert.assertEquals(inVector.get(i), out.get(i));
+            Assertions.assertEquals(inVector.get(i), out.get(i));
         }
     }
 
@@ -167,7 +166,7 @@ public class SymbolCodingTest {
             db.setBitstreamVersion(BITSTREAM_VERSION);
             StatusAssert.assertOk(SymbolDecoding.decode(UInt.of(i + 1), 1, db, out));
             for (int j = 0; j < i + 1; ++j) {
-                Assert.assertEquals(in.get(j), out.get(j));
+                Assertions.assertEquals(in.get(j), out.get(j));
             }
         }
     }
@@ -188,7 +187,7 @@ public class SymbolCodingTest {
         db.setBitstreamVersion(BITSTREAM_VERSION);
         StatusAssert.assertOk(SymbolDecoding.decode(UInt.of(in.size()), 1, db, out));
         for (int i = 0; i < in.size(); ++i) {
-            Assert.assertEquals(in.get(i), out.get(i));
+            Assertions.assertEquals(in.get(i), out.get(i));
         }
     }
 

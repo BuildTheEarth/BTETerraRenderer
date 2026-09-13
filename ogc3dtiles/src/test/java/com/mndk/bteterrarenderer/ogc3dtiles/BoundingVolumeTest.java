@@ -10,8 +10,9 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.joml.Matrix3d;
 import org.joml.Vector3d;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class BoundingVolumeTest {
 
@@ -27,7 +28,7 @@ public class BoundingVolumeTest {
         MatcherAssert.assertThat(volume, CoreMatchers.instanceOf(Region.class));
 
         Region region = (Region) volume;
-        Assert.assertEquals(20, region.getMaxHeight() - region.getMinHeight(), 0.00001);
+        Assertions.assertEquals(20, region.getMaxHeight() - region.getMinHeight(), 0.00001);
     }
 
     @Test
@@ -36,7 +37,7 @@ public class BoundingVolumeTest {
         Volume volume = BTETerraRenderer.JSON_MAPPER.readValue(json, Volume.class);
         MatcherAssert.assertThat(volume, CoreMatchers.instanceOf(Ellipsoid.class));
         Matrix3d radiusMatrix = ((Ellipsoid) volume).getRadiusMatrix();
-        Assert.assertEquals(141.4214, Math.cbrt(radiusMatrix.determinant()), 0.00001);
+        Assertions.assertEquals(141.4214, Math.cbrt(radiusMatrix.determinant()), 0.00001);
     }
 
     @Test
@@ -49,13 +50,13 @@ public class BoundingVolumeTest {
                 "  ]}";
         Volume volume = BTETerraRenderer.JSON_MAPPER.readValue(json, Volume.class);
         MatcherAssert.assertThat(volume, CoreMatchers.instanceOf(Parallelepiped.class));
-        Assert.assertEquals(new Vector3d(0, 0, 10), ((Parallelepiped) volume).getCenter());
+        Assertions.assertEquals(new Vector3d(0, 0, 10), ((Parallelepiped) volume).getCenter());
     }
 
     @Test
     public void givenWrongSphereJson_testThrowable() {
         String json = "{\"sphere\": [0, 0, 10]}";
-        Assert.assertThrows(ArrayIndexOutOfBoundsException.class,
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class,
                 () -> BTETerraRenderer.JSON_MAPPER.readValue(json, Volume.class));
     }
 }

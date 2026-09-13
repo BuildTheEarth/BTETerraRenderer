@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mndk.bteterrarenderer.BTETerraRenderer;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.GeographicProjection;
 import com.mndk.bteterrarenderer.dep.terraplusplus.projection.OutOfProjectionBoundsException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class GeographicProjectionTest {
 
@@ -26,7 +27,7 @@ public class GeographicProjectionTest {
 
     public static void validateBTEProjection(GeographicProjection projection) {
         try {
-            Assert.assertArrayEquals(GAME_COORD, projection.fromGeo(GEO_COORD[0], GEO_COORD[1]), 0);
+            Assertions.assertArrayEquals(GAME_COORD, projection.fromGeo(GEO_COORD[0], GEO_COORD[1]), 0);
         } catch (OutOfProjectionBoundsException e) {
             throw new RuntimeException(e);
         }

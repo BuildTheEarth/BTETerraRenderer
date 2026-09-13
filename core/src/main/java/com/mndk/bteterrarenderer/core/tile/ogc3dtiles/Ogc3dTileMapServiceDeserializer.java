@@ -8,8 +8,8 @@ import com.mndk.bteterrarenderer.ogc3dtiles.Wgs84Constants;
 import com.mndk.bteterrarenderer.ogc3dtiles.geoid.GeoidHeightFunction;
 import com.mndk.bteterrarenderer.ogc3dtiles.math.SpheroidCoordinatesConverter;
 import com.mndk.bteterrarenderer.util.json.JsonParserUtil;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 class Ogc3dTileMapServiceDeserializer extends TileMapServiceDeserializer<Ogc3dTileMapService> {
@@ -30,7 +30,7 @@ class Ogc3dTileMapServiceDeserializer extends TileMapServiceDeserializer<Ogc3dTi
                 .build();
     }
 
-    @NotNull
+    @Nonnull
     private static GeoidHeightFunction getGeoidHeightFunction(String geoidType) throws IOException {
         switch (geoidType) {
             case "wgs84": return GeoidHeightFunction.WGS84_ELLIPSOID;

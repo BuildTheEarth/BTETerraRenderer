@@ -59,15 +59,14 @@ public class GltfModelConverter {
     }
 
     private void convertNodeModel(NodeModel nodeModel, Matrix4d parentTransform) {
-        float[] matrixArray = nodeModel.getMatrix();
+        double[] matrixArray = nodeModel.getMatrix();
         Matrix4d localTransform = new Matrix4d(parentTransform);
 
         if (matrixArray == null) {
-            // TODO: Wait for JglTF to support double precision for translation, rotation, and scale
             Matrix4d nodeTransform = new Matrix4d();
-            float[] scaleArray = nodeModel.getScale();
-            float[] rotationArray = nodeModel.getRotation();
-            float[] translationArray = nodeModel.getTranslation();
+            double[] scaleArray = nodeModel.getScale();
+            double[] rotationArray = nodeModel.getRotation();
+            double[] translationArray = nodeModel.getTranslation();
 
             if (scaleArray != null) nodeTransform.scale(new Vector3d(scaleArray));
             if (rotationArray != null) nodeTransform.rotate(JOMLUtils.quaternionXYZW(rotationArray).normalize());

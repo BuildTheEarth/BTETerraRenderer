@@ -14,12 +14,12 @@ pluginManagement {
     plugins {
         id("net.fabricmc.fabric-loom-remap") version fabricLoomVersion
         id("net.fabricmc.fabric-loom") version fabricLoomVersion
-        id("com.gradleup.shadow") version "9.4.2"
+        id("com.gradleup.shadow") version "9.6.1"
     }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.9.3"
+    id("dev.kikugie.stonecutter") version "0.9.8"
 }
 
 rootProject.name = "BTETerraRenderer"

@@ -23,8 +23,9 @@ import com.mndk.bteterrarenderer.draco.compression.mesh.MeshUtil;
 import com.mndk.bteterrarenderer.draco.core.Status;
 import com.mndk.bteterrarenderer.draco.io.DracoTestFileUtil;
 import com.mndk.bteterrarenderer.draco.io.MeshIOUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.File;
 
@@ -34,7 +35,7 @@ public class CornerTableTest {
     public void normalWithSeams() {
         File file = DracoTestFileUtil.toFile("draco/testdata/cube_att.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull("Failed to load test model: " + file, mesh);
+        Assertions.assertNotNull(mesh, "Failed to load test model: " + file);
 
         CornerTable table = MeshUtil.createCornerTableFromPositionAttribute(mesh);
         table.getValenceCache().cacheValences();
@@ -44,30 +45,30 @@ public class CornerTableTest {
             int valence = table.getValence(index);
             int valence2 = table.getValenceCache().valenceFromCache(index);
             int valence3 = table.getValenceCache().valenceFromCacheInaccurate(index);
-            Assert.assertEquals(valence, valence2);
-            Assert.assertTrue(valence >= valence3);
+            Assertions.assertEquals(valence, valence2);
+            Assertions.assertTrue(valence >= valence3);
 
-            Assert.assertTrue(valence <= 6);
-            Assert.assertTrue(valence2 <= 6);
+            Assertions.assertTrue(valence <= 6);
+            Assertions.assertTrue(valence2 <= 6);
 
-            Assert.assertTrue(valence >= 3);
-            Assert.assertTrue(valence2 >= 3);
-            Assert.assertTrue(valence3 >= 3);
+            Assertions.assertTrue(valence >= 3);
+            Assertions.assertTrue(valence2 >= 3);
+            Assertions.assertTrue(valence3 >= 3);
         }
 
         for (CornerIndex index : CornerIndex.range(0, table.getNumCorners())) {
             int valence = table.getValence(index);
             int valence2 = table.getValenceCache().valenceFromCache(index);
             int valence3 = table.getValenceCache().valenceFromCacheInaccurate(index);
-            Assert.assertEquals(valence, valence2);
-            Assert.assertTrue(valence >= valence3);
+            Assertions.assertEquals(valence, valence2);
+            Assertions.assertTrue(valence >= valence3);
 
-            Assert.assertTrue(valence <= 6);
-            Assert.assertTrue(valence2 <= 6);
+            Assertions.assertTrue(valence <= 6);
+            Assertions.assertTrue(valence2 <= 6);
 
-            Assert.assertTrue(valence >= 3);
-            Assert.assertTrue(valence2 >= 3);
-            Assert.assertTrue(valence3 >= 3);
+            Assertions.assertTrue(valence >= 3);
+            Assertions.assertTrue(valence2 >= 3);
+            Assertions.assertTrue(valence3 >= 3);
         }
 
         table.getValenceCache().clearValenceCache();
@@ -78,37 +79,37 @@ public class CornerTableTest {
     public void testNonManifoldEdges() {
         File file = DracoTestFileUtil.toFile("draco/testdata/non_manifold_wrap.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull(mesh);
+        Assertions.assertNotNull(mesh);
 
         CornerTable ct = MeshUtil.createCornerTableFromPositionAttribute(mesh);
-        Assert.assertNotNull(ct);
+        Assertions.assertNotNull(ct);
 
         MeshConnectedComponents connectedComponents = new MeshConnectedComponents();
         connectedComponents.findConnectedComponents(ct);
-        Assert.assertEquals(2, connectedComponents.getNumConnectedComponents());
+        Assertions.assertEquals(2, connectedComponents.getNumConnectedComponents());
     }
 
     @Test
     public void testNewFace() {
         File file = DracoTestFileUtil.toFile("draco/testdata/cube_att.obj");
         Mesh mesh = MeshIOUtil.decode(file).getValueOr(Status::throwException);
-        Assert.assertNotNull(mesh);
+        Assertions.assertNotNull(mesh);
 
         CornerTable ct = MeshUtil.createCornerTableFromPositionAttribute(mesh);
-        Assert.assertNotNull(ct);
-        Assert.assertEquals(12, ct.getNumFaces());
-        Assert.assertEquals(3 * 12, ct.getNumCorners());
-        Assert.assertEquals(8, ct.getNumVertices());
+        Assertions.assertNotNull(ct);
+        Assertions.assertEquals(12, ct.getNumFaces());
+        Assertions.assertEquals(3 * 12, ct.getNumCorners());
+        Assertions.assertEquals(8, ct.getNumVertices());
 
         VertexIndex newVi = ct.addNewVertex();
-        Assert.assertEquals(9, ct.getNumVertices());
+        Assertions.assertEquals(9, ct.getNumVertices());
 
-        Assert.assertEquals(12, ct.addNewFace(new VertexIndex[] { VertexIndex.of(6), VertexIndex.of(7), newVi }).getValue());
-        Assert.assertEquals(13, ct.getNumFaces());
-        Assert.assertEquals(3 * 13, ct.getNumCorners());
+        Assertions.assertEquals(12, ct.addNewFace(new VertexIndex[]{VertexIndex.of(6), VertexIndex.of(7), newVi}).getValue());
+        Assertions.assertEquals(13, ct.getNumFaces());
+        Assertions.assertEquals(3 * 13, ct.getNumCorners());
 
-        Assert.assertEquals(6, ct.getVertex(CornerIndex.of(3 * 12    )).getValue());
-        Assert.assertEquals(7, ct.getVertex(CornerIndex.of(3 * 12 + 1)).getValue());
-        Assert.assertEquals(ct.getVertex(CornerIndex.of(3 * 12 + 2)), newVi);
+        Assertions.assertEquals(6, ct.getVertex(CornerIndex.of(3 * 12)).getValue());
+        Assertions.assertEquals(7, ct.getVertex(CornerIndex.of(3 * 12 + 1)).getValue());
+        Assertions.assertEquals(ct.getVertex(CornerIndex.of(3 * 12 + 2)), newVi);
     }
 }

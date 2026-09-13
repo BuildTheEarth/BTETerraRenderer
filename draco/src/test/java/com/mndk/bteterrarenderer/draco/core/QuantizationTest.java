@@ -17,8 +17,9 @@
 
 package com.mndk.bteterrarenderer.draco.core;
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class QuantizationTest {
 
@@ -26,33 +27,33 @@ public class QuantizationTest {
     public void testQuantizer() {
         Quantizer quantizer = new Quantizer();
         quantizer.init(10.0f, 255);
-        Assert.assertEquals(0, quantizer.quantizeFloat(0.0f));
-        Assert.assertEquals(255, quantizer.quantizeFloat(10.0f));
-        Assert.assertEquals(-255, quantizer.quantizeFloat(-10.0f));
-        Assert.assertEquals(127, quantizer.quantizeFloat(4.999f));
-        Assert.assertEquals(128, quantizer.quantizeFloat(5.0f));
-        Assert.assertEquals(-127, quantizer.quantizeFloat(-4.9999f));
+        Assertions.assertEquals(0, quantizer.quantizeFloat(0.0f));
+        Assertions.assertEquals(255, quantizer.quantizeFloat(10.0f));
+        Assertions.assertEquals(-255, quantizer.quantizeFloat(-10.0f));
+        Assertions.assertEquals(127, quantizer.quantizeFloat(4.999f));
+        Assertions.assertEquals(128, quantizer.quantizeFloat(5.0f));
+        Assertions.assertEquals(-127, quantizer.quantizeFloat(-4.9999f));
         // Note: Both -5.f and +5.f lie exactly on the boundary between two
         // quantized values (127.5f and -127.5f). Due to rounding, both values are
         // then converted to 128 and -127 respectively.
-        Assert.assertEquals(-127, quantizer.quantizeFloat(-5.0f));
-        Assert.assertEquals(-128, quantizer.quantizeFloat(-5.0001f));
+        Assertions.assertEquals(-127, quantizer.quantizeFloat(-5.0f));
+        Assertions.assertEquals(-128, quantizer.quantizeFloat(-5.0001f));
 
         // Out of range quantization.
         // The behavior is technically undefined, but both quantizer and dequantizer
         // should still work correctly unless the quantized values overflow.
-        Assert.assertTrue(quantizer.quantizeFloat(-15.0f) < -255);
-        Assert.assertTrue(quantizer.quantizeFloat(15.0f) > 255);
+        Assertions.assertTrue(quantizer.quantizeFloat(-15.0f) < -255);
+        Assertions.assertTrue(quantizer.quantizeFloat(15.0f) > 255);
     }
 
     @Test
     public void testDequantizer() {
         Dequantizer dequantizer = new Dequantizer();
         StatusAssert.assertOk(dequantizer.init(10.0f, 255));
-        Assert.assertEquals(0.0f, dequantizer.dequantizeFloat(0), 0.000000001);
-        Assert.assertEquals(10.0f, dequantizer.dequantizeFloat(255), 0.000000001);
-        Assert.assertEquals(-10.0f, dequantizer.dequantizeFloat(-255), 0.000000001);
-        Assert.assertEquals(10.0f * (128.0f / 255.0f), dequantizer.dequantizeFloat(128), 0.000000001);
+        Assertions.assertEquals(0.0f, dequantizer.dequantizeFloat(0), 0.000000001);
+        Assertions.assertEquals(10.0f, dequantizer.dequantizeFloat(255), 0.000000001);
+        Assertions.assertEquals(-10.0f, dequantizer.dequantizeFloat(-255), 0.000000001);
+        Assertions.assertEquals(10.0f * (128.0f / 255.0f), dequantizer.dequantizeFloat(128), 0.000000001);
 
         // Test that the dequantizer fails to initialize with invalid input
         // parameters.

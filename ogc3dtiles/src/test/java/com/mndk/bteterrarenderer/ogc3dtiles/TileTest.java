@@ -8,8 +8,9 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class TileTest {
 
@@ -28,8 +29,8 @@ public class TileTest {
 
         Tile tile = BTETerraRenderer.JSON_MAPPER.readValue(json, Tile.class);
         MatcherAssert.assertThat(tile.getBoundingVolume(), CoreMatchers.instanceOf(Region.class));
-        Assert.assertEquals(1, tile.getContents().size());
-        Assert.assertEquals(new Matrix4d(), tile.getGlobalTransform(new Matrix4d()));
+        Assertions.assertEquals(1, tile.getContents().size());
+        Assertions.assertEquals(new Matrix4d(), tile.getGlobalTransform(new Matrix4d()));
     }
 
     @Test
@@ -60,14 +61,14 @@ public class TileTest {
 
         Tile tile = BTETerraRenderer.JSON_MAPPER.readValue(json, Tile.class);
         MatcherAssert.assertThat(tile.getBoundingVolume(), CoreMatchers.instanceOf(Region.class));
-        Assert.assertEquals(2, tile.getContents().size());
-        Assert.assertEquals(
+        Assertions.assertEquals(2, tile.getContents().size());
+        Assertions.assertEquals(
                 new Matrix4d().translate(new Vector3d(3, 4, 5)).scale(new Vector3d(3, 2, 6)),
                 tile.getGlobalTransform(new Matrix4d())
         );
 
         Tile child = tile.getChildren().get(0);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 new Matrix4d().translate(new Vector3d(21, 14, 17)).scale(new Vector3d(12, 14, 12)),
                 child.getGlobalTransform(new Matrix4d())
         );
