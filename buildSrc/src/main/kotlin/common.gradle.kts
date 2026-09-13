@@ -205,13 +205,6 @@ if (mcVersion != null) {
             "org.w3c.dom.svg"            to "w3cdom.svg",
             "org.yaml.snakeyaml"         to "snakeyaml",
         )
-        if (mcVersion > "1.12") {
-            dependencyReplacements.putAll(
-                mapOf(
-                    "org.tukaani.xz" to "xz"
-                )
-            )
-        }
         if (mcVersion < "1.19.3") {
             dependencyReplacements.putAll(
                 mapOf(
