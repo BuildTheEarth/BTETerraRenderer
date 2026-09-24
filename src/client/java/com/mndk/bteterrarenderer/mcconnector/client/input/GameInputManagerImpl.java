@@ -10,14 +10,24 @@ public class GameInputManagerImpl implements GameInputManager {
 
     @Override
     public boolean isKeyDown(InputKey key) {
-        return InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow()/*? if <1.21.9 {*//*.getWindow()*//*? }*/,
-                key.glfwKeyCode);
+//? if >=26.3 {
+        // 26.3-snapshot-4 switched from GLFW to SDL
+        return InputConstants.isKeyDown(key.sdlKeyCode);
+//? } else if >=1.21.9 {
+        /*return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key.glfwKeyCode);
+*///? } else {
+        /*return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.glfwKeyCode);
+*///? }
     }
 
     @Override
     public IKeyBinding registerInternal(String locKey, InputKey key, IKeyBindingCategory category) {
-        KeyMapping keyBinding = new KeyMapping(locKey, key.glfwKeyCode, ((KeyBindingCategoryImpl) category).delegate());
+//? if >=26.3 {
+        // 26.3-snapshot-4 switched from GLFW to SDL
+        KeyMapping keyBinding = new KeyMapping(locKey, key.sdlKeyCode, ((KeyBindingCategoryImpl) category).delegate());
+//? } else {
+        /*KeyMapping keyBinding = new KeyMapping(locKey, key.glfwKeyCode, ((KeyBindingCategoryImpl) category).delegate());
+*///? }
 //? if >=26.1 {
         net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping(keyBinding);
 //? } else {
