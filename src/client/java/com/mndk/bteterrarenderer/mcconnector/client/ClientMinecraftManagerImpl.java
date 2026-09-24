@@ -131,6 +131,11 @@ public class ClientMinecraftManagerImpl extends ClientMinecraftManager {
 
     @Override
     public void openUri(URI uri) {
-        Util.getPlatform().openUri(uri);
+//? if >=26.3 {
+        // openUri moved to Blaze3D on 26.3-pre-3
+        com.mojang.blaze3d.Blaze3D.openUri(uri);
+//? } else {
+        /*Util.getPlatform().openUri(uri);
+*///? }
     }
 }

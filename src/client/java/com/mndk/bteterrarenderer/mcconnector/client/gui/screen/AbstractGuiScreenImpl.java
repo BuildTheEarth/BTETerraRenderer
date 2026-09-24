@@ -137,7 +137,7 @@ public class AbstractGuiScreenImpl extends Screen {
     public boolean keyPressed(KeyEvent keyInput) {
         boolean superResult = super.keyPressed(keyInput);
 
-//? if >=26.3-alpha.4 {
+//? if >=26.3 {
         // 26.3-snapshot-4 switched from GLFW to SDL
         boolean delegateResult = delegate.keyPressed(
                 InputKey.fromSdlKeyCode(keyInput.key()), keyInput.keycode(), keyInput.modifiers());

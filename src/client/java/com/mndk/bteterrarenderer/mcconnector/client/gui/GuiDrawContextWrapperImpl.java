@@ -18,7 +18,7 @@ import com.mojang.blaze3d.pipeline.*;
 //? }
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-//? if >=26.3-alpha.3 {
+//? if >=26.3 {
 import com.mojang.renderpearl.api.pipeline.*; // 26.3-snapshot-3 moved Blaze3D RenderPipeline stuff to this package
 //? }
 import lombok.RequiredArgsConstructor;

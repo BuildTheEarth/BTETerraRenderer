@@ -9,7 +9,7 @@ import com.mndk.bteterrarenderer.mcconnector.util.math.McCoordTransformer;
 import com.mojang.blaze3d.*;
 import com.mojang.blaze3d.pipeline.*;
 import com.mojang.blaze3d.vertex.*;
-//? if >=26.3-alpha.3 {
+//? if >=26.3 {
 import com.mojang.renderpearl.api.pipeline.*; // 26.3-snapshot-3 moved Blaze3D RenderPipeline stuff to this package
 //? }
 import net.minecraft.client.renderer.*;
@@ -36,7 +36,7 @@ public class BufferBuildersManagerImpl implements BufferBuildersManager {
      */
     private static RenderSetup generateSetup(RenderPipeline pipeline, Identifier texture) {
         return RenderSetup.builder(pipeline)
-//? if >=26.3-alpha.2 {
+//? if >=26.3 {
                 .setOitPipelines(RenderPipelines.OIT_ENTITY) // 26.3-snapshot-2 added OIT
 //? }
                 // Sampler name must match what the pipeline declares via withSampler(...)
