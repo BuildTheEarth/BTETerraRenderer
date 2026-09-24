@@ -3,6 +3,10 @@
 Keep release notes here, newest first.
 Use the release tag as the heading so the release workflow can match it.
 
+## Unreleased
+
+* Fixed several Google Earth 3D issues
+
 ## v1.5.0
 
 * Added support for Minecraft 26.2
