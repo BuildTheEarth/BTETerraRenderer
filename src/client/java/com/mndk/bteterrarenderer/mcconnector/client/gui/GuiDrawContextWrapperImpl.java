@@ -74,7 +74,7 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
 //? if >=1.20 {
     public void glPushRelativeScissor(int relX, int relY, int relWidth, int relHeight) {
         // GuiGraphicsExtractor.enableScissor uses x1,y1,x2,y2
-//? if >=1.21.6 {
+//? if >=1.21.4 {
         delegate.enableScissor(relX, relY, relX + relWidth, relY + relHeight);
 //? } else {
         /*int[] scissorDimension = this.getAbsoluteScissorDimension(relX, relY, relWidth, relHeight);
@@ -153,7 +153,7 @@ public class GuiDrawContextWrapperImpl extends AbstractGuiDrawContextWrapper {
      * @return {@code [ scissorX, scissorY, scissorWidth, scissorHeight ]}
      */
     private int[] getAbsoluteScissorDimension(int relX, int relY, int relWidth, int relHeight) {
-//? if >=1.21.6 {
+//? if >=1.21.4 {
         // GuiGraphicsExtractor.enableScissor applies the current matrix transform.
         return new int[] { relX, relY, relWidth, relHeight };
 //? } else if >=1.19.3 {
