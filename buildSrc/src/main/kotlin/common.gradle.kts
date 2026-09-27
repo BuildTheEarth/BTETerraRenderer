@@ -147,7 +147,11 @@ dependencies {
     "compileAndTestOnly"("org.apache.commons:commons-lang3:3.20.0")
     "compileAndTestOnly"("commons-codec:commons-codec:1.22.1")
     "compileAndTestOnly"("com.google.guava:guava:33.7.1-jre")
-    "compileAndTestOnly"("io.netty:netty-all:4.2.18.Final")
+    // Netty isn't shaded into the jar; Minecraft provides it at runtime.
+    // MC 1.18-1.21.10 bundle Netty 4.1.x (no io.netty.channel.MultiThreadIoEventLoopGroup).
+    // DO NOT bump this past 4.1.x until support for those versions (< fabric26.1) is dropped,
+    // or compiled code will fail to link at runtime with NoClassDefFoundError.
+    "compileAndTestOnly"("io.netty:netty-all:4.1.9.Final")
     "compileAndTestOnly"("org.tukaani:xz:1.12")
     if (mcVersion == null) {
         "compileAndTestOnly"("org.joml:joml:1.10.9")

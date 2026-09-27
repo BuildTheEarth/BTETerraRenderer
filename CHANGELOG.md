@@ -6,6 +6,7 @@ Use the release tag as the heading so the release workflow can match it.
 ## Unreleased
 
 * Fixed several Google Earth 3D issues
+* Fixed a critical crash affecting Minecraft versions 1.18-1.21.10
 
 ## v1.5.0
 
