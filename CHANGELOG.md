@@ -3,6 +3,10 @@
 Keep release notes here, newest first.
 Use the release tag as the heading so the release workflow can match it.
 
+## Unreleased
+
+* Fixed a critical crash affecting Minecraft versions 1.18-1.21.10
+
 ## v1.5.0
 
 * Added support for Minecraft 26.2
