@@ -3,10 +3,11 @@
 Keep release notes here, newest first.
 Use the release tag as the heading so the release workflow can match it.
 
-## Unreleased
+## v1.5.1
 
 * Fixed several Google Earth 3D issues
 * Fixed a critical crash affecting Minecraft versions 1.18-1.21.10
+* Fixed scissoring on 1.21.4 and 1.21.5
 
 ## v1.5.0
 
