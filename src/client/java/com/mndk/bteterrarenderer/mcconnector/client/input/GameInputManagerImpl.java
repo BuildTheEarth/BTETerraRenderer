@@ -55,4 +55,11 @@ public class GameInputManagerImpl implements GameInputManager {
     public void setClipboardContent(String content) {
         Minecraft.getInstance().keyboardHandler.setClipboard(content);
     }
+
+    @Override
+    public void setTextInputFocused(Object owner, boolean focused) {
+//? if >=26.3 {
+        Minecraft.getInstance().textInputManager().onTextInputFocusChange(owner, focused);
+//? }
+    }
 }

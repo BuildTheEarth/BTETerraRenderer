@@ -153,7 +153,19 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
     // ---------------- input factories ----------------
 
     private static MouseButtonEvent makeClick(double x, double y, int button) {
-        return new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0));
+        int nativeButton = /*? if >=26.3 {*/toSdlMouseButton(button)/*? } else {*//*button*//*? }*/;
+        return new MouseButtonEvent(x, y, new MouseButtonInfo(nativeButton, 0));
     }
+
+//? if >=26.3 {
+    private static int toSdlMouseButton(int button) {
+        return switch (button) {
+            case 0 -> 1; // Left
+            case 1 -> 3; // Right
+            case 2 -> 2; // Middle
+            default -> button >= 3 ? button + 1 : button;
+        };
+    }
+//? }
 //? }
 }
