@@ -50,6 +50,13 @@ public class TextFieldWidgetCopy extends AbstractWidgetCopy {
         this.frame++;
     }
 
+    @Override
+    public void setFocused(boolean focused) {
+        if (focused == this.isFocused()) return;
+        super.setFocused(focused);
+        McConnector.client().inputManager.setTextInputFocused(this, focused);
+    }
+
     public void setText(String text) {
         if (!this.validator.test(text)) return;
 

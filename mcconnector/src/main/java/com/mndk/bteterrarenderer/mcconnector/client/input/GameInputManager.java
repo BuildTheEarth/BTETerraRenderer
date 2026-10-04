@@ -19,6 +19,8 @@ public interface GameInputManager {
     String getClipboardContent();
     void setClipboardContent(String content);
 
+    default void setTextInputFocused(Object owner, boolean focused) {}
+
     default boolean isControlKeyDown() {
         if (McConnector.client().isOnMac()) {
             return isKeyDown(KEY_LEFT_SUPER) || isKeyDown(KEY_RIGHT_SUPER);

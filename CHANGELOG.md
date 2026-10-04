@@ -5,6 +5,7 @@ Use the release tag as the heading so the release workflow can match it.
 
 ## v1.5.1
 
+* Added support for Minecraft 26.3
 * Fixed several Google Earth 3D issues
 * Fixed a critical crash affecting Minecraft versions 1.18-1.21.10
 * Fixed scissoring on 1.21.4 and 1.21.5

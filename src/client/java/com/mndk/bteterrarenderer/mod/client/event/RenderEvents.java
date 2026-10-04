@@ -29,9 +29,12 @@ import net.minecraft.util.profiling.Profiler;
 public class RenderEvents {
 
     public static void registerEvents() {
-//? if >=26.1 {
-        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(RenderEvents::onWorldRender);
-//? } else if !=1.21.9 {
+//? if >=26.2 {
+        // 26.3-snapshot-2+ must use this path
+        LevelRenderEvents.COLLECT_SUBMITS.register(RenderEvents::onWorldRender);
+//? } else if >=26.1 {
+        /*LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(RenderEvents::onWorldRender);
+*///? } else if !=1.21.9 {
         /*WorldRenderEvents.AFTER_ENTITIES.register(RenderEvents::onWorldRender);
 *///? }
 

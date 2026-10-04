@@ -84,7 +84,7 @@ public class AbstractGuiScreenImpl extends Screen {
 
         double x = click.x();
         double y = click.y();
-        int button = click.button();
+        int button = /*? if >=26.3 {*/fromSdlMouseButton(click.button())/*? } else {*//*click.button()*//*? }*/;
 
         boolean delegateResult = delegate.mousePressed(x, y, button);
         return superResult || delegateResult;
@@ -99,7 +99,7 @@ public class AbstractGuiScreenImpl extends Screen {
 
         double x = click.x();
         double y = click.y();
-        int button = click.button();
+        int button = /*? if >=26.3 {*/fromSdlMouseButton(click.button())/*? } else {*//*click.button()*//*? }*/;
 
         boolean delegateResult = delegate.mouseReleased(x, y, button);
         return superResult || delegateResult;
@@ -115,7 +115,7 @@ public class AbstractGuiScreenImpl extends Screen {
 
         double x = click.x();
         double y = click.y();
-        int button = click.button();
+        int button = /*? if >=26.3 {*/fromSdlMouseButton(click.button())/*? } else {*//*click.button()*//*? }*/;
 
         // Your delegate expects (mouseX, mouseY, button, startX, startY)
         // We approximate startX/startY from current - delta
@@ -137,11 +137,15 @@ public class AbstractGuiScreenImpl extends Screen {
     public boolean keyPressed(KeyEvent keyInput) {
         boolean superResult = super.keyPressed(keyInput);
 
-        int keyCode = keyInput.key();
-        int scanCode = keyInput.scancode();
-        int modifiers = keyInput.modifiers();
+//? if >=26.3 {
+        // 26.3-snapshot-4 switched from GLFW to SDL
+        boolean delegateResult = delegate.keyPressed(
+                InputKey.fromSdlKeyCode(keyInput.key()), keyInput.keycode(), keyInput.modifiers());
+//? } else {
+        /*boolean delegateResult = delegate.keyPressed(
+                InputKey.fromGlfwKeyCode(keyInput.key()), keyInput.scancode(), keyInput.modifiers());
+*///? }
 
-        boolean delegateResult = delegate.keyPressed(InputKey.fromGlfwKeyCode(keyCode), scanCode, modifiers);
         return superResult || delegateResult;
     }
 
@@ -205,6 +209,17 @@ public class AbstractGuiScreenImpl extends Screen {
         return delegate.charTyped(chr, modifiers);
     }
 *///? }
+
+//? if >=26.3 {
+    private static int fromSdlMouseButton(int button) {
+        return switch (button) {
+            case 1 -> 0; // Left
+            case 2 -> 2; // Middle
+            case 3 -> 1; // Right
+            default -> button >= 4 ? button - 1 : button;
+        };
+    }
+//? }
 
     @Override
     public void removed() {
