@@ -122,11 +122,11 @@ public enum InputKey {
     KEY_LEFT_SHIFT(225, 340, 0x2A),
     KEY_LEFT_CONTROL(224, 341, 0x1D),
     KEY_LEFT_ALT(226, 342, 0x38),
-    KEY_LEFT_SUPER(226, 343, 0xC4), // Left super and right super are the same in keycode
+    KEY_LEFT_SUPER(227, 343, 0xC4), // Left super and right super are the same in keycode
     KEY_RIGHT_SHIFT(229, 344, 0x36),
     KEY_RIGHT_CONTROL(228, 345, 0x9D),
     KEY_RIGHT_ALT(230, 346, 0xB8),
-    KEY_RIGHT_SUPER(230, 347, 0xC4), // Left super and right super are the same in keycode
+    KEY_RIGHT_SUPER(231, 347, 0xC4), // Left super and right super are the same in keycode
     KEY_MENU(118, 348);
 
     public final int sdlKeyCode;

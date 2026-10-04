@@ -118,10 +118,13 @@ public record NativeGuiScreenWrapperImpl(@Nonnull Screen delegate) implements Na
      */
     @Override
     public boolean keyPressed(InputKey key, int scanCode, int modifiers) {
-//? if >=1.21.9 {
-        KeyEvent keyInput = new KeyEvent(key.glfwKeyCode, scanCode, modifiers);
+//? if >=26.3 {
+        KeyEvent keyInput = new KeyEvent(key.sdlKeyCode, scanCode, modifiers);
         return delegate.keyPressed(keyInput);
-//? } else {
+//? } else if >=1.21.9 {
+        /*KeyEvent keyInput = new KeyEvent(key.glfwKeyCode, scanCode, modifiers);
+        return delegate.keyPressed(keyInput);
+*///? } else {
         /*return delegate.keyPressed(key.glfwKeyCode, scanCode, modifiers);
 *///? }
     }
